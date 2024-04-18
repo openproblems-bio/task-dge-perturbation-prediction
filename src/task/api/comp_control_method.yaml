@@ -1,0 +1,31 @@
+functionality:
+  namespace: "control_methods"
+  info:
+    type: control_method
+    type_info:
+      label: Control Method
+      summary: A control method.
+      description: |
+        A control method to predict perturbation effects.
+  arguments:
+    - name: --de_train
+      __merge__: file_de_train_parquet.yaml
+      required: true
+      direction: input
+    - name: --de_test
+      __merge__: file_de_test_parquet.yaml
+      required: true
+      direction: input
+    - name: --id_map
+      __merge__: file_id_map.yaml
+      required: true
+      direction: input
+    - name: --output
+      __merge__: file_prediction.yaml
+      required: true
+      direction: output
+  test_resources:
+    - type: python_script
+      path: /src/common/component_tests/run_and_check_output.py
+    - path: /resources/neurips-2023-data
+      dest: resources/neurips-2023-data

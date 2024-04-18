@@ -1,0 +1,11 @@
+type: file
+example: resources/neurips-2023-data/prediction.parquet
+info:
+  label: Prediction
+  summary: "Differential Gene Expression prediction"
+  file_type: parquet
+  columns:
+    - name: id
+      type: integer
+      description: Index of the test observation
+      required: true

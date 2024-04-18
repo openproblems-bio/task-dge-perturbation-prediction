@@ -1,0 +1,377 @@
+functionality:
+  name: "run_benchmark"
+  namespace: "workflows"
+  version: "main_build"
+  argument_groups:
+  - name: "Inputs"
+    arguments:
+    - type: "file"
+      name: "--dataset_info"
+      info: null
+      example:
+      - "resources/neurips-2023-data/dataset_info.yaml"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "file"
+      name: "--de_train"
+      info:
+        label: "DE train"
+        summary: "Differential expression results for training."
+        file_type: "parquet"
+        columns:
+        - name: "cell_type"
+          type: "string"
+          description: "The annotated cell type of each cell based on RNA expression."
+          required: true
+        - name: "sm_name"
+          type: "string"
+          description: "The primary name for the (parent) compound (in a standardized\
+            \ representation)\nas chosen by LINCS. This is provided to map the data\
+            \ in this experiment to \nthe LINCS Connectivity Map data.\n"
+          required: true
+        - name: "sm_lincs_id"
+          type: "string"
+          description: "The global LINCS ID (parent) compound (in a standardized representation).\n\
+            This is provided to map the data in this experiment to the LINCS Connectivity\n\
+            Map data.\n"
+          required: true
+        - name: "SMILES"
+          type: "string"
+          description: "Simplified molecular-input line-entry system (SMILES) representations\
+            \ of the\ncompounds used in the experiment. This is a 1D representation\
+            \ of molecular\nstructure. These SMILES are provided by Cellarity based\
+            \ on the specific\ncompounds ordered for this experiment.\n"
+          required: true
+        - name: "split"
+          type: "string"
+          description: "Split. Must be one of 'control', 'train', 'public_test', or\
+            \ 'private_test'"
+          required: true
+        - name: "control"
+          type: "boolean"
+          description: "Boolean indicating whether this instance was used as a control."
+          required: true
+      example:
+      - "resources/neurips-2023-data/de_train.parquet"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "file"
+      name: "--de_test"
+      info:
+        label: "DE test"
+        summary: "Differential expression results for testing."
+        file_type: "parquet"
+        columns:
+        - name: "id"
+          type: "integer"
+          description: "Index of the test observation"
+          required: true
+        - name: "cell_type"
+          type: "string"
+          description: "The annotated cell type of each cell based on RNA expression."
+          required: true
+        - name: "sm_name"
+          type: "string"
+          description: "The primary name for the (parent) compound (in a standardized\
+            \ representation)\nas chosen by LINCS. This is provided to map the data\
+            \ in this experiment to \nthe LINCS Connectivity Map data.\n"
+          required: true
+        - name: "sm_lincs_id"
+          type: "string"
+          description: "The global LINCS ID (parent) compound (in a standardized representation).\n\
+            This is provided to map the data in this experiment to the LINCS Connectivity\n\
+            Map data.\n"
+          required: true
+        - name: "SMILES"
+          type: "string"
+          description: "Simplified molecular-input line-entry system (SMILES) representations\
+            \ of the\ncompounds used in the experiment. This is a 1D representation\
+            \ of molecular\nstructure. These SMILES are provided by Cellarity based\
+            \ on the specific\ncompounds ordered for this experiment.\n"
+          required: true
+        - name: "split"
+          type: "string"
+          description: "Split. Must be one of 'control', 'train', 'public_test', or\
+            \ 'private_test'"
+          required: true
+        - name: "control"
+          type: "boolean"
+          description: "Boolean indicating whether this instance was used as a control."
+          required: true
+      example:
+      - "resources/neurips-2023-data/de_test.parquet"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "file"
+      name: "--id_map"
+      info:
+        label: "ID Map"
+        summary: "File indicates the order of de_test, the cell types and the small\
+          \ molecule names."
+        file_type: "csv"
+        columns:
+        - name: "id"
+          type: "integer"
+          description: "Index of the test observation"
+          required: true
+        - name: "cell_type"
+          type: "string"
+          description: "Cell type name"
+          required: true
+        - name: "sm_name"
+          type: "string"
+          description: "Small molecule name"
+          required: true
+      example:
+      - "resources/neurips-2023-data/id_map.csv"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+  - name: "Outputs"
+    arguments:
+    - type: "file"
+      name: "--scores"
+      description: "A yaml file containing the scores of each of the methods"
+      info: null
+      default:
+      - "score_uns.yaml"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "output"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "file"
+      name: "--method_configs"
+      info: null
+      default:
+      - "method_configs.yaml"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "output"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "file"
+      name: "--metric_configs"
+      info: null
+      default:
+      - "metric_configs.yaml"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "output"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "file"
+      name: "--dataset_uns"
+      info: null
+      default:
+      - "dataset_uns.yaml"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "output"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "file"
+      name: "--task_info"
+      info: null
+      default:
+      - "task_info.yaml"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "output"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+  - name: "Methods"
+    arguments:
+    - type: "string"
+      name: "--method_ids"
+      description: "A list of method ids to run. If not specified, all methods will\
+        \ be run."
+      info: null
+      required: false
+      direction: "input"
+      multiple: true
+      multiple_sep: ":"
+      dest: "par"
+  resources:
+  - type: "nextflow_script"
+    path: "main.nf"
+    is_executable: true
+    entrypoint: "run_wf"
+  - type: "file"
+    path: "../../api/task_info.yaml"
+  info: null
+  status: "enabled"
+  dependencies:
+  - name: "common/extract_metadata"
+    repository:
+      type: "github"
+      name: ""
+      repo: "openproblems-bio/openproblems-v2"
+      tag: "main_build"
+      localPath: "/tmp/viash_hub_repo11466837410592687505"
+    foundConfigPath: "/tmp/viash_hub_repo11466837410592687505/target/nextflow/common/extract_metadata/.config.vsh.yaml"
+    configInfo:
+      functionalityName: "extract_metadata"
+      git_remote: "https://github.com/openproblems-bio/openproblems-v2"
+      viash_version: "0.8.0"
+      config: "/home/runner/work/openproblems-v2/openproblems-v2/src/common/extract_metadata/config.vsh.yaml"
+      functionalityNamespace: "common"
+      output: "/home/runner/work/openproblems-v2/openproblems-v2/target/nextflow/common/extract_metadata"
+      platform: "nextflow"
+      git_commit: "388b1094059592e77cd21edee13d1d171bab112a"
+      executable: "/home/runner/work/openproblems-v2/openproblems-v2/target/nextflow/common/extract_metadata/extract_metadata"
+    writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/dependencies/github/openproblems-bio/openproblems-v2/main_build/nextflow/common/extract_metadata"
+  - name: "control_methods/zeros"
+    repository:
+      type: "local"
+      localPath: ""
+    foundConfigPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/zeros/config.vsh.yaml"
+    configInfo:
+      functionalityName: "zeros"
+      git_tag: ""
+      git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+      viash_version: "0.8.5"
+      config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/zeros/config.vsh.yaml"
+      functionalityNamespace: "control_methods"
+      output: ""
+      platform: ""
+      git_commit: "a13201f468f3a9672d759719aa6354a1e49a0019"
+      executable: "/nextflow/control_methods/zeros/main.nf"
+    writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/zeros"
+  - name: "control_methods/sample"
+    repository:
+      type: "local"
+      localPath: ""
+    foundConfigPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/sample/config.vsh.yaml"
+    configInfo:
+      functionalityName: "sample"
+      git_tag: ""
+      git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+      viash_version: "0.8.5"
+      config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/sample/config.vsh.yaml"
+      functionalityNamespace: "control_methods"
+      output: ""
+      platform: ""
+      git_commit: "a13201f468f3a9672d759719aa6354a1e49a0019"
+      executable: "/nextflow/control_methods/sample/main.nf"
+    writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/sample"
+  - name: "control_methods/ground_truth"
+    repository:
+      type: "local"
+      localPath: ""
+    foundConfigPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/ground_truth/config.vsh.yaml"
+    configInfo:
+      functionalityName: "ground_truth"
+      git_tag: ""
+      git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+      viash_version: "0.8.5"
+      config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/ground_truth/config.vsh.yaml"
+      functionalityNamespace: "control_methods"
+      output: ""
+      platform: ""
+      git_commit: "a13201f468f3a9672d759719aa6354a1e49a0019"
+      executable: "/nextflow/control_methods/ground_truth/main.nf"
+    writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/ground_truth"
+  - name: "methods/random_forest"
+    repository:
+      type: "local"
+      localPath: ""
+    foundConfigPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/random_forest/config.vsh.yaml"
+    configInfo:
+      functionalityName: "random_forest"
+      git_tag: ""
+      git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+      viash_version: "0.8.5"
+      config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/random_forest/config.vsh.yaml"
+      functionalityNamespace: "methods"
+      output: ""
+      platform: ""
+      git_commit: "a13201f468f3a9672d759719aa6354a1e49a0019"
+      executable: "/nextflow/methods/random_forest/main.nf"
+    writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/random_forest"
+  - name: "metrics/mean_rowwise_rmse"
+    repository:
+      type: "local"
+      localPath: ""
+    foundConfigPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/metrics/mean_rowwise_rmse/config.vsh.yaml"
+    configInfo:
+      functionalityName: "mean_rowwise_rmse"
+      git_tag: ""
+      git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+      viash_version: "0.8.5"
+      config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/metrics/mean_rowwise_rmse/config.vsh.yaml"
+      functionalityNamespace: "metrics"
+      output: ""
+      platform: ""
+      git_commit: "a13201f468f3a9672d759719aa6354a1e49a0019"
+      executable: "/nextflow/metrics/mean_rowwise_rmse/main.nf"
+    writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_rmse"
+  repositories:
+  - type: "github"
+    name: "openproblemsv2"
+    repo: "openproblems-bio/openproblems-v2"
+    tag: "main_build"
+    localPath: ""
+  set_wd_to_resources_dir: false
+platforms:
+- type: "nextflow"
+  id: "nextflow"
+  directives:
+    tag: "$id"
+  auto:
+    simplifyInput: true
+    simplifyOutput: false
+    transcript: false
+    publish: false
+  config:
+    labels:
+      lowmem: "memory = 20.Gb"
+      midmem: "memory = 50.Gb"
+      highmem: "memory = 100.Gb"
+      lowcpu: "cpus = 5"
+      midcpu: "cpus = 15"
+      highcpu: "cpus = 30"
+      lowtime: "time = 1.h"
+      midtime: "time = 4.h"
+      hightime: "time = 8.h"
+    script:
+    - "process.errorStrategy = 'ignore'"
+  debug: false
+  container: "docker"
+info:
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/workflows/run_benchmark/config.vsh.yaml"
+  platform: "nextflow"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark/main.nf"
+  viash_version: "0.8.5"
+  git_commit: "a13201f468f3a9672d759719aa6354a1e49a0019"
+  git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

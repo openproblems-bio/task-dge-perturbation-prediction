@@ -1,0 +1,8 @@
+resources
+work
+.nextflow*
+.idea
+.vscode
+.DS_Store
+output
+trace-*

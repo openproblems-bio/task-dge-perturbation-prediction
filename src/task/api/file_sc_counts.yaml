@@ -1,0 +1,86 @@
+type: file
+example: resources/neurips-2023-raw/sc_counts.h5ad
+info:
+  label: Single Cell Counts
+  summary: "Anndata with the counts of the whole dataset."
+  file_type: h5ad
+  slots:
+    obs:
+      - name: dose_uM
+        description: "Dose in micromolar."
+        type: integer
+        required: true
+      - name: timepoint_hr
+        description: "Time point measured in hours."
+        type: float
+        required: true
+      - name: raw_cell_id
+        description: "Original cell identifier."
+        type: string
+        required: true
+      - name: hashtag_id
+        description: "Identifier for hashtag oligo."
+        type: string
+        required: true
+      - name: well
+        description: "Well location in the plate."
+        type: string
+        required: true
+      - name: container_format
+        description: "Format of the container (e.g., 96-well plate)."
+        type: string
+        required: true
+      - name: row
+        description: "Row in the plate."
+        type: string
+        required: true
+      - name: col
+        description: "Column in the plate."
+        type: integer
+        required: true
+      - name: plate_name
+        description: "Name of the plate."
+        type: string
+        required: true
+      - name: cell_id
+        description: "Unique cell identifier."
+        type: string
+        required: true
+      - name: cell_type
+        description: "Type of cell (e.g., B cells, T cells CD4+)."
+        type: string
+        required: true
+      - name: split
+        description: "Dataset split type (e.g., control, treated)."
+        type: string
+        required: true
+      - name: donor_id
+        description: "Identifier for the donor."
+        type: string
+        required: true
+      - name: sm_name
+        description: "Name of the small molecule used for treatment."
+        type: string
+        required: true
+    obsm:
+      - name: HTO_clr
+        description: "Corrected counts for hashing tags."
+        type: matrix
+        required: true
+      - name: X_pca
+        description: "Principal component analysis results."
+        type: matrix
+        required: true
+      - name: X_umap
+        description: "UMAP dimensionality reduction results."
+        type: matrix
+        required: true
+      - name: protein_counts
+        description: "Count data for proteins."
+        type: matrix
+        required: true
+    layers:
+      - name: counts
+        description: "Raw count data for each gene across cells."
+        type: matrix
+        required: true

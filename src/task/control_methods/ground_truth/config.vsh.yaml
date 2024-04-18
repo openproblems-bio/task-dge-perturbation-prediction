@@ -1,0 +1,23 @@
+__merge__: ../../api/comp_control_method.yaml
+functionality:
+  name: ground_truth
+  info:
+    label: Ground truth
+    summary: "Returns the ground truth predictions."
+    description: |
+      The identity function that returns the ground-truth information as the output.
+    preferred_normalization: counts
+  resources:
+    - type: r_script
+      path: script.R
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_r:1.0.2
+    setup:
+      - type: r
+        cran: [ arrow, dplyr ]
+      - type: python
+        packages: [ fastparquet ]
+  - type: nextflow
+    directives:
+      label: [ midtime, highmem, highcpu ]

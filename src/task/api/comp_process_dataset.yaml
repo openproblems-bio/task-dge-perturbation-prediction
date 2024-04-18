@@ -1,0 +1,34 @@
+functionality:
+  namespace: "process_dataset"
+  info:
+    type: process_dataset
+    type_info:
+      label: Process dataset
+      summary: Process the raw dataset
+      description: |
+        Process the raw dataset for the DGE regression task.
+  arguments:
+    - name: --sc_counts
+      __merge__: file_sc_counts.yaml
+      required: true
+      direction: input
+    - name: --lincs_id_compound_mapping
+      __merge__: file_lincs_id_compound_mapping.yaml
+      required: true
+      direction: input
+    - name: --de_train
+      __merge__: file_de_train_parquet.yaml
+      required: true
+      direction: output
+      default: de_train.parquet
+    - name: --de_test
+      __merge__: file_de_test_parquet.yaml
+      required: true
+      direction: output
+      default: de_test.parquet
+    - name: --id_map
+      __merge__: file_id_map.yaml
+      required: true
+      direction: output
+      default: id_map.csv
+  test_resources: []

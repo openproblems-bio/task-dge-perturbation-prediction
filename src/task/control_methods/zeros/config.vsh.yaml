@@ -1,0 +1,20 @@
+__merge__: ../../api/comp_control_method.yaml
+functionality:
+  name: zeros
+  info:
+    label: Zeros
+    summary: Baseline method that predicts all zeros
+    description: |
+      Baseline method that predicts all zeros.
+  resources:
+    - type: python_script
+      path: script.py
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_python:1.0.2
+    setup:
+      - type: python
+        packages: [ fastparquet ]
+  - type: nextflow
+    directives:
+      label: [ midtime, highmem, highcpu ]

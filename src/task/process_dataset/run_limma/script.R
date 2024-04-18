@@ -1,0 +1,147 @@
+requireNamespace("anndata", quietly = TRUE)
+library(dplyr, warn.conflicts = FALSE)
+library(tidyr, warn.conflicts = FALSE)
+library(purrr, warn.conflicts = FALSE)
+library(tibble, warn.conflicts = FALSE)
+
+## VIASH START
+par <- list(
+  input = "resources/neurips-2023-data/pseudobulk.h5ad",
+  de_sig_cutoff = 0.05,
+  control_compound = "Dimethyl Sulfoxide",
+  # for public data
+  output = "resources/neurips-2023-data/de_train.h5ad",
+  input_splits = c("train", "control", "public_test"),
+  output_splits = c("train", "control", "public_test")
+  # # for private data
+  # output = "resources/neurips-2023-data/de_test.h5ad",
+  # input_splits = c("train", "control", "public_test", "private_test"),
+  # output_splits = c("private_test")
+)
+meta <- list(
+  cpus = 30L
+)
+## VIASH END
+
+# load data
+adata <- anndata::read_h5ad(par$input)
+
+# select [cell_type, sm_name] pairs which will be used for DE analysis
+new_obs <- adata$obs %>%
+  select(cell_type, sm_name, sm_lincs_id, SMILES, split, control) %>%
+  distinct() %>%
+  filter(sm_name != par$control_compound)
+
+if (!is.null(par$output_splits)) {
+  new_obs <- new_obs %>%
+    filter(split %in% par$output_splits)
+}
+
+# check which cell_types to run limma for
+cell_types <- as.character(unique(new_obs$cell_type))
+
+# helper function for transforming values to limma compatible values
+limma_trafo <- function(value) {
+  gsub("[^[:alnum:]]", "_", value)
+}
+
+# run limma voom and lmfit per cell type
+limma_fit_per_celltype <- list()
+
+for (cell_type_i in seq_along(cell_types)) {
+  cell_type <- cell_types[[cell_type_i]]
+  cat("Running limma for cell type: ", cell_type, " (", cell_type_i, "/", length(cell_types), ")\n", sep = "")
+
+  # subset to cell type
+  obs_filt <- adata$obs$cell_type == cell_type
+  if (!is.null(par$input_splits)) {
+    obs_filt <- obs_filt & adata$obs$split %in% par$input_splits
+  }
+  cell_type_adata <- adata[obs_filt, ]
+
+  # calc norm factors
+  d0 <- Matrix::t(cell_type_adata$X) %>%
+    edgeR::DGEList() %>%
+    edgeR::calcNormFactors()
+
+  # create design matrix
+  mm <- model.matrix(
+    ~ 0 + sm_name + donor_id + plate_name + library_id,
+    cell_type_adata$obs %>% mutate_all(limma_trafo)
+  )
+
+  # voom transformation
+  y <- limma::voom(d0, design = mm, plot = FALSE)
+
+  # run limma
+  fit <- limma::lmFit(y, mm)
+
+  limma_fit_per_celltype[[cell_type]] <- fit
+}
+
+# run limma DE for each cell type and compound
+de_df <- list_rbind(map(
+  seq_len(nrow(new_obs)),
+  function(row_i) {
+    cat("Computing DE contrasts (", row_i, "/", nrow(new_obs), ")\n", sep = "")
+    cell_type <- as.character(new_obs$cell_type[[row_i]])
+    sm_name <- as.character(new_obs$sm_name[[row_i]])
+
+    fit <- limma_fit_per_celltype[[cell_type]]
+
+    # run contrast fit
+    contrast_formula <- paste0(
+      "sm_name", limma_trafo(sm_name),
+      " - ",
+      "sm_name", limma_trafo(par$control_compound)
+    )
+    contr <- limma::makeContrasts(
+      contrasts = contrast_formula,
+      levels = colnames(coef(fit))
+    )
+
+    limma::contrasts.fit(fit, contr) %>%
+      limma::eBayes() %>%
+      limma::topTable(n = Inf, sort = "none") %>%
+      rownames_to_column("gene") %>%
+      mutate(row_i = row_i)
+  }
+))
+
+# transform data
+de_df2 <- de_df %>%
+  mutate(
+    # convert gene names to factor
+    gene = factor(gene),
+    # readjust p-values for multiple testing
+    adj.P.Value = p.adjust(P.Value, method = "BH"),
+    # compute sign log10 p-values
+    sign_log10_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine$double.eps, P.Value)),
+    is_de = P.Value < par$de_sig_cutoff,
+    is_de_adj = adj.P.Val < par$de_sig_cutoff
+  ) %>%
+  as_tibble()
+
+rownames(new_obs) <- paste0(new_obs$cell_type, ", ", new_obs$sm_name)
+new_var <- data.frame(row.names = levels(de_df2$gene))
+
+# create layers from de_df
+layer_names <- c("is_de", "is_de_adj", "logFC", "P.Value", "adj.P.Value", "sign_log10_pval")
+layers <- map(setNames(layer_names, layer_names), function(layer_name) {
+  de_df2 %>%
+    select(gene, row_i, !!layer_name) %>%
+    arrange(row_i) %>%
+    spread(gene, !!layer_name) %>%
+    select(-row_i) %>%
+    as.matrix()
+})
+
+# create anndata object
+output <- anndata::AnnData(
+  obs = new_obs,
+  var = new_var,
+  layers = setNames(layers, layer_names)
+)
+
+# write to file
+zz <- output$write_h5ad(par$output, compression = "gzip")

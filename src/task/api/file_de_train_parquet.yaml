@@ -1,0 +1,41 @@
+type: file
+example: resources/neurips-2023-data/de_train.parquet
+info:
+  label: DE train
+  summary: "Differential expression results for training."
+  file_type: parquet
+  columns:
+    - name: cell_type
+      type: string
+      description: "The annotated cell type of each cell based on RNA expression."
+      required: true
+    - name: sm_name
+      type: string
+      description: |
+        The primary name for the (parent) compound (in a standardized representation)
+        as chosen by LINCS. This is provided to map the data in this experiment to 
+        the LINCS Connectivity Map data.
+      required: true
+    - name: sm_lincs_id
+      type: string
+      description: |
+        The global LINCS ID (parent) compound (in a standardized representation).
+        This is provided to map the data in this experiment to the LINCS Connectivity
+        Map data.
+      required: true
+    - name: SMILES
+      type: string
+      description: |
+        Simplified molecular-input line-entry system (SMILES) representations of the
+        compounds used in the experiment. This is a 1D representation of molecular
+        structure. These SMILES are provided by Cellarity based on the specific
+        compounds ordered for this experiment.
+      required: true
+    - name: split
+      type: string
+      description: "Split. Must be one of 'control', 'train', 'public_test', or 'private_test'"
+      required: true
+    - name: control
+      type: boolean
+      description: "Boolean indicating whether this instance was used as a control."
+      required: true
