@@ -3251,7 +3251,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a13201f468f3a9672d759719aa6354a1e49a0019",
+          "git_commit" : "b34a0ce9e0e0f9cb0b1bdee594f0ac67b0f38e07",
           "executable" : "/nextflow/process_dataset/clean_sc_counts/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/clean_sc_counts"
@@ -3272,7 +3272,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a13201f468f3a9672d759719aa6354a1e49a0019",
+          "git_commit" : "b34a0ce9e0e0f9cb0b1bdee594f0ac67b0f38e07",
           "executable" : "/nextflow/process_dataset/compute_pseudobulk/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/compute_pseudobulk"
@@ -3293,7 +3293,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a13201f468f3a9672d759719aa6354a1e49a0019",
+          "git_commit" : "b34a0ce9e0e0f9cb0b1bdee594f0ac67b0f38e07",
           "executable" : "/nextflow/process_dataset/run_limma/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/run_limma"
@@ -3314,7 +3314,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a13201f468f3a9672d759719aa6354a1e49a0019",
+          "git_commit" : "b34a0ce9e0e0f9cb0b1bdee594f0ac67b0f38e07",
           "executable" : "/nextflow/process_dataset/convert_h5ad_to_parquet/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/convert_h5ad_to_parquet"
@@ -3365,7 +3365,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/workflow",
     "viash_version" : "0.8.5",
-    "git_commit" : "a13201f468f3a9672d759719aa6354a1e49a0019",
+    "git_commit" : "b34a0ce9e0e0f9cb0b1bdee594f0ac67b0f38e07",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
