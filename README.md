@@ -18,7 +18,11 @@ You need to have Docker, Java, and Viash installed. Follow
 [these instructions](https://openproblems.bio/documentation/fundamentals/requirements)
 to install the required dependencies.
 
-## First steps
+## Add a method
+
+To add a method to the repository, follow the instructions in the `scripts/add_a_method.sh` script.
+
+## Frequently used commands
 
 To get started, you can run the following commands:
 

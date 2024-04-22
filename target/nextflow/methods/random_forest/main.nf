@@ -3014,7 +3014,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/random_forest",
     "viash_version" : "0.8.5",
-    "git_commit" : "aed715bb8a3ae49c176191a81da06041b659bcac",
+    "git_commit" : "a3e340189b5a9c0a0a77ceec04dad818b9cb5dbd",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
