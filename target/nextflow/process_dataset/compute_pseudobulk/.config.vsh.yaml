@@ -92,5 +92,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/compute_pseudobulk"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/compute_pseudobulk/compute_pseudobulk"
   viash_version: "0.8.5"
-  git_commit: "b34a0ce9e0e0f9cb0b1bdee594f0ac67b0f38e07"
+  git_commit: "aed715bb8a3ae49c176191a81da06041b659bcac"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

@@ -1,0 +1,48 @@
+functionality:
+  name: convert_kaggle_h5ad_to_parquet
+  namespace: task/process_dataset
+  info:
+    type: process_dataset
+    type_info:
+      label: H5AD to Parquet
+      summary: Convert Kaggle h5ad to parquet
+      description: |
+        Convert dataset from h5ad files into training and test parquet files.
+  arguments:
+    - name: --input_train
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-kaggle/12_de_by_cell_type_train.h5ad
+    - name: --input_test
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-kaggle/12_de_by_cell_type_test.h5ad
+    - name: --output_train
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-kaggle/de_train.parquet
+    - name: --output_test
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-kaggle/de_test.parquet
+    - name: --output_id_map
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-kaggle/id_map.csv
+  resources:
+    - type: python_script
+      path: script.py
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_python:1.0.2
+    setup:
+      - type: python
+        packages: [ fastparquet, anndata, pandas ]
+  - type: nextflow
+    directives:
+      label: [ midtime, midmem, lowcpu ]
