@@ -1,0 +1,28 @@
+functionality:
+  namespace: "methods"
+  info:
+    type: method
+    type_info:
+      label: Train
+      summary: Train a model for a regression method.
+      description: |
+        Train a model for a regression method for the DGE perturbation prediction task.
+  arguments:
+    - name: --de_train
+      __merge__: file_de_train_parquet.yaml
+      required: true
+      direction: input
+    - name: --id_map
+      __merge__: file_id_map.yaml
+      required: true
+      direction: input
+    - name: --model
+      type: file
+      description: The model to use for prediction.
+      required: true
+      direction: output
+  test_resources:
+    - type: python_script
+      path: /src/common/component_tests/run_and_check_output.py
+    - path: /resources/neurips-2023-data
+      dest: resources/neurips-2023-data
