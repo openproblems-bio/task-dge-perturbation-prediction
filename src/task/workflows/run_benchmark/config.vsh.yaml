@@ -68,6 +68,9 @@ functionality:
     - name: control_methods/zeros
     - name: control_methods/sample
     - name: control_methods/ground_truth
+    - name: control_methods/mean_outcome
+    - name: control_methods/mean_across_celltypes
+    - name: control_methods/mean_across_compounds
     - name: methods/random_forest
     - name: metrics/mean_rowwise_rmse
   repositories:

@@ -14,6 +14,9 @@ workflow run_wf {
   // construct list of methods
   methods = [
     ground_truth,
+    mean_outcome,
+    mean_across_celltypes,
+    mean_across_compounds,
     sample,
     zeros,
     random_forest
