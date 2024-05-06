@@ -3064,7 +3064,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_compounds",
     "viash_version" : "0.8.5",
-    "git_commit" : "8a458177370e73a03f680cb2a796e80cd51c8a86",
+    "git_commit" : "00b03a0a115b46d545e0f0797beb3f7f67d2ad21",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

@@ -10,7 +10,11 @@ functionality:
   arguments:
     - name: --de_train
       __merge__: file_de_train_parquet.yaml
-      required: true
+      required: false
+      direction: input
+    - name: --de_train_h5ad
+      __merge__: file_de_train_h5ad.yaml
+      required: false
       direction: input
     - name: --id_map
       __merge__: file_id_map.yaml

@@ -26,6 +26,16 @@ functionality:
       required: true
       direction: output
       default: de_test.parquet
+    - name: --de_train_h5ad
+      __merge__: file_de_train_h5ad.yaml
+      required: true
+      direction: output
+      default: de_train.h5ad
+    - name: --de_test_h5ad
+      __merge__: file_de_test_h5ad.yaml
+      required: true
+      direction: output
+      default: de_test.h5ad
     - name: --id_map
       __merge__: file_id_map.yaml
       required: true

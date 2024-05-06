@@ -2933,7 +2933,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/common/create_component",
     "viash_version" : "0.8.5",
-    "git_commit" : "8a458177370e73a03f680cb2a796e80cd51c8a86",
+    "git_commit" : "00b03a0a115b46d545e0f0797beb3f7f67d2ad21",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3137,11 +3137,10 @@ def set_par_values(config) -> None:
       value = arg.get("default", arg.get("example", "..."))
     elif key == "de_train":
       value = "resources/neurips-2023-kaggle/de_train.parquet"
+    elif key == "de_train_h5ad":
+      value = "resources/neurips-2023-kaggle/2023-09-12_de_by_cell_type_train.h5ad"
     elif key == "id_map":
       value = "resources/neurips-2023-kaggle/id_map.csv"
-    elif arg.get("direction", "input") == "input":
-      key_strip = key.replace("input_", "")
-      value = f'resources_test/{par["task"]}/pancreas/{key_strip}.h5ad'
     else:
       key_strip = key.replace("output_", "")
       value = f'{key_strip}.h5ad'

@@ -437,9 +437,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "ruamel.yaml"
 
 LABEL org.opencontainers.image.description="Companion container for running component common create_component"
-LABEL org.opencontainers.image.created="2024-04-26T00:38:10Z"
+LABEL org.opencontainers.image.created="2024-05-06T13:00:01Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="8a458177370e73a03f680cb2a796e80cd51c8a86"
+LABEL org.opencontainers.image.revision="00b03a0a115b46d545e0f0797beb3f7f67d2ad21"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -1131,11 +1131,10 @@ def set_par_values(config) -> None:
       value = arg.get("default", arg.get("example", "..."))
     elif key == "de_train":
       value = "resources/neurips-2023-kaggle/de_train.parquet"
+    elif key == "de_train_h5ad":
+      value = "resources/neurips-2023-kaggle/2023-09-12_de_by_cell_type_train.h5ad"
     elif key == "id_map":
       value = "resources/neurips-2023-kaggle/id_map.csv"
-    elif arg.get("direction", "input") == "input":
-      key_strip = key.replace("input_", "")
-      value = f'resources_test/{par["task"]}/pancreas/{key_strip}.h5ad'
     else:
       key_strip = key.replace("output_", "")
       value = f'{key_strip}.h5ad'

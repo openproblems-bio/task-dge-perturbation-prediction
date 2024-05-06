@@ -174,8 +174,12 @@ function ViashHelp {
   echo ""
   echo "Arguments:"
   echo "    --de_train"
-  echo "        type: file, required parameter, file must exist"
+  echo "        type: file, file must exist"
   echo "        example: resources/neurips-2023-data/de_train.parquet"
+  echo ""
+  echo "    --de_train_h5ad"
+  echo "        type: file, file must exist"
+  echo "        example: resources/neurips-2023-data/de_train.h5ad"
   echo ""
   echo "    --id_map"
   echo "        type: file, required parameter, file must exist"
@@ -413,9 +417,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods random_forest"
-LABEL org.opencontainers.image.created="2024-04-26T00:38:10Z"
+LABEL org.opencontainers.image.created="2024-05-06T13:00:00Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="8a458177370e73a03f680cb2a796e80cd51c8a86"
+LABEL org.opencontainers.image.revision="00b03a0a115b46d545e0f0797beb3f7f67d2ad21"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -581,6 +585,17 @@ while [[ $# -gt 0 ]]; do
             VIASH_PAR_DE_TRAIN=$(ViashRemoveFlags "$1")
             shift 1
             ;;
+        --de_train_h5ad)
+            [ -n "$VIASH_PAR_DE_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--de_train_h5ad\': \'$VIASH_PAR_DE_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TRAIN_H5AD="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_train_h5ad. Use "--help" to get more information on the parameters. && exit 1
+            shift 2
+            ;;
+        --de_train_h5ad=*)
+            [ -n "$VIASH_PAR_DE_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--de_train_h5ad=*\': \'$VIASH_PAR_DE_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TRAIN_H5AD=$(ViashRemoveFlags "$1")
+            shift 1
+            ;;
         --id_map)
             [ -n "$VIASH_PAR_ID_MAP" ] && ViashError Bad arguments for option \'--id_map\': \'$VIASH_PAR_ID_MAP\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
             VIASH_PAR_ID_MAP="$2"
@@ -721,10 +736,6 @@ fi
 
 
 # check whether required parameters exist
-if [ -z ${VIASH_PAR_DE_TRAIN+x} ]; then
-  ViashError '--de_train' is a required argument. Use "--help" to get more information on the parameters.
-  exit 1
-fi
 if [ -z ${VIASH_PAR_ID_MAP+x} ]; then
   ViashError '--id_map' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
@@ -757,6 +768,10 @@ fi
 # check whether required files exist
 if [ ! -z "$VIASH_PAR_DE_TRAIN" ] && [ ! -e "$VIASH_PAR_DE_TRAIN" ]; then
   ViashError "Input file '$VIASH_PAR_DE_TRAIN' does not exist."
+  exit 1
+fi
+if [ ! -z "$VIASH_PAR_DE_TRAIN_H5AD" ] && [ ! -e "$VIASH_PAR_DE_TRAIN_H5AD" ]; then
+  ViashError "Input file '$VIASH_PAR_DE_TRAIN_H5AD' does not exist."
   exit 1
 fi
 if [ ! -z "$VIASH_PAR_ID_MAP" ] && [ ! -e "$VIASH_PAR_ID_MAP" ]; then
@@ -818,6 +833,10 @@ VIASH_CHOWN_VARS=()
 if [ ! -z "$VIASH_PAR_DE_TRAIN" ]; then
   VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_DE_TRAIN")" )
   VIASH_PAR_DE_TRAIN=$(ViashAutodetectMount "$VIASH_PAR_DE_TRAIN")
+fi
+if [ ! -z "$VIASH_PAR_DE_TRAIN_H5AD" ]; then
+  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_DE_TRAIN_H5AD")" )
+  VIASH_PAR_DE_TRAIN_H5AD=$(ViashAutodetectMount "$VIASH_PAR_DE_TRAIN_H5AD")
 fi
 if [ ! -z "$VIASH_PAR_ID_MAP" ]; then
   VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_ID_MAP")" )
@@ -896,6 +915,7 @@ requireNamespace("pbapply", quietly = TRUE)
 
 par <- list(
   "de_train" = $( if [ ! -z ${VIASH_PAR_DE_TRAIN+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TRAIN" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "de_train_h5ad" = $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TRAIN_H5AD" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
   "id_map" = $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_ID_MAP" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
   "output" = $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_OUTPUT" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi )
 )
@@ -972,6 +992,9 @@ VIASHEOF
 # strip viash automount from file paths
 if [ ! -z "$VIASH_PAR_DE_TRAIN" ]; then
   VIASH_PAR_DE_TRAIN=$(ViashStripAutomount "$VIASH_PAR_DE_TRAIN")
+fi
+if [ ! -z "$VIASH_PAR_DE_TRAIN_H5AD" ]; then
+  VIASH_PAR_DE_TRAIN_H5AD=$(ViashStripAutomount "$VIASH_PAR_DE_TRAIN_H5AD")
 fi
 if [ ! -z "$VIASH_PAR_ID_MAP" ]; then
   VIASH_PAR_ID_MAP=$(ViashStripAutomount "$VIASH_PAR_ID_MAP")

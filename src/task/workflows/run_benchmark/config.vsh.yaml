@@ -12,6 +12,10 @@ functionality:
           __merge__: ../../api/file_de_train_parquet.yaml
           required: true
           direction: input
+        - name: "--de_train_h5ad"
+          __merge__: ../../api/file_de_train_h5ad.yaml
+          required: true
+          direction: input
         - name: "--de_test"
           __merge__: ../../api/file_de_test_parquet.yaml
           required: true

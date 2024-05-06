@@ -66,6 +66,7 @@ workflow run_wf {
       fromState: { id, state, comp ->
         def new_args = [
           de_train: state.de_train,
+          de_train_h5ad: state.de_train_h5ad,
           id_map: state.id_map,
         ]
         if (comp.config.functionality.info.type == "control_method") {

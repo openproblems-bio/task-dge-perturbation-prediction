@@ -71,7 +71,9 @@ workflow run_wf {
 
       [
         de_train: state.de_train,
+        de_train_h5ad: state.de_train_h5ad,
         de_test: state.de_test,
+        de_test_h5ad: state.de_test_h5ad,
         id_map: state.id_map,
         dataset_info: dataset_info_file
       ]
