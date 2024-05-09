@@ -99,6 +99,7 @@ arguments = []
 
 for arg in config["functionality"]["arguments"]:
     new_arg = arg.copy()
+    arg_info = new_arg.get("info", {})
 
     # set clean name
     clean_name = re.sub("^--", "", arg["name"])
@@ -106,11 +107,15 @@ for arg in config["functionality"]["arguments"]:
 
     # use example to find test resource file
     if arg["type"] == "file":
-      if arg["direction"] == "input":
-          value = f"{meta['resources_dir']}/{arg['example'][0]}"
-      else:
-          value = f"{clean_name}.h5ad"
-      new_arg["value"] = value
+        if arg["direction"] == "input":
+            value = f"{meta['resources_dir']}/{arg['example'][0]}"
+        else:
+            example = arg.get("example", ["example.txt"])[0]
+            ext = path.splitext(example)[1]
+            value = f"{clean_name}.{ext}"
+        new_arg["value"] = value
+    elif "test_default" in arg_info:
+        new_arg["value"] = arg_info["test_default"]
     
     arguments.append(new_arg)
 
@@ -137,7 +142,7 @@ for argset_name, argset_args in argument_sets.items():
     # construct command
     cmd = [ meta["executable"] ]
     for arg in argset_args:
-        if arg["type"] == "file":
-            cmd.extend([arg["name"], arg["value"]])
+        if "value" in arg:
+            cmd.extend([arg["name"], str(arg["value"])])
 
     run_and_check_outputs(argset_args, cmd)
