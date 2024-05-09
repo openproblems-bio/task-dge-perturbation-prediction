@@ -1,56 +1,8 @@
 functionality:
-  name: "mean_across_celltypes"
-  namespace: "control_methods"
+  name: "mean_cosine_sim"
+  namespace: "metrics"
   version: "main_build"
   arguments:
-  - type: "file"
-    name: "--de_train"
-    info:
-      label: "DE train"
-      summary: "Differential expression results for training."
-      file_type: "parquet"
-      columns:
-      - name: "cell_type"
-        type: "string"
-        description: "The annotated cell type of each cell based on RNA expression."
-        required: true
-      - name: "sm_name"
-        type: "string"
-        description: "The primary name for the (parent) compound (in a standardized\
-          \ representation)\nas chosen by LINCS. This is provided to map the data\
-          \ in this experiment to \nthe LINCS Connectivity Map data.\n"
-        required: true
-      - name: "sm_lincs_id"
-        type: "string"
-        description: "The global LINCS ID (parent) compound (in a standardized representation).\n\
-          This is provided to map the data in this experiment to the LINCS Connectivity\n\
-          Map data.\n"
-        required: true
-      - name: "SMILES"
-        type: "string"
-        description: "Simplified molecular-input line-entry system (SMILES) representations\
-          \ of the\ncompounds used in the experiment. This is a 1D representation\
-          \ of molecular\nstructure. These SMILES are provided by Cellarity based\
-          \ on the specific\ncompounds ordered for this experiment.\n"
-        required: true
-      - name: "split"
-        type: "string"
-        description: "Split. Must be one of 'control', 'train', 'public_test', or\
-          \ 'private_test'"
-        required: true
-      - name: "control"
-        type: "boolean"
-        description: "Boolean indicating whether this instance was used as a control."
-        required: true
-    example:
-    - "resources/neurips-2023-data/de_train.parquet"
-    must_exist: true
-    create_parent: true
-    required: true
-    direction: "input"
-    multiple: false
-    multiple_sep: ":"
-    dest: "par"
   - type: "file"
     name: "--de_test"
     info:
@@ -104,36 +56,7 @@ functionality:
     multiple_sep: ":"
     dest: "par"
   - type: "file"
-    name: "--id_map"
-    info:
-      label: "ID Map"
-      summary: "File indicates the order of de_test, the cell types and the small\
-        \ molecule names."
-      file_type: "csv"
-      columns:
-      - name: "id"
-        type: "integer"
-        description: "Index of the test observation"
-        required: true
-      - name: "cell_type"
-        type: "string"
-        description: "Cell type name"
-        required: true
-      - name: "sm_name"
-        type: "string"
-        description: "Small molecule name"
-        required: true
-    example:
-    - "resources/neurips-2023-data/id_map.csv"
-    must_exist: true
-    create_parent: true
-    required: true
-    direction: "input"
-    multiple: false
-    multiple_sep: ":"
-    dest: "par"
-  - type: "file"
-    name: "--output"
+    name: "--prediction"
     info:
       label: "Prediction"
       summary: "Differential Gene Expression prediction"
@@ -145,6 +68,42 @@ functionality:
         required: true
     example:
     - "resources/neurips-2023-data/prediction.parquet"
+    must_exist: true
+    create_parent: true
+    required: true
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "file"
+    name: "--output"
+    info:
+      label: "Score"
+      summary: "File indicating the score of a metric."
+      file_type: "h5ad"
+      slots:
+        uns:
+        - type: "string"
+          name: "dataset_id"
+          description: "A unique identifier for the dataset"
+          required: true
+        - type: "string"
+          name: "method_id"
+          description: "A unique identifier for the method"
+          required: true
+        - type: "string"
+          name: "metric_ids"
+          description: "One or more unique metric identifiers"
+          multiple: true
+          required: true
+        - type: "double"
+          name: "metric_values"
+          description: "The metric values obtained for the given prediction. Must\
+            \ be of same length as 'metric_ids'."
+          multiple: true
+          required: true
+    example:
+    - "resources/neurips-2023-data/score.h5ad"
     must_exist: true
     create_parent: true
     required: true
@@ -164,15 +123,26 @@ functionality:
     path: "resources/neurips-2023-data"
     dest: "resources/neurips-2023-data"
   info:
-    label: "Mean outcome for the cell type"
-    summary: "Baseline method that returns mean of cell type's outcomes"
-    description: "Baseline method that predicts for a cell type the mean of its outcomes\
-      \ of all compounds.\n"
-    type: "control_method"
+    metrics:
+    - name: "mean_socine_sim"
+      label: "Mean Cosine Similarity"
+      summary: "The mean of cosine similarities per row (perturbation)."
+      description: "We use the **Mean Cosine Similarity** to score submissions, computed\
+        \ as follows:\n\n$$\n\\textrm{Mean-Cosine} = \\frac{1}{R} \\sum_{i=1}^R \\\
+        frac{\\mathbf{y}_i \\cdot \\mathbf{\\hat{y}}_i}{\\|\\mathbf{y}_i\\| \\|\\\
+        mathbf{\\hat{y}}_i\\|}\n$$\n\nwhere \\\\(R\\\\) is the number of scored rows,\
+        \ and \\\\(\\mathbf{y}_i\\\\) and \\\\(\\mathbf{\\hat{y}}_i\\\\) are the actual\
+        \ and predicted values, respectively, for row \\\\(i\\\\).\n"
+      repository_url: "..."
+      documentation_url: "..."
+      min: -1
+      max: 1
+      maximize: true
+    type: "metric"
     type_info:
-      label: "Control Method"
-      summary: "A control method."
-      description: "A control method to predict perturbation effects.\n"
+      label: "Metric"
+      summary: "A metric to compare two predictions."
+      description: "A metric to compare two predictions.\n"
   status: "enabled"
   set_wd_to_resources_dir: false
 platforms:
@@ -223,10 +193,10 @@ platforms:
   debug: false
   container: "docker"
 info:
-  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/mean_across_celltypes/config.vsh.yaml"
-  platform: "nextflow"
-  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_celltypes"
-  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_celltypes/mean_across_celltypes"
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/metrics/mean_cosine_sim/config.vsh.yaml"
+  platform: "docker"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_cosine_sim"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_cosine_sim/mean_cosine_sim"
   viash_version: "0.8.5"
   git_commit: "99ce4fe675f32755e6a8fee9fdcf54d82ab470f6"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
