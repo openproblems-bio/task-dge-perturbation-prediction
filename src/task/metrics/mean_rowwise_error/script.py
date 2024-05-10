@@ -1,5 +1,6 @@
 import pandas as pd
 import anndata as ad
+import numpy as np
 
 ## VIASH START
 par = {
@@ -20,10 +21,14 @@ prediction = prediction[genes]
 
 print("Calculate mean rowwise RMSE", flush=True)
 mean_rowwise_rmse = 0
+mean_rowwise_mae = 0
 for i in de_test.index:
-    mean_rowwise_rmse += ((de_test.iloc[i] - prediction.iloc[i])**2).mean()
+    diff = de_test.iloc[i] - prediction.iloc[i]
+    mean_rowwise_rmse += np.sqrt((diff**2).mean())
+    mean_rowwise_mae += np.abs(diff).mean()
 
 mean_rowwise_rmse /= de_test.shape[0]
+mean_rowwise_mae /= de_test.shape[0]
 
 print("Create output", flush=True)
 output = ad.AnnData(
@@ -31,8 +36,8 @@ output = ad.AnnData(
         # this info is not stored in the parquet files
         "dataset_id": "unknown",
         "method_id": "unknown",
-        "metric_ids": ["mean_rowwise_rmse"],
-        "metric_values": [mean_rowwise_rmse]
+        "metric_ids": ["mean_rowwise_rmse", "mean_rowwise_mae"],
+        "metric_values": [mean_rowwise_rmse, mean_rowwise_mae]
     }
 )
 

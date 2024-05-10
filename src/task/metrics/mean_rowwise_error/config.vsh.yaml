@@ -1,6 +1,6 @@
 __merge__: ../../api/comp_metric.yaml
 functionality:
-  name: mean_rowwise_rmse
+  name: mean_rowwise_error
   info:
     metrics:
       - name: mean_rowwise_rmse
@@ -14,6 +14,22 @@ functionality:
           $$
 
           where \\(R\\) is the number of scored rows, and \\(y_{ij}\\) and \\(\widehat{y}_{ij}\\) are the actual and predicted values, respectively, for row \\(i\\) and column \\(j\\), and \\(n\\) is the number of columns.
+        repository_url: "..."
+        documentation_url: "..."
+        min: 0
+        max: "+inf"
+        maximize: false
+      - name: mean_rowwise_mae
+        label: Mean Rowwise MAE
+        summary: The mean of the absolute error (MAE) of each row in the matrix.
+        description: |
+            We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:
+
+            $$
+            \textrm{MRMAE} = \frac{1}{R}\sum_{i=1}^R\left(\frac{1}{n} \sum_{j=1}^{n} |y_{ij} - \widehat{y}_{ij}|\right)
+            $$
+          
+            where \(R\) is the number of scored rows, and \(y_{ij}\) and \(\widehat{y}_{ij}\) are the actual and predicted values, respectively, for row \(i\) and column \(j\), and \(n\) is the number of columns.
         repository_url: "..."
         documentation_url: "..."
         min: 0

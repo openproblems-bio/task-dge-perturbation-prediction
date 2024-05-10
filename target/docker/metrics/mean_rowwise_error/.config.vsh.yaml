@@ -1,5 +1,5 @@
 functionality:
-  name: "mean_rowwise_rmse"
+  name: "mean_rowwise_error"
   namespace: "metrics"
   version: "main_build"
   arguments:
@@ -140,6 +140,20 @@ functionality:
       min: 0
       max: "+inf"
       maximize: false
+    - name: "mean_rowwise_mae"
+      label: "Mean Rowwise MAE"
+      summary: "The mean of the absolute error (MAE) of each row in the matrix."
+      description: "We use the **Mean Rowwise Absolute Error** to score submissions,\
+        \ computed as follows:\n\n$$\n\\textrm{MRMAE} = \\frac{1}{R}\\sum_{i=1}^R\\\
+        left(\\frac{1}{n} \\sum_{j=1}^{n} |y_{ij} - \\widehat{y}_{ij}|\\right)\n$$\n\
+        \nwhere \\(R\\) is the number of scored rows, and \\(y_{ij}\\) and \\(\\widehat{y}_{ij}\\\
+        ) are the actual and predicted values, respectively, for row \\(i\\) and column\
+        \ \\(j\\), and \\(n\\) is the number of columns.\n"
+      repository_url: "..."
+      documentation_url: "..."
+      min: 0
+      max: "+inf"
+      maximize: false
     type: "metric"
     type_info:
       label: "Metric"
@@ -195,10 +209,10 @@ platforms:
   debug: false
   container: "docker"
 info:
-  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/metrics/mean_rowwise_rmse/config.vsh.yaml"
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/metrics/mean_rowwise_error/config.vsh.yaml"
   platform: "docker"
-  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_rmse"
-  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_rmse/mean_rowwise_rmse"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_error"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_error/mean_rowwise_error"
   viash_version: "0.8.5"
-  git_commit: "03d7093ae987e76d5ca1b596b725fe9fb990efe6"
+  git_commit: "d71846d39790a34f6740cafaf3d2b5761a313b31"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

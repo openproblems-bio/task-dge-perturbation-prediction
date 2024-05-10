@@ -76,7 +76,7 @@ functionality:
     - name: control_methods/mean_across_celltypes
     - name: control_methods/mean_across_compounds
     - name: methods/random_forest
-    - name: metrics/mean_rowwise_rmse
+    - name: metrics/mean_rowwise_error
     - name: metrics/mean_cosine_sim
   repositories:
     - name: openproblemsv2

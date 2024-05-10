@@ -46,7 +46,7 @@ viash run src/task/control_methods/sample/config.vsh.yaml -- \
   --output "$OUT/prediction.parquet"
 
 echo ">> Run metric"
-viash run src/task/metrics/mean_rowwise_rmse/config.vsh.yaml -- \
+viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --prediction "$OUT/prediction.parquet" \
   --de_test "$OUT/de_test.parquet" \
   --output "$OUT/score.h5ad"

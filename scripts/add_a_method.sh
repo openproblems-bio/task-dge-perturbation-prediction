@@ -39,7 +39,7 @@ viash run src/task/methods/$method_id/config.vsh.yaml -- \
   --output "output/prediction.parquet"
 
 # run evaluation metric
-viash run src/task/metrics/mean_rowwise_rmse/config.vsh.yaml -- \
+viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --de_test "resources/neurips-2023-kaggle/de_test.parquet" \
   --prediction "output/prediction.parquet" \
   --output "output/score.h5ad"
