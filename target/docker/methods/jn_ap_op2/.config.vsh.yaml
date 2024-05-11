@@ -1,5 +1,5 @@
 functionality:
-  name: "third_place"
+  name: "jn_ap_op2"
   namespace: "methods"
   version: "main_build"
   arguments:
@@ -179,8 +179,7 @@ functionality:
     multiple_sep: ":"
     dest: "par"
   - type: "integer"
-    name: "--reps"
-    description: "Number of repetitions to train the model."
+    name: "--n_replica"
     info:
       test_default: 1
     default:
@@ -190,14 +189,23 @@ functionality:
     multiple: false
     multiple_sep: ":"
     dest: "par"
+  - type: "string"
+    name: "--submission_names"
+    info:
+      test_default:
+      - "dl40"
+    default:
+    - "dl40"
+    - "dl200"
+    required: false
+    direction: "input"
+    multiple: true
+    multiple_sep: ";"
+    dest: "par"
   resources:
   - type: "python_script"
     path: "script.py"
     is_executable: true
-  - type: "file"
-    path: "notebook_264.py"
-  - type: "file"
-    path: "notebook_266.py"
   test_resources:
   - type: "python_script"
     path: "src/common/component_tests/run_and_check_output.py"
@@ -206,32 +214,21 @@ functionality:
     path: "resources/neurips-2023-data"
     dest: "resources/neurips-2023-data"
   info:
-    label: "Third Place"
-    summary: "Neural networks with pseudolabeling with ensemble modelling"
-    description: "The prediction system is two staged, so I publish two versions of\
-      \ the notebook.\nThe first stage predicts pseudolabels. To be honest, if I stopped\
-      \ on this version, I would not be the third.\nThe predicted pseudolabels on\
-      \ all test data (255 rows) are added to training in the second stage.\nStage\
-      \ 1 preparing pseudolabels\n\nThe main part of this system is a neural network.\
-      \ Every neural network and its environment was optimized by optuna. Hyperparameters\
-      \ that have been optimized:\na dropout value, a number of neurons in particular\
-      \ layers, an output dimension of an embedding layer, a number of epochs, a learning\
-      \ rate, a batch size, a number of dimension of truncated singular value decomposition.\n\
-      The optimization was done on custom 4-folds cross validation. In order to avoid\
-      \ overfitting to cross validation by optuna I applied 2 repeats for every fold\
-      \ and took an average. Generally, the more, the better. The optuna's criterion\
-      \ was MRRMSE.\nFinally, 7 models were ensembled. Optuna was applied again to\
-      \ determine best weights of linear combination. The prediction of test set is\
-      \ the pseudolabels now and will be used in second stage.\nStage 2 retraining\
-      \ with pseudolabels\n\nThe pseudolabels (255 rows) were added to the training\
-      \ dataset. I applied 20 models with optimized parameters in different experiments\
-      \ for a model diversity.\nOptuna selected optimal weights for the linear combination\
-      \ of the prediction again.\nModels had high variance, so every model was trained\
-      \ 10 times on all dataset and the median of prediction is taken as a final prediction.\
-      \ The prediction was additionally clipped to colwise min and max. \n"
-    reference: "N/A"
-    documentation_url: "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458750"
-    repository_url: "https://github.com/okon2000/single_cell_perturbations"
+    label: "A deep NN model proposed by Antoine Passiemier and Jalil Nourisa"
+    summary: "Deep learning architecture composed of 2 modules: a sample-centric MLP\
+      \ and a gene-centric MLP"
+    description: "We first encode each sample using leave-one-out encoder based on\
+      \ compound and cell type. This produces X with the dimension of n_samples, n_genes,\
+      \ n_encode,\nwhere n_encode is 2. Then, X is passed to a MLP1 sample-wise with\
+      \ input of n_samples, n_genes*n_encode, which outputs the same dimension data.\n\
+      The purpose of this MLP is to learn inter-gene relationships. Then, we group\
+      \ the output of MLP1 with X (original encoded data) and feed it\nto MLP2 which\
+      \ receives n_smaples*n_genes, (n_encode + n_encode) and results n_samples*n_genes.\
+      \ This MLP2 trains on each (compound, cell_type, gene)\ncombination. This is\
+      \ to overcome the underdetermination problem due to lack of sufficient (compound,\
+      \ cell_type) samples. \n"
+    documentation_url: "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/461159"
+    repository_url: "https://github.com/AntoinePassemiers/Open-Challenges-Single-Cell-Perturbations"
     type: "method"
     type_info:
       label: "Method"
@@ -255,13 +252,10 @@ platforms:
   - type: "python"
     user: false
     packages:
-    - "tensorflow==2.12.0"
-    - "numpy==1.23.5"
-    - "pandas==2.0.3"
-    - "matplotlib==3.7.2"
-    - "scikit-learn==1.3.2"
-    - "pyarrow==13.0.0"
     - "fastparquet"
+    - "torch"
+    - "pandas"
+    - "category_encoders"
     upgrade: true
   entrypoint: []
   cmd: null
@@ -273,7 +267,7 @@ platforms:
     label:
     - "midtime"
     - "midmem"
-    - "highcpu"
+    - "midcpu"
     - "gpu"
     tag: "$id"
   auto:
@@ -297,10 +291,10 @@ platforms:
   debug: false
   container: "docker"
 info:
-  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/third_place/config.vsh.yaml"
-  platform: "nextflow"
-  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/third_place"
-  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/third_place/third_place"
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/jn_ap_op2/config.vsh.yaml"
+  platform: "docker"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/jn_ap_op2"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/jn_ap_op2/jn_ap_op2"
   viash_version: "0.8.5"
   git_commit: "10f8469a1950c9560eda197763dc30723f9dc3a7"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

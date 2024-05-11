@@ -406,9 +406,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "pyarrow"
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset compute_pseudobulk"
-LABEL org.opencontainers.image.created="2024-05-10T07:42:39Z"
+LABEL org.opencontainers.image.created="2024-05-11T07:24:11Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="d71846d39790a34f6740cafaf3d2b5761a313b31"
+LABEL org.opencontainers.image.revision="10f8469a1950c9560eda197763dc30723f9dc3a7"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
