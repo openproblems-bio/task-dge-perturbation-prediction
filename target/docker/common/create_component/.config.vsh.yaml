@@ -133,5 +133,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/common/create_component"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/common/create_component/create_component"
   viash_version: "0.8.5"
-  git_commit: "10f8469a1950c9560eda197763dc30723f9dc3a7"
+  git_commit: "218b55dc7d818e0a7204febd0a0dc1f9780c9e17"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

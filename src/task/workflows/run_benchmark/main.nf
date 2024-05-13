@@ -19,7 +19,9 @@ workflow run_wf {
     mean_across_compounds,
     sample,
     zeros,
-    random_forest
+    random_forest,
+    third_place,
+    jn_ap_op2
   ]
 
   // construct list of metrics

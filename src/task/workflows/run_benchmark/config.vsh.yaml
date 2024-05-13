@@ -76,6 +76,8 @@ functionality:
     - name: control_methods/mean_across_celltypes
     - name: control_methods/mean_across_compounds
     - name: methods/random_forest
+    - name: methods/third_place
+    - name: methods/jn_ap_op2
     - name: metrics/mean_rowwise_error
     - name: metrics/mean_cosine_sim
   repositories:

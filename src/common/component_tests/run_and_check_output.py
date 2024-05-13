@@ -99,7 +99,7 @@ arguments = []
 
 for arg in config["functionality"]["arguments"]:
     new_arg = arg.copy()
-    arg_info = new_arg.get("info", {})
+    arg_info = new_arg.get("info") or {}
 
     # set clean name
     clean_name = re.sub("^--", "", arg["name"])

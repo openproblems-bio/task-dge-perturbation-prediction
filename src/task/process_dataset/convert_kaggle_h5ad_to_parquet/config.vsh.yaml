@@ -24,11 +24,21 @@ functionality:
       required: true
       direction: output
       example: resources/neurips-2023-kaggle/de_train.parquet
+    - name: --output_train_h5ad
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-kaggle/de_train.h5ad
     - name: --output_test
       type: file
       required: true
       direction: output
       example: resources/neurips-2023-kaggle/de_test.parquet
+    - name: --output_test_h5ad
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-kaggle/de_test.h5ad
     - name: --output_id_map
       type: file
       required: true
