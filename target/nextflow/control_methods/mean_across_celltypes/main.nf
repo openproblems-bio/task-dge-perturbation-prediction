@@ -3064,7 +3064,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_celltypes",
     "viash_version" : "0.8.5",
-    "git_commit" : "bfd33ba58ebea2755f8e494cf41ce634024fda7b",
+    "git_commit" : "e3f23f83f96adcdebd836ff50c5fd8ff02ff6edc",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

@@ -72,4 +72,4 @@ platforms:
           - git+https://github.com/scapeML/scape.git
   - type: nextflow
     directives:
-      label: [ midtime, highmem, highcpu ]
+      label: [ hightime, highmem, highcpu ]

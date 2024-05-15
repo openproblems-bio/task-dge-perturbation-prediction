@@ -49,4 +49,4 @@ platforms:
   - type: native
   - type: nextflow
     directives:
-      label: [midtime, midmem, highcpu, gpu]
+      label: [ hightime, highmem, highcpu ]
