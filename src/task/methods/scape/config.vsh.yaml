@@ -1,0 +1,75 @@
+__merge__: ../../api/comp_method.yaml
+functionality:
+  name: scape
+  info:
+    label: ScAPE
+    summary: judge_2
+    description: ScAPE is a package implementing the neural network model used in the Open Problems – Single-Cell Perturbations challenge hosted by Kaggle. This is the model we used to generate the submission that achieved top <2% performance (16th position out of 1097 teams) in the final leaderboard.
+    reference: pablormier2023scape
+    documentation_url: https://github.com/scapeML/scape
+    repository_url: https://github.com/scapeML/scape
+  arguments:
+    - type: file
+      name: --output_dir
+      direction: output
+      description: Additional output directory for the model.
+      required: false
+      example: path/to/output_dir
+    - type: string
+      name: --cell
+      description: Pre-defined cell type held for pre-training.
+      required: false
+      default: NK cells
+    - type: integer
+      name: --epochs
+      description: Number of epochs for coarse training.
+      default: 300
+      info:
+        test_default: 2
+    - type: integer
+      name: --epochs_enhanced
+      description: Number of epochs for enhanced training.
+      default: 800
+      info:
+        test_default: 2
+    - type: integer
+      name: --n_genes
+      description: The number of genes for coarse training.
+      default: 64
+      info:
+        test_default: 10
+    - type: integer
+      name: --n_genes_enhanced
+      description: The number of genes for enhanced training.
+      default: 256
+      info:
+        test_default: 10
+    - type: integer
+      name: --n_drugs
+      description: The number of drugs to consider for coarse training. If none, all drugs are considered.
+      info:
+        test_default: 5
+    - type: integer
+      name: --min_n_top_drugs
+      description: The minimum number of top drugs to consider.
+      default: 50
+      info:
+        test_default: 0
+  resources:
+    - type: python_script
+      path: script.py
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    setup:
+      - type: python
+        packages:
+          - tensorflow~=2.14.0
+          - tensorflow-io-gcs-filesystem>=0.31.0
+          - pandas~=1.5.3
+          - scikit-learn~=1.2.2
+          - fastparquet~=2023.10.1
+          - git+https://github.com/scapeML/scape.git
+  - type: nextflow
+    directives:
+      label: [ midtime, highmem, highcpu ]

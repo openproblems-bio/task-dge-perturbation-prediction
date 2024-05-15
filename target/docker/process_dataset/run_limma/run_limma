@@ -428,9 +428,9 @@ RUN Rscript -e 'if (!requireNamespace("BiocManager", quietly = TRUE)) install.pa
   Rscript -e 'if (!requireNamespace("tibble", quietly = TRUE)) BiocManager::install("tibble")'
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset run_limma"
-LABEL org.opencontainers.image.created="2024-05-13T14:54:22Z"
+LABEL org.opencontainers.image.created="2024-05-15T13:08:59Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="218b55dc7d818e0a7204febd0a0dc1f9780c9e17"
+LABEL org.opencontainers.image.revision="bfd33ba58ebea2755f8e494cf41ce634024fda7b"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

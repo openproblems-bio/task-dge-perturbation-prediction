@@ -18,7 +18,8 @@ def check_h5ad_slots(adata, arg):
     """Check whether an AnnData file contains all for the required
     slots in the corresponding .info.slots field.
     """
-    for struc_name, items in arg["info"].get("slots", {}).items():
+    arg_info = arg.get("info") or {}
+    for struc_name, items in arg_info.get("slots", {}).items():
         struc_x = getattr(adata, struc_name)
         
         if struc_name == "X":
@@ -36,7 +37,8 @@ def check_df_columns(df, arg):
     """Check whether a DataFrame contains all for the required
     columns in the corresponding .info.columns field.
     """
-    for item in arg["info"].get("columns", []):
+    arg_info = arg.get("info") or {}
+    for item in arg_info.get("columns", []):
         if item.get("required", True):
             assert item['name'] in df.columns,\
                 f"File '{arg['value']}' is missing column '{item['name']}'"
@@ -64,9 +66,10 @@ def run_and_check_outputs(arguments, cmd):
 
     print(">> Reading h5ad files and checking formats", flush=True)
     for arg in arguments:
-        file_type = arg.get("info", {}).get("file_type", "h5ad")
+        arg_info = arg.get("info") or {}
+        file_type = arg_info.get("file_type", "h5ad")
         if arg["type"] == "file":
-            if file_type == "h5ad" and "slots" in arg["info"]:
+            if file_type == "h5ad" and "slots" in arg_info:
                 print(f"Reading and checking {arg['clean_name']}", flush=True)
 
                 # try to read as an anndata, else as a parquet file
@@ -75,7 +78,7 @@ def run_and_check_outputs(arguments, cmd):
                 print(f"  {adata}")
 
                 check_h5ad_slots(adata, arg)
-            elif file_type in ["parquet", "csv"] and "columns" in arg["info"]:
+            elif file_type in ["parquet", "csv"] and "columns" in arg_info:
                 print(f"Reading and checking {arg['clean_name']}", flush=True)
 
                 if file_type == "csv":
@@ -111,19 +114,22 @@ for arg in config["functionality"]["arguments"]:
             value = f"{meta['resources_dir']}/{arg['example'][0]}"
         else:
             example = arg.get("example", ["example.txt"])[0]
-            ext = path.splitext(example)[1]
-            value = f"{clean_name}.{ext}"
+            ext_res = re.search(r"\.(\w+)$", example)
+            if ext_res:
+                value = f"{clean_name}.{ext_res.group(1)}"
+            else:
+                value = f"{clean_name}"
         new_arg["value"] = value
     elif "test_default" in arg_info:
         new_arg["value"] = arg_info["test_default"]
     
     arguments.append(new_arg)
 
-
-if "test_setup" not in config["functionality"]["info"]:
+fun_info = config["functionality"].get("info") or {}
+if "test_setup" not in fun_info:
     argument_sets = {"run": arguments}
 else:
-    test_setup = config["functionality"]["info"]["test_setup"]
+    test_setup = fun_info["test_setup"]
     argument_sets = {}
     for name, test_instance in test_setup.items():
         new_arguments = []

@@ -1,5 +1,5 @@
 functionality:
-  name: "random_forest"
+  name: "scape"
   namespace: "methods"
   version: "main_build"
   arguments:
@@ -178,9 +178,104 @@ functionality:
     multiple: false
     multiple_sep: ":"
     dest: "par"
+  - type: "file"
+    name: "--output_dir"
+    description: "Additional output directory for the model."
+    info: null
+    example:
+    - "path/to/output_dir"
+    must_exist: true
+    create_parent: true
+    required: false
+    direction: "output"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "string"
+    name: "--cell"
+    description: "Pre-defined cell type held for pre-training."
+    info: null
+    default:
+    - "NK cells"
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "integer"
+    name: "--epochs"
+    description: "Number of epochs for coarse training."
+    info:
+      test_default: 2
+    default:
+    - 300
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "integer"
+    name: "--epochs_enhanced"
+    description: "Number of epochs for enhanced training."
+    info:
+      test_default: 2
+    default:
+    - 800
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "integer"
+    name: "--n_genes"
+    description: "The number of genes for coarse training."
+    info:
+      test_default: 10
+    default:
+    - 64
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "integer"
+    name: "--n_genes_enhanced"
+    description: "The number of genes for enhanced training."
+    info:
+      test_default: 10
+    default:
+    - 256
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "integer"
+    name: "--n_drugs"
+    description: "The number of drugs to consider for coarse training. If none, all\
+      \ drugs are considered."
+    info:
+      test_default: 5
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "integer"
+    name: "--min_n_top_drugs"
+    description: "The minimum number of top drugs to consider."
+    info:
+      test_default: 0
+    default:
+    - 50
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
   resources:
-  - type: "r_script"
-    path: "script.R"
+  - type: "python_script"
+    path: "script.py"
     is_executable: true
   test_resources:
   - type: "python_script"
@@ -190,13 +285,15 @@ functionality:
     path: "resources/neurips-2023-data"
     dest: "resources/neurips-2023-data"
   info:
-    label: "Random Forests"
-    summary: "Random forest regression."
-    description: "A random forest regression method."
-    reference: "breiman2001random"
-    documentation_url: "https://www.stat.berkeley.edu/~breiman/RandomForests/reg_home.htm"
-    repository_url: "https://github.com/cran/randomForest"
-    preferred_normalization: "counts"
+    label: "ScAPE"
+    summary: "judge_2"
+    description: "ScAPE is a package implementing the neural network model used in\
+      \ the Open Problems – Single-Cell Perturbations challenge hosted by Kaggle.\
+      \ This is the model we used to generate the submission that achieved top <2%\
+      \ performance (16th position out of 1097 teams) in the final leaderboard."
+    reference: "pablormier2023scape"
+    documentation_url: "https://github.com/scapeML/scape"
+    repository_url: "https://github.com/scapeML/scape"
     type: "method"
     type_info:
       label: "Method"
@@ -208,7 +305,7 @@ functionality:
 platforms:
 - type: "docker"
   id: "docker"
-  image: "ghcr.io/openproblems-bio/base_r:1.0.2"
+  image: "ghcr.io/openproblems-bio/base_python:1.0.4"
   target_organization: "openproblems-bio/task-dge-perturbation-prediction"
   target_registry: "ghcr.io"
   namespace_separator: "/"
@@ -217,16 +314,15 @@ platforms:
   setup_strategy: "ifneedbepullelsecachedbuild"
   target_image_source: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   setup:
-  - type: "r"
-    cran:
-    - "ranger"
-    - "arrow"
-    - "pbapply"
-    bioc_force_install: false
   - type: "python"
     user: false
     packages:
-    - "fastparquet"
+    - "tensorflow~=2.14.0"
+    - "tensorflow-io-gcs-filesystem>=0.31.0"
+    - "pandas~=1.5.3"
+    - "scikit-learn~=1.2.2"
+    - "fastparquet~=2023.10.1"
+    - "git+https://github.com/scapeML/scape.git"
     upgrade: true
   entrypoint: []
   cmd: null
@@ -259,10 +355,10 @@ platforms:
   debug: false
   container: "docker"
 info:
-  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/random_forest/config.vsh.yaml"
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/scape/config.vsh.yaml"
   platform: "nextflow"
-  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/random_forest"
-  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/random_forest/random_forest"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape/scape"
   viash_version: "0.8.5"
   git_commit: "bfd33ba58ebea2755f8e494cf41ce634024fda7b"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
