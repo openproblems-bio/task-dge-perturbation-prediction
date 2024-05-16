@@ -41,7 +41,7 @@ functionality:
       path: main.nf
       entrypoint: run_wf
   dependencies:
-    - name: process_dataset/clean_sc_counts
+    - name: process_dataset/clean_pseudobulk
     - name: process_dataset/compute_pseudobulk
     - name: process_dataset/run_limma
     - name: process_dataset/convert_h5ad_to_parquet

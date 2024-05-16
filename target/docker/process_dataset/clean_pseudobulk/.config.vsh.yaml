@@ -1,5 +1,5 @@
 functionality:
-  name: "clean_sc_counts"
+  name: "clean_pseudobulk"
   namespace: "process_dataset"
   version: "main_build"
   arguments:
@@ -7,19 +7,7 @@ functionality:
     name: "--input"
     info: null
     example:
-    - "resources/neurips-2023-raw/sc_counts.h5ad"
-    must_exist: true
-    create_parent: true
-    required: true
-    direction: "input"
-    multiple: false
-    multiple_sep: ":"
-    dest: "par"
-  - type: "file"
-    name: "--lincs_id_compound_mapping"
-    info: null
-    example:
-    - "resources/neurips-2023-raw/lincs_id_compound_mapping.parquet"
+    - "resources/neurips-2023-raw/pseudobulk.h5ad"
     must_exist: true
     create_parent: true
     required: true
@@ -31,7 +19,7 @@ functionality:
     name: "--output"
     info: null
     example:
-    - "resources/neurips-2023-data/sc_counts_cleaned.h5ad"
+    - "resources/neurips-2023-data/pseudobulk_cleaned.h5ad"
     must_exist: true
     create_parent: true
     required: true
@@ -43,18 +31,21 @@ functionality:
   - type: "python_script"
     path: "script.py"
     is_executable: true
+  - type: "file"
+    path: "filter_genes.R"
   info:
     type: "process_dataset"
     type_info:
-      label: "Clean dataset"
-      summary: "Clean up the single-cell dataset"
-      description: "Clean up the single-cell dataset for the DGE regression task.\n"
+      label: "Filter pseudobulked data"
+      summary: "Filter the genes and compounds"
+      description: "Filter the pseudobulked single-cell dataset for the DGE regression\
+        \ task.\n"
   status: "enabled"
   set_wd_to_resources_dir: false
 platforms:
 - type: "docker"
   id: "docker"
-  image: "ghcr.io/openproblems-bio/base_python:1.0.2"
+  image: "ghcr.io/openproblems-bio/base_r:1.0.2"
   target_organization: "openproblems-bio/task-dge-perturbation-prediction"
   target_registry: "ghcr.io"
   namespace_separator: "/"
@@ -68,6 +59,15 @@ platforms:
     packages:
     - "pyarrow"
     upgrade: true
+  - type: "r"
+    cran:
+    - "edgeR"
+    - "limma"
+    - "dplyr"
+    - "tidyr"
+    - "purrr"
+    - "tibble"
+    bioc_force_install: false
   entrypoint: []
   cmd: null
 - type: "nextflow"
@@ -99,10 +99,10 @@ platforms:
   debug: false
   container: "docker"
 info:
-  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/clean_sc_counts/config.vsh.yaml"
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/clean_pseudobulk/config.vsh.yaml"
   platform: "docker"
-  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/process_dataset/clean_sc_counts"
-  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/process_dataset/clean_sc_counts/clean_sc_counts"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/process_dataset/clean_pseudobulk"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/process_dataset/clean_pseudobulk/clean_pseudobulk"
   viash_version: "0.8.5"
-  git_commit: "e3f23f83f96adcdebd836ff50c5fd8ff02ff6edc"
+  git_commit: "efba7b39547c7af711864e5f03ef515c73fa46fa"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

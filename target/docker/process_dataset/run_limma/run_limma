@@ -175,7 +175,7 @@ function ViashHelp {
   echo "Arguments:"
   echo "    --input"
   echo "        type: file, required parameter, file must exist"
-  echo "        example: resources/neurips-2023-data/pseudobulk.h5ad"
+  echo "        example: resources/neurips-2023-data/pseudobulk_cleaned.h5ad"
   echo ""
   echo "    --input_splits"
   echo "        type: string, multiple values allowed"
@@ -428,9 +428,9 @@ RUN Rscript -e 'if (!requireNamespace("BiocManager", quietly = TRUE)) install.pa
   Rscript -e 'if (!requireNamespace("tibble", quietly = TRUE)) BiocManager::install("tibble")'
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset run_limma"
-LABEL org.opencontainers.image.created="2024-05-15T21:39:54Z"
+LABEL org.opencontainers.image.created="2024-05-16T14:58:12Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="e3f23f83f96adcdebd836ff50c5fd8ff02ff6edc"
+LABEL org.opencontainers.image.revision="efba7b39547c7af711864e5f03ef515c73fa46fa"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

@@ -2919,51 +2919,6 @@ meta = [
       },
       {
         "type" : "file",
-        "name" : "--lincs_id_compound_mapping",
-        "info" : {
-          "label" : "Mapping compound names to lincs ids and smiles",
-          "summary" : "Parquet file mapping compound names to lincs ids and smiles.",
-          "file_type" : "parquet",
-          "columns" : [
-            {
-              "name" : "compound_id",
-              "description" : "Unique identifier for the compound.",
-              "type" : "string",
-              "required" : true
-            },
-            {
-              "name" : "sm_lincs_id",
-              "description" : "LINCS identifier for the compound.",
-              "type" : "string",
-              "required" : true
-            },
-            {
-              "name" : "sm_name",
-              "description" : "Name of the compound.",
-              "type" : "string",
-              "required" : true
-            },
-            {
-              "name" : "smiles",
-              "description" : "SMILES notation representing the molecular structure.",
-              "type" : "string",
-              "required" : true
-            }
-          ]
-        },
-        "example" : [
-          "resources/neurips-2023-raw/lincs_id_compound_mapping.parquet"
-        ],
-        "must_exist" : true,
-        "create_parent" : true,
-        "required" : true,
-        "direction" : "input",
-        "multiple" : false,
-        "multiple_sep" : ":",
-        "dest" : "par"
-      },
-      {
-        "type" : "file",
         "name" : "--de_train",
         "info" : {
           "label" : "DE train",
@@ -3442,25 +3397,25 @@ meta = [
     "status" : "enabled",
     "dependencies" : [
       {
-        "name" : "process_dataset/clean_sc_counts",
+        "name" : "process_dataset/clean_pseudobulk",
         "repository" : {
           "type" : "local",
           "localPath" : ""
         },
-        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/clean_sc_counts/config.vsh.yaml",
+        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/clean_pseudobulk/config.vsh.yaml",
         "configInfo" : {
-          "functionalityName" : "clean_sc_counts",
+          "functionalityName" : "clean_pseudobulk",
           "git_tag" : "",
           "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
           "viash_version" : "0.8.5",
-          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/clean_sc_counts/config.vsh.yaml",
+          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/clean_pseudobulk/config.vsh.yaml",
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "e3f23f83f96adcdebd836ff50c5fd8ff02ff6edc",
-          "executable" : "/nextflow/process_dataset/clean_sc_counts/main.nf"
+          "git_commit" : "efba7b39547c7af711864e5f03ef515c73fa46fa",
+          "executable" : "/nextflow/process_dataset/clean_pseudobulk/main.nf"
         },
-        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/clean_sc_counts"
+        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/clean_pseudobulk"
       },
       {
         "name" : "process_dataset/compute_pseudobulk",
@@ -3478,7 +3433,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "e3f23f83f96adcdebd836ff50c5fd8ff02ff6edc",
+          "git_commit" : "efba7b39547c7af711864e5f03ef515c73fa46fa",
           "executable" : "/nextflow/process_dataset/compute_pseudobulk/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/compute_pseudobulk"
@@ -3499,7 +3454,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "e3f23f83f96adcdebd836ff50c5fd8ff02ff6edc",
+          "git_commit" : "efba7b39547c7af711864e5f03ef515c73fa46fa",
           "executable" : "/nextflow/process_dataset/run_limma/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/run_limma"
@@ -3520,7 +3475,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "e3f23f83f96adcdebd836ff50c5fd8ff02ff6edc",
+          "git_commit" : "efba7b39547c7af711864e5f03ef515c73fa46fa",
           "executable" : "/nextflow/process_dataset/convert_h5ad_to_parquet/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/convert_h5ad_to_parquet"
@@ -3571,7 +3526,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/workflow",
     "viash_version" : "0.8.5",
-    "git_commit" : "e3f23f83f96adcdebd836ff50c5fd8ff02ff6edc",
+    "git_commit" : "efba7b39547c7af711864e5f03ef515c73fa46fa",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3579,7 +3534,7 @@ meta = [
 
 // resolve dependencies dependencies (if any)
 meta["root_dir"] = getRootDir()
-include { clean_sc_counts } from "${meta.resources_dir}/../../../nextflow/process_dataset/clean_sc_counts/main.nf"
+include { clean_pseudobulk } from "${meta.resources_dir}/../../../nextflow/process_dataset/clean_pseudobulk/main.nf"
 include { compute_pseudobulk } from "${meta.resources_dir}/../../../nextflow/process_dataset/compute_pseudobulk/main.nf"
 include { run_limma } from "${meta.resources_dir}/../../../nextflow/process_dataset/run_limma/main.nf"
 include { convert_h5ad_to_parquet } from "${meta.resources_dir}/../../../nextflow/process_dataset/convert_h5ad_to_parquet/main.nf"
@@ -3593,25 +3548,24 @@ workflow run_wf {
   main:
 
   output_ch = input_ch
-  
-    | clean_sc_counts.run(
-      fromState: [
-        input: "sc_counts",
-        lincs_id_compound_mapping: "lincs_id_compound_mapping"
-      ],
-      toState: [sc_counts_cleaned: "output"]
-    )
 
     | compute_pseudobulk.run(
-      fromState: [input: "sc_counts_cleaned"],
+      fromState: [input: "sc_counts"],
       toState: [pseudobulk: "output"]
+    )
+
+    | clean_pseudobulk.run(
+      fromState: [
+        input: "pseudobulk",
+      ],
+      toState: [pseudobulk_filtered: "output"]
     )
 
     | run_limma.run(
       key: "limma_train",
       fromState: { id, state ->
         [
-          input: state.pseudobulk,
+          input: state.pseudobulk_filtered,
           input_splits: ["train", "control", "public_test"],
           output_splits: ["train", "control", "public_test"]
         ]
@@ -3623,7 +3577,7 @@ workflow run_wf {
       key: "limma_test",
       fromState: { id, state ->
         [
-          input: state.pseudobulk,
+          input: state.pseudobulk_filtered,
           input_splits: ["train", "control", "public_test", "private_test"],
           output_splits: ["private_test"]
         ]

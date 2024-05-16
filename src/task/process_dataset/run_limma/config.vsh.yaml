@@ -13,7 +13,7 @@ functionality:
       type: file
       required: true
       direction: input
-      example: resources/neurips-2023-data/pseudobulk.h5ad
+      example: resources/neurips-2023-data/pseudobulk_cleaned.h5ad
     - name: --input_splits
       type: string
       multiple: true

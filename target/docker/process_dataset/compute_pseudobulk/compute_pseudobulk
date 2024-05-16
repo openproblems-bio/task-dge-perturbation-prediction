@@ -175,7 +175,7 @@ function ViashHelp {
   echo "Arguments:"
   echo "    --input"
   echo "        type: file, required parameter, file must exist"
-  echo "        example: resources/neurips-2023-data/sc_counts_cleaned.h5ad"
+  echo "        example: resources/neurips-2023-raw/sc_counts.h5ad"
   echo ""
   echo "    --output"
   echo "        type: file, required parameter, output, file must exist"
@@ -406,9 +406,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "pyarrow"
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset compute_pseudobulk"
-LABEL org.opencontainers.image.created="2024-05-15T21:39:53Z"
+LABEL org.opencontainers.image.created="2024-05-16T14:58:12Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="e3f23f83f96adcdebd836ff50c5fd8ff02ff6edc"
+LABEL org.opencontainers.image.revision="efba7b39547c7af711864e5f03ef515c73fa46fa"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -935,9 +935,21 @@ def sum_by(adata: ad.AnnData, col: str) -> ad.AnnData:
 print(">> Load dataset", flush=True)
 sc_counts = ad.read_h5ad(par["input"])
 
+print(">> Keep only raw counts", flush=True)
+sc_counts.X = sc_counts.raw.X
+del sc_counts.raw
+
+print(">> Fix splits after reannotation", flush=True)
+sc_counts.obs["cell_type_orig_updated"] = sc_counts.obs["cell_type_orig"].apply(lambda x: "T cells" if x.startswith("T ") else x)
+sc_counts.obs["sm_cell_type_orig"] = sc_counts.obs["sm_name"].astype(str) + "_" + sc_counts.obs["cell_type_orig_updated"].astype(str)
+mapping_to_split = sc_counts.obs.groupby("sm_cell_type_orig")["split"].apply(lambda x: x.unique()[0]).to_dict()
+sc_counts.obs["sm_cell_type"] = sc_counts.obs["sm_name"].astype(str) + "_" + sc_counts.obs["cell_type"].astype(str)
+sc_counts.obs["split"] = sc_counts.obs["sm_cell_type"].map(mapping_to_split)
+sc_counts.obs['control'] = sc_counts.obs['split'].eq("control")
+
 print(">> Create pseudobulk dataset", flush=True)
-bulk_adata = sum_by(sc_counts, 'plate_well_cell_type')
-bulk_adata.obs = bulk_adata.obs.drop(columns=['plate_well_cell_type'])
+bulk_adata = sum_by(sc_counts, 'plate_well_celltype_reannotated')
+bulk_adata.obs = bulk_adata.obs.drop(columns=['plate_well_celltype_reannotated'])
 
 print(">> Remove samples with no counts", flush=True)
 bulk_adata = bulk_adata[bulk_adata.X.todense().sum(axis=1) > 0]

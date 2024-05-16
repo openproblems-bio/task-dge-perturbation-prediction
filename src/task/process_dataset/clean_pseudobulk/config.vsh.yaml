@@ -1,33 +1,36 @@
 functionality:
-  name: compute_pseudobulk
+  name: clean_pseudobulk
   namespace: process_dataset
   info:
     type: process_dataset
     type_info:
-      label: Pseudobulk
-      summary: Compute pseudobulk data
+      label: Filter pseudobulked data
+      summary: Filter the genes and compounds
       description: |
-        Compute pseudobulk data for the DGE regression task.
+        Filter the pseudobulked single-cell dataset for the DGE regression task.
   arguments:
     - name: --input
       type: file
       required: true
       direction: input
-      example: resources/neurips-2023-raw/sc_counts.h5ad
+      example: resources/neurips-2023-raw/pseudobulk.h5ad
     - name: --output
       type: file
       required: true
       direction: output
-      example: resources/neurips-2023-data/pseudobulk.h5ad
+      example: resources/neurips-2023-data/pseudobulk_cleaned.h5ad
   resources:
     - type: python_script
       path: script.py
+    - path: filter_genes.R
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_python:1.0.2
+    image: ghcr.io/openproblems-bio/base_r:1.0.2
     setup:
       - type: python
         packages: [ pyarrow ]
+      - type: r
+        cran: [ edgeR, limma, dplyr, tidyr, purrr, tibble ]
   - type: nextflow
     directives:
       label: [ midtime, midmem, lowcpu ]

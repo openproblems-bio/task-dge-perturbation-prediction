@@ -10,14 +10,8 @@ OUT=resources/neurips-2023-data
 if [[ ! -f "$IN/sc_counts.h5ad" ]]; then
   echo ">> Downloading 'sc_counts.h5ad'"
   aws s3 cp --no-sign-request \
-    s3://openproblems-bio/public/neurips-2023-competition/sc_counts.h5ad \
+    s3://openproblems-bio/public/neurips-2023-competition/sc_counts_reannotated_with_counts.h5ad \
     "$IN/sc_counts.h5ad"
-fi
-if [[ ! -f "$IN/lincs_id_compound_mapping.parquet" ]]; then
-  echo ">> Downloading 'lincs_id_compound_mapping.parquet'"
-  aws s3 cp --no-sign-request \
-    s3://saturn-kaggle-datasets/open-problems-single-cell-perturbations-optional/lincs_id_compound_mapping.parquet \
-    "$IN/lincs_id_compound_mapping.parquet"
 fi
 
 echo ">> Running 'process_dataset' workflow"

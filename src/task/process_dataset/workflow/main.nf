@@ -5,25 +5,24 @@ workflow run_wf {
   main:
 
   output_ch = input_ch
-  
-    | clean_sc_counts.run(
-      fromState: [
-        input: "sc_counts",
-        lincs_id_compound_mapping: "lincs_id_compound_mapping"
-      ],
-      toState: [sc_counts_cleaned: "output"]
-    )
 
     | compute_pseudobulk.run(
-      fromState: [input: "sc_counts_cleaned"],
+      fromState: [input: "sc_counts"],
       toState: [pseudobulk: "output"]
+    )
+
+    | clean_pseudobulk.run(
+      fromState: [
+        input: "pseudobulk",
+      ],
+      toState: [pseudobulk_filtered: "output"]
     )
 
     | run_limma.run(
       key: "limma_train",
       fromState: { id, state ->
         [
-          input: state.pseudobulk,
+          input: state.pseudobulk_filtered,
           input_splits: ["train", "control", "public_test"],
           output_splits: ["train", "control", "public_test"]
         ]
@@ -35,7 +34,7 @@ workflow run_wf {
       key: "limma_test",
       fromState: { id, state ->
         [
-          input: state.pseudobulk,
+          input: state.pseudobulk_filtered,
           input_splits: ["train", "control", "public_test", "private_test"],
           output_splits: ["private_test"]
         ]
