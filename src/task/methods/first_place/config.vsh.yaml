@@ -1,0 +1,57 @@
+__merge__: ../../api/comp_method.yaml
+
+functionality:
+  name: first_place
+  info:
+    label: First Place
+    summary: "FILL IN: A one sentence summary of this method."
+    description: |
+      FILL IN: A (multi-line) description of how this method works.
+    reference: bibtex_reference_key
+    documentation_url: https://url.to/the/documentation
+    repository_url: https://github.com/organisation/repository
+
+  arguments:
+    - name: "--extra_output"
+      type: "file"
+      default: "resources/neurips-2023-data/extra_output/"
+      description: "Extra output directory. Will contain folders `prepared_data`, `trained_models`, and `logs`."
+      direction: output
+      required: false
+      must_exist: false
+    - name: --epochs
+      type: integer
+      default: 250
+      description: "Number of epochs to train."
+      info:
+        test_default: 1
+    - name: --kf_n_splits
+      type: integer
+      default: 5
+      description: "Number of splits for KFold."
+      info:
+        test_default: 2
+    - name: --models
+      type: string
+      default: [initial, light, heavy]
+      multiple: true
+      info:
+        test_default: [initial, light]
+
+  resources:
+    - type: python_script
+      path: script.py
+    - path: helper_script.py
+    
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    run_args: ["--shm-size=2g"]
+    setup:
+      - type: python
+        packages: [ fastparquet, pandas==2.1.3, pyarrow==14.0.1, tqdm==4.66.1, scikit-learn==1.3.2, torch==2.1.1, transformers==4.35.2, matplotlib==3.8.2 ]
+
+  - type: native
+  - type: nextflow
+    directives:
+      label: [midtime,midmem,highcpu,midsharedmem,gpu]

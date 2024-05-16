@@ -7,9 +7,9 @@ import re
 
 ## VIASH START
 meta = {
-    "executable": "target/docker/denoising/methods/dca/dca",
-    "config": "target/docker/denoising/methods/dca/.config.vsh.yaml",
-    "resources_dir": "resources_test/denoising"
+    "executable": "target/docker/methods/first_place/first_place",
+    "config": "target/docker/methods/first_place/.config.vsh.yaml",
+    "resources_dir": "resources"
 }
 ## VIASH END
 
@@ -46,8 +46,8 @@ def check_df_columns(df, arg):
 def run_and_check_outputs(arguments, cmd):
     print(">> Checking whether input files exist", flush=True)
     for arg in arguments:
-        if arg["type"] == "file" and arg["direction"] == "input":
-            assert path.exists(arg["value"]), f"Input file '{arg['value']}' does not exist"
+        if arg["type"] == "file" and arg["direction"] == "input" and arg["required"]:
+            assert not arg["must_exist"] or path.exists(arg["value"]), f"Input file '{arg['value']}' does not exist"
 
     print(f">> Running script as test", flush=True)
     out = subprocess.run(cmd, stderr=subprocess.STDOUT)
@@ -61,8 +61,8 @@ def run_and_check_outputs(arguments, cmd):
 
     print(">> Checking whether output file exists", flush=True)
     for arg in arguments:
-        if arg["type"] == "file" and arg["direction"] == "output":
-            assert path.exists(arg["value"]), f"Output file '{arg['value']}' does not exist"
+        if arg["type"] == "file" and arg["direction"] == "output" and arg["required"]:
+            assert not arg["must_exist"] or path.exists(arg["value"]), f"Output file '{arg['value']}' does not exist"
 
     print(">> Reading h5ad files and checking formats", flush=True)
     for arg in arguments:
@@ -113,7 +113,7 @@ for arg in config["functionality"]["arguments"]:
         if arg["direction"] == "input":
             value = f"{meta['resources_dir']}/{arg['example'][0]}"
         else:
-            example = arg.get("example", ["example.txt"])[0]
+            example = arg.get("example", ["example"])[0]
             ext_res = re.search(r"\.(\w+)$", example)
             if ext_res:
                 value = f"{clean_name}.{ext_res.group(1)}"
@@ -149,6 +149,9 @@ for argset_name, argset_args in argument_sets.items():
     cmd = [ meta["executable"] ]
     for arg in argset_args:
         if "value" in arg:
-            cmd.extend([arg["name"], str(arg["value"])])
+            value = arg["value"]
+            if arg["multiple"] and isinstance(value, list):
+                value = arg["multiple_sep"].join(value)
+            cmd.extend([arg["name"], str(value)])
 
     run_and_check_outputs(argset_args, cmd)
