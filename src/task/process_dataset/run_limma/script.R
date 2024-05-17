@@ -8,7 +8,7 @@ library(future)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/pseudobulk.h5ad",
+  input = "resources/neurips-2023-data/pseudobulk_cleaned.h5ad",
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
   # for public data
@@ -16,9 +16,9 @@ par <- list(
   input_splits = c("train", "control", "public_test"),
   output_splits = c("train", "control", "public_test")
   # # for private data
-  # output = "resources/neurips-2023-data/de_test.h5ad",
-  # input_splits = c("train", "control", "public_test", "private_test"),
-  # output_splits = c("private_test")
+#   output = "resources/neurips-2023-data/de_test.h5ad",
+#   input_splits = c("train", "control", "public_test", "private_test"),
+#   output_splits = c("private_test")
 )
 meta <- list(
   cpus = 10
@@ -57,7 +57,7 @@ d0 <- Matrix::t(adata[obs_filt, ]$X) %>%
     edgeR::DGEList() %>%
     edgeR::calcNormFactors()
 
-design_matrix <- model.matrix(~ 0 + sm_cell_type + donor_id, adata[obs_filt, ]$obs %>% mutate_all(limma_trafo))
+design_matrix <- model.matrix(~ 0 + sm_cell_type + plate_name, adata[obs_filt, ]$obs %>% mutate_all(limma_trafo))
 
 # Voom transformation and lmFit
 v <- limma::voom(d0, design = design_matrix, plot = FALSE)

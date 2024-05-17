@@ -2945,7 +2945,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/run_limma",
     "viash_version" : "0.8.5",
-    "git_commit" : "3828c7a4c6846a6c4bb397ce2cdf30a56acfef10",
+    "git_commit" : "4ed3a7ad03ea5ad4626cba526b898cf45d7e9e4d",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3038,7 +3038,7 @@ d0 <- Matrix::t(adata[obs_filt, ]\\$X) %>%
     edgeR::DGEList() %>%
     edgeR::calcNormFactors()
 
-design_matrix <- model.matrix(~ 0 + sm_cell_type + donor_id, adata[obs_filt, ]\\$obs %>% mutate_all(limma_trafo))
+design_matrix <- model.matrix(~ 0 + sm_cell_type + plate_name, adata[obs_filt, ]\\$obs %>% mutate_all(limma_trafo))
 
 # Voom transformation and lmFit
 v <- limma::voom(d0, design = design_matrix, plot = FALSE)

@@ -214,5 +214,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_error"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_error/mean_rowwise_error"
   viash_version: "0.8.5"
-  git_commit: "3828c7a4c6846a6c4bb397ce2cdf30a56acfef10"
+  git_commit: "4ed3a7ad03ea5ad4626cba526b898cf45d7e9e4d"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

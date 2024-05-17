@@ -430,9 +430,9 @@ RUN Rscript -e 'if (!requireNamespace("BiocManager", quietly = TRUE)) install.pa
   Rscript -e 'if (!requireNamespace("future", quietly = TRUE)) BiocManager::install("future")'
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset run_limma"
-LABEL org.opencontainers.image.created="2024-05-17T12:04:52Z"
+LABEL org.opencontainers.image.created="2024-05-17T18:46:04Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="3828c7a4c6846a6c4bb397ce2cdf30a56acfef10"
+LABEL org.opencontainers.image.revision="4ed3a7ad03ea5ad4626cba526b898cf45d7e9e4d"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -1027,7 +1027,7 @@ d0 <- Matrix::t(adata[obs_filt, ]\$X) %>%
     edgeR::DGEList() %>%
     edgeR::calcNormFactors()
 
-design_matrix <- model.matrix(~ 0 + sm_cell_type + donor_id, adata[obs_filt, ]\$obs %>% mutate_all(limma_trafo))
+design_matrix <- model.matrix(~ 0 + sm_cell_type + plate_name, adata[obs_filt, ]\$obs %>% mutate_all(limma_trafo))
 
 # Voom transformation and lmFit
 v <- limma::voom(d0, design = design_matrix, plot = FALSE)

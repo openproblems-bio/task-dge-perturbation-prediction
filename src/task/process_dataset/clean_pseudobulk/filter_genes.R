@@ -31,7 +31,7 @@ for (cell_type in cell_types) {
   counts <- Matrix::t(cell_type_adata$X)
 
   d <- DGEList(counts)
-  design <- model.matrix(~ 0 + sm_name + donor_id, data = cell_type_adata$obs %>% mutate_all(limma_trafo))
+  design <- model.matrix(~ 0 + sm_name + plate_name, data = cell_type_adata$obs %>% mutate_all(limma_trafo))
   keep <- filterByExpr(d, design)
   genes_to_keep <- rownames(d)[keep]
 
