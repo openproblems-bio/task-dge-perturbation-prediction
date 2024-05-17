@@ -3,10 +3,12 @@ library(dplyr, warn.conflicts = FALSE)
 library(tidyr, warn.conflicts = FALSE)
 library(purrr, warn.conflicts = FALSE)
 library(tibble, warn.conflicts = FALSE)
+library(furrr)
+library(future)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/pseudobulk_cleaned.h5ad",
+  input = "resources/neurips-2023-data/pseudobulk.h5ad",
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
   # for public data
@@ -19,16 +21,18 @@ par <- list(
   # output_splits = c("private_test")
 )
 meta <- list(
-  cpus = 30L
+  cpus = 10
 )
 ## VIASH END
+
+plan(multicore, workers = meta$cpus)
 
 # load data
 adata <- anndata::read_h5ad(par$input)
 
 # select [cell_type, sm_name] pairs which will be used for DE analysis
 new_obs <- adata$obs %>%
-  select(cell_type, sm_name, sm_lincs_id, SMILES, split, control) %>%
+  select(sm_cell_type, cell_type, sm_name, sm_lincs_id, SMILES, split, control) %>%
   distinct() %>%
   filter(sm_name != par$control_compound)
 
@@ -45,55 +49,34 @@ limma_trafo <- function(value) {
   gsub("[^[:alnum:]]", "_", value)
 }
 
-# run limma voom and lmfit per cell type
-limma_fit_per_celltype <- list()
+obs_filt <- adata$obs$split %in% par$input_splits
 
-for (cell_type_i in seq_along(cell_types)) {
-  cell_type <- cell_types[[cell_type_i]]
-  cat("Running limma for cell type: ", cell_type, " (", cell_type_i, "/", length(cell_types), ")\n", sep = "")
+start_time <- Sys.time()
 
-  # subset to cell type
-  obs_filt <- adata$obs$cell_type == cell_type
-  if (!is.null(par$input_splits)) {
-    obs_filt <- obs_filt & adata$obs$split %in% par$input_splits
-  }
-  cell_type_adata <- adata[obs_filt, ]
-
-  # calc norm factors
-  d0 <- Matrix::t(cell_type_adata$X) %>%
+d0 <- Matrix::t(adata[obs_filt, ]$X) %>%
     edgeR::DGEList() %>%
     edgeR::calcNormFactors()
 
-  # create design matrix
-  mm <- model.matrix(
-    ~ 0 + sm_name + donor_id + plate_name + library_id,
-    cell_type_adata$obs %>% mutate_all(limma_trafo)
-  )
+design_matrix <- model.matrix(~ 0 + sm_cell_type + donor_id, adata[obs_filt, ]$obs %>% mutate_all(limma_trafo))
 
-  # voom transformation
-  y <- limma::voom(d0, design = mm, plot = FALSE)
-
-  # run limma
-  fit <- limma::lmFit(y, mm)
-
-  limma_fit_per_celltype[[cell_type]] <- fit
-}
+# Voom transformation and lmFit
+v <- limma::voom(d0, design = design_matrix, plot = FALSE)
+fit <- limma::lmFit(v, design_matrix)
 
 # run limma DE for each cell type and compound
-de_df <- list_rbind(map(
+de_df <- future_map_dfr(
   seq_len(nrow(new_obs)),
   function(row_i) {
     cat("Computing DE contrasts (", row_i, "/", nrow(new_obs), ")\n", sep = "")
+    sm_cell_type <- as.character(new_obs$sm_cell_type[[row_i]])
     cell_type <- as.character(new_obs$cell_type[[row_i]])
-    sm_name <- as.character(new_obs$sm_name[[row_i]])
 
-    fit <- limma_fit_per_celltype[[cell_type]]
-
+    control_name <- paste(par$control_compound, cell_type, sep = "_")
     # run contrast fit
     contrast_formula <- paste0(
-      "sm_name", limma_trafo(sm_name),
+      "sm_cell_type", limma_trafo(sm_cell_type),
       " - ",
-      "sm_name", limma_trafo(par$control_compound)
+      "sm_cell_type", limma_trafo(control_name)
     )
     contr <- limma::makeContrasts(
       contrasts = contrast_formula,
@@ -101,12 +84,20 @@ de_df <- list_rbind(map(
     )
 
     limma::contrasts.fit(fit, contr) %>%
-      limma::eBayes() %>%
+      limma::eBayes(robust=TRUE) %>%
       limma::topTable(n = Inf, sort = "none") %>%
       rownames_to_column("gene") %>%
       mutate(row_i = row_i)
-  }
-))
+  },
+  .options = furrr_options(seed = TRUE)
+)
+
+end_time <- Sys.time()
+full_duration <- end_time - start_time
+full_duration_seconds <- as.numeric(full_duration, units = "secs")
+full_minutes <- full_duration_seconds %/% 60
+full_seconds <- full_duration_seconds %% 60
+cat("Total limma runtime: ", full_minutes, " minutes, ", full_seconds, " seconds\n")
 
 # transform data
 de_df2 <- de_df %>%

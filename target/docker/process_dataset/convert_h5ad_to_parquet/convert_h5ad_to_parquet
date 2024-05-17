@@ -418,9 +418,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet" "anndata" "pandas"
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset convert_h5ad_to_parquet"
-LABEL org.opencontainers.image.created="2024-05-17T10:42:31Z"
+LABEL org.opencontainers.image.created="2024-05-17T12:04:52Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="4eb96402327f1bd47b5752901f2c22d42b266dcc"
+LABEL org.opencontainers.image.revision="3828c7a4c6846a6c4bb397ce2cdf30a56acfef10"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

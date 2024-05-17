@@ -2961,7 +2961,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/task/process_dataset/convert_kaggle_h5ad_to_parquet",
     "viash_version" : "0.8.5",
-    "git_commit" : "4eb96402327f1bd47b5752901f2c22d42b266dcc",
+    "git_commit" : "3828c7a4c6846a6c4bb397ce2cdf30a56acfef10",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
