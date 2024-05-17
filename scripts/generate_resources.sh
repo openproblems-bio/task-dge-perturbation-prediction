@@ -21,7 +21,6 @@ nextflow run \
   -resume \
   --id neurips-2023-data \
   --sc_counts "$IN/sc_counts.h5ad" \
-  --lincs_id_compound_mapping "$IN/lincs_id_compound_mapping.parquet" \
   --dataset_id "neurips-2023-data" \
   --dataset_name "NeurIPS2023 scPerturb DGE" \
   --dataset_url "TBD" \
