@@ -3066,7 +3066,7 @@ meta = [
     {
       "type" : "docker",
       "id" : "docker",
-      "image" : "ghcr.io/openproblems-bio/base_python:1.0.4",
+      "image" : "ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4",
       "target_organization" : "openproblems-bio/task-dge-perturbation-prediction",
       "target_registry" : "ghcr.io",
       "namespace_separator" : "/",
@@ -3102,7 +3102,8 @@ meta = [
         "label" : [
           "hightime",
           "highmem",
-          "highcpu"
+          "highcpu",
+          "gpu"
         ],
         "tag" : "$id"
       },
@@ -3137,7 +3138,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/third_place",
     "viash_version" : "0.8.5",
-    "git_commit" : "b4b1926bb14c87cd855aa7e4893894f8c929d8e6",
+    "git_commit" : "1d2323716c4faff6a7ed38aa220e0203bb8b675b",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3603,7 +3604,8 @@ meta["defaults"] = [
   "label" : [
     "hightime",
     "highmem",
-    "highcpu"
+    "highcpu",
+    "gpu"
   ],
   "tag" : "$id"
 }'''),

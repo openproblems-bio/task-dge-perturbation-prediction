@@ -4,178 +4,16 @@ import time
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
-import torch.nn as nn
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 from sklearn.preprocessing import OneHotEncoder
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 import random
 from sklearn.model_selection import KFold as KF
-
-class LogCoshLoss(nn.Module):
-    """Loss function for regression tasks"""
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, y_prime_t, y_t):
-        ey_t = (y_t - y_prime_t)/3 # divide by 3 to avoid numerical overflow in cosh
-        clipped_ey_t = torch.clamp(ey_t, min=-50, max=50)
-        return torch.mean(torch.log(torch.cosh(clipped_ey_t + 1e-12)))
-    
-    
-class Dataset:
-    """Python class to load the data for training and inference in Pytorch"""
-    def __init__(self, data_x, data_y=None):
-        super(Dataset, self).__init__()
-        self.data_x = data_x
-        self.data_y = data_y
-
-    def __len__(self):
-        return len(self.data_x)
-    
-    def __getitem__(self, idx):
-        if self.data_y is not None:
-            return self.data_x[idx], self.data_y[idx]
-        else:
-            return self.data_x[idx]
+from models import Conv, LSTM, GRU
+from helper_classes import Dataset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-# dims_dict = {'conv': {'heavy': 13400, 'light': 4576, 'initial': 8992},
-#                                     'rnn': {'linear': {'heavy': 99968, 'light': 24192, 'initial': 29568},
-#                                            'input_shape': {'heavy': [779,142], 'light': [187,202], 'initial': [229,324]}
-              
-#                              }}
-
-dims_dict = {'conv': {'heavy': 15624, 'light': 5312, 'initial': 10472},
-                                    'rnn': {'linear': {'heavy': 3072, 'light': 9728, 'initial': 29440},
-                                           'input_shape': {'heavy': [22, 5861], 'light': [74, 593], 'initial': [228, 379]}
-                                           }}
-
-class Conv(nn.Module):
-    def __init__(self, scheme):
-        super(Conv, self).__init__()
-        self.name = 'Conv'
-        self.conv_block = nn.Sequential(nn.Conv1d(1, 8, 5, stride=1, padding=0),
-                                        nn.Dropout(0.3),
-                                        nn.Conv1d(8, 8, 5, stride=1, padding=0),
-                                        nn.ReLU(),
-                                        nn.Conv1d(8, 16, 5, stride=2, padding=0),
-                                        nn.Dropout(0.3),
-                                        nn.AvgPool1d(11),
-                                        nn.Conv1d(16, 8, 3, stride=3, padding=0),
-                                        nn.Flatten())
-        self.scheme = scheme
-        self.linear = nn.Sequential(
-                nn.Linear(dims_dict['conv'][self.scheme], 1024),
-                nn.Dropout(0.3),
-                nn.ReLU(),
-                nn.Linear(1024, 512),
-                nn.Dropout(0.3),
-                nn.ReLU())
-        # self.head1 = nn.Linear(512, 18211)
-        self.head1 = nn.Linear(512, 21265)
-        self.loss1 = nn.MSELoss()
-        self.loss2 = LogCoshLoss()
-        self.loss3 = nn.L1Loss()
-        self.loss4 = nn.BCELoss()
-        
-    def forward(self, x, y=None):
-        if y is None:
-            out = self.conv_block(x)
-            out = self.head1(self.linear(out))
-            return out
-        else:
-            out = self.conv_block(x)
-            out = self.head1(self.linear(out))
-            loss1 = 0.4*self.loss1(out, y) + 0.3*self.loss2(out, y) + 0.3*self.loss3(out, y)
-            yhat = torch.sigmoid(out)
-            yy = torch.sigmoid(y)
-            loss2 = self.loss4(yhat, yy)
-            return 0.8*loss1 + 0.2*loss2
-        
-
-class LSTM(nn.Module):
-    def __init__(self, scheme):
-        super(LSTM, self).__init__()
-        self.name = 'LSTM'
-        self.scheme = scheme
-        self.lstm = nn.LSTM(dims_dict['rnn']['input_shape'][self.scheme][1], 128, num_layers=2, batch_first=True)
-        self.linear = nn.Sequential(
-            nn.Linear(dims_dict['rnn']['linear'][self.scheme], 1024),
-            nn.Dropout(0.3),
-            nn.ReLU(),
-            nn.Linear(1024, 512),
-            nn.Dropout(0.3),
-            nn.ReLU())
-        # self.head1 = nn.Linear(512, 18211)
-        self.head1 = nn.Linear(512, 21265)
-        self.loss1 = nn.MSELoss()
-        self.loss2 = LogCoshLoss()
-        self.loss3 = nn.L1Loss()
-        self.loss4 = nn.BCELoss()
-        
-    def forward(self, x, y=None):
-        shape1, shape2 = dims_dict['rnn']['input_shape'][self.scheme]
-        x = x.reshape(x.shape[0],shape1,shape2)
-        if y is None:
-            out, (hn, cn) = self.lstm(x)
-            out = out.reshape(out.shape[0],-1)
-            out = torch.cat([out, hn.reshape(hn.shape[1], -1)], dim=1)
-            out = self.head1(self.linear(out))
-            return out
-        else:
-            out, (hn, cn) = self.lstm(x)
-            out = out.reshape(out.shape[0],-1)
-            out = torch.cat([out, hn.reshape(hn.shape[1], -1)], dim=1)
-            out = self.head1(self.linear(out))
-            loss1 = 0.4*self.loss1(out, y) + 0.3*self.loss2(out, y) + 0.3*self.loss3(out, y)
-            yhat = torch.sigmoid(out)
-            yy = torch.sigmoid(y)
-            loss2 = self.loss4(yhat, yy)
-            return 0.8*loss1 + 0.2*loss2
-        
-        
-class GRU(nn.Module):
-    def __init__(self, scheme):
-        super(GRU, self).__init__()
-        self.name = 'GRU'
-        self.scheme = scheme
-        self.gru = nn.GRU(dims_dict['rnn']['input_shape'][self.scheme][1], 128, num_layers=2, batch_first=True)
-        self.linear = nn.Sequential(
-            nn.Linear(dims_dict['rnn']['linear'][self.scheme], 1024),
-            nn.Dropout(0.3),
-            nn.ReLU(),
-            nn.Linear(1024, 512),
-            nn.Dropout(0.3),
-            nn.ReLU())
-        # self.head1 = nn.Linear(512, 18211)
-        self.head1 = nn.Linear(512, 21265)
-        self.loss1 = nn.MSELoss()
-        self.loss2 = LogCoshLoss()
-        self.loss3 = nn.L1Loss()
-        self.loss4 = nn.BCELoss()
-        
-    def forward(self, x, y=None):
-        shape1, shape2 = dims_dict['rnn']['input_shape'][self.scheme]
-        x = x.reshape(x.shape[0],shape1,shape2)
-        if y is None:
-            out, hn = self.gru(x)
-            out = out.reshape(out.shape[0],-1)
-            out = torch.cat([out, hn.reshape(hn.shape[1], -1)], dim=1)
-            out = self.head1(self.linear(out))
-            return out
-        else:
-            out, hn = self.gru(x)
-            out = out.reshape(out.shape[0],-1)
-            out = torch.cat([out, hn.reshape(hn.shape[1], -1)], dim=1)
-            out = self.head1(self.linear(out))
-            loss1 = 0.4*self.loss1(out, y) + 0.3*self.loss2(out, y) + 0.3*self.loss3(out, y)
-            yhat = torch.sigmoid(out)
-            yy = torch.sigmoid(y)
-            loss2 = self.loss4(yhat, yy)
-            return 0.8*loss1 + 0.2*loss2
 
 def seed_everything():
     seed = 42
@@ -354,7 +192,7 @@ def train_function(model, x_train, y_train, x_val, y_val, info_data, config, cli
     return model, results
 
 
-def cross_validate_models(X, y, kf_cv, cell_types_sm_names, model_dir, logs_dir, config=None, scheme='initial', clip_norm=1.0):
+def cross_validate_models(X, y, kf_cv, cell_types_sm_names, paths, config=None, scheme='initial', clip_norm=1.0):
     trained_models = []
     for i,(train_idx,val_idx) in enumerate(kf_cv.split(X)):
         print(f"\nSplit {i+1}/{kf_cv.n_splits}...")
@@ -369,27 +207,27 @@ def cross_validate_models(X, y, kf_cv, cell_types_sm_names, model_dir, logs_dir,
             model, results = train_function(model, x_train, y_train, x_val, y_val, info_data, config=config, clip_norm=clip_norm)
             model.to('cpu')
             trained_models.append(model)
-            print(f'PATH OF THE MODEL EQUALS: {model_dir}/pytorch_{model.name}_{scheme}_fold{i}.pt')
-            torch.save(model.state_dict(), f'{model_dir}/pytorch_{model.name}_{scheme}_fold{i}.pt')
-            with open(f'{logs_dir}/{model.name}_{scheme}_fold{i}.json', 'w') as file:
+            print(f'PATH OF THE MODEL EQUALS: {paths["model_dir"]}/pytorch_{model.name}_{scheme}_fold{i}.pt')
+            torch.save(model.state_dict(), f'{paths["model_dir"]}/pytorch_{model.name}_{scheme}_fold{i}.pt')
+            with open(f'{paths["logs_dir"]}/{model.name}_{scheme}_fold{i}.json', 'w') as file:
                 json.dump(results, file)
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
     return trained_models
 
-def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, config, model_names, model_dir, logs_dir):
+def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, config, model_names, paths):
     kf_cv = KF(n_splits=config["KF_N_SPLITS"], shuffle=True, random_state=42)
     trained_models = {'initial': [], 'light': [], 'heavy': []}
-    print(model_dir)
-    if not os.path.exists(model_dir):
+    print(paths["model_dir"])
+    if not os.path.exists(paths["model_dir"]):
         print("MODEL DIR DID NOT EXIST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        os.makedirs(model_dir, exist_ok=True)
-    if not os.path.exists(logs_dir):
-        os.makedirs(logs_dir, exist_ok=True)
+        os.makedirs(paths["model_dir"], exist_ok=True)
+    if not os.path.exists(paths["logs_dir"]):
+        os.makedirs(paths["logs_dir"], exist_ok=True)
     for scheme, clip_norm, input_features in zip(['initial', 'light', 'heavy'], config["CLIP_VALUES"], [X_vec, X_vec_light, X_vec_heavy]):
         if scheme in model_names:
             seed_everything()
-            models = cross_validate_models(input_features, y, kf_cv, cell_types_sm_names, config=config, scheme=scheme, clip_norm=clip_norm, model_dir=model_dir, logs_dir=logs_dir)
+            models = cross_validate_models(input_features, y, kf_cv, cell_types_sm_names, config=config, scheme=scheme, clip_norm=clip_norm, paths=paths)
             trained_models[scheme].extend(models)
     return trained_models
 

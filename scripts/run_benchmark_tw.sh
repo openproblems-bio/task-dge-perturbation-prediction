@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RUN_ID="run_$(date +%Y-%m-%d_%H-%M-%S)"
-publish_dir="s3://openproblems-bio/public/neurips-2023-competition/workflow-runs/benchmark/${RUN_ID}"
+publish_dir="s3://openproblems-data/resources/dge_perturbation_prediction/results/${RUN_ID}"
 
 cat > /tmp/params.yaml << HERE
 id: dge_perturbation_task

@@ -3142,10 +3142,10 @@ meta = [
     ],
     "info" : {
       "label" : "ScAPE",
-      "summary" : "judge_2",
-      "description" : "ScAPE is a package implementing the neural network model used in the Open Problems – Single-Cell Perturbations challenge hosted by Kaggle. This is the model we used to generate the submission that achieved top <2% performance (16th position out of 1097 teams) in the final leaderboard.",
+      "summary" : "Neural network model for drug effect prediction",
+      "description" : "ScAPE is utilises a neural network (NN) model to estimate drug effects on gene expression in\nperipheral blood mononuclear cells (PBMCs). The model took drug and cell features as input,\nwith these features primarily derived from the median of signed log-pvalues and log fold-changes\ngrouped by drug and cell type. The NN was trained using a leave-one-drug-out cross-validation\nstrategy, focusing on NK cells as a representative cell type due to their similarity to B cells\nand Myeloid cells in principal component analysis. Model performance was evaluated by comparing\nits predictions against two baselines: predicting zero effect and predicting the median\nlog-pvalue for each drug. The final submission combined predictions from models trained on\ndifferent gene and drug subsets, aiming to enhance overall prediction accuracy.\n",
       "reference" : "pablormier2023scape",
-      "documentation_url" : "https://github.com/scapeML/scape",
+      "documentation_url" : "https://docs.google.com/document/d/1w0GIJ8VoQx3HEJNmLXoU-Y_STB-h5-bXusL80_6EVuU/edit",
       "repository_url" : "https://github.com/scapeML/scape",
       "type" : "method",
       "type_info" : {
@@ -3161,7 +3161,7 @@ meta = [
     {
       "type" : "docker",
       "id" : "docker",
-      "image" : "ghcr.io/openproblems-bio/base_python:1.0.4",
+      "image" : "ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4",
       "target_organization" : "openproblems-bio/task-dge-perturbation-prediction",
       "target_registry" : "ghcr.io",
       "namespace_separator" : "/",
@@ -3192,7 +3192,8 @@ meta = [
         "label" : [
           "hightime",
           "highmem",
-          "highcpu"
+          "highcpu",
+          "gpu"
         ],
         "tag" : "$id"
       },
@@ -3227,7 +3228,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape",
     "viash_version" : "0.8.5",
-    "git_commit" : "b4b1926bb14c87cd855aa7e4893894f8c929d8e6",
+    "git_commit" : "1d2323716c4faff6a7ed38aa220e0203bb8b675b",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3242,7 +3243,7 @@ def innerWorkflowFactory(args) {
   def rawScript = '''set -e
 tempscript=".viash_script.sh"
 cat > "$tempscript" << VIASHMAIN
-import sys, os, fastparquet, anndata
+import sys, os, fastparquet, anndata, shutil
 print(sys.executable)
 print(os.getcwd())
 import pandas as pd
@@ -3300,7 +3301,7 @@ model_dir = par["output_dir"] or tempfile.TemporaryDirectory(dir = meta["temp_di
 # remove temp dir on exit
 if not par["output_dir"]:
 	import atexit
-	atexit.register(lambda: os.rmdir(model_dir))
+	atexit.register(lambda: shutil.rmtree(model_dir))
 
 # load log pvals
 df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")
@@ -3764,7 +3765,8 @@ meta["defaults"] = [
   "label" : [
     "hightime",
     "highmem",
-    "highcpu"
+    "highcpu",
+    "gpu"
   ],
   "tag" : "$id"
 }'''),

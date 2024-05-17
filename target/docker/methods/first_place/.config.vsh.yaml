@@ -185,7 +185,7 @@ functionality:
     info: null
     default:
     - "resources/neurips-2023-data/extra_output"
-    must_exist: false
+    must_exist: true
     create_parent: true
     required: false
     direction: "output"
@@ -236,7 +236,17 @@ functionality:
     path: "script.py"
     is_executable: true
   - type: "file"
-    path: "helper_script.py"
+    path: "helper_classes.py"
+  - type: "file"
+    path: "helper_functions.py"
+  - type: "file"
+    path: "models.py"
+  - type: "file"
+    path: "predict.py"
+  - type: "file"
+    path: "prepare_data.py"
+  - type: "file"
+    path: "train.py"
   test_resources:
   - type: "python_script"
     path: "src/common/component_tests/run_and_check_output.py"
@@ -246,11 +256,16 @@ functionality:
     dest: "resources/neurips-2023-data"
   info:
     label: "First Place"
-    summary: "FILL IN: A one sentence summary of this method."
-    description: "FILL IN: A (multi-line) description of how this method works.\n"
-    reference: "bibtex_reference_key"
-    documentation_url: "https://url.to/the/documentation"
-    repository_url: "https://github.com/organisation/repository"
+    summary: "An ensemble of LSTM, GRU, and 1D CNN models"
+    description: "An ensemble of LSTM, GRU, and 1D CNN models with a variety of input\
+      \ features derived from ChemBERTa embeddings,\none-hot encoding of cell type/small\
+      \ molecule pairs, and various statistical measures of target gene expression.\n\
+      The models were trained with a combination of MSE, MAE, LogCosh, and BCE loss\
+      \ functions to improve their\nrobustness and predictive performance. The approach\
+      \ also included data augmentation techniques to ensure\ngeneralization and account\
+      \ for noise in the data.\n"
+    documentation_url: "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/459258"
+    repository_url: "https://github.com/Jean-KOUAGOU/1st-place-solution-single-cell-pbs/tree/main"
     type: "method"
     type_info:
       label: "Method"
@@ -262,7 +277,7 @@ functionality:
 platforms:
 - type: "docker"
   id: "docker"
-  image: "ghcr.io/openproblems-bio/base_python:1.0.4"
+  image: "ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4"
   target_organization: "openproblems-bio/task-dge-perturbation-prediction"
   target_registry: "ghcr.io"
   namespace_separator: "/"
@@ -276,12 +291,18 @@ platforms:
   - type: "python"
     user: false
     packages:
+    - "torch==2.1.1"
+    - "--index-url"
+    - "https://download.pytorch.org/whl/cu121"
+    upgrade: true
+  - type: "python"
+    user: false
+    packages:
     - "fastparquet"
     - "pandas==2.1.3"
     - "pyarrow==14.0.1"
     - "tqdm==4.66.1"
     - "scikit-learn==1.3.2"
-    - "torch==2.1.1"
     - "transformers==4.35.2"
     - "matplotlib==3.8.2"
     upgrade: true
@@ -293,8 +314,8 @@ platforms:
   id: "nextflow"
   directives:
     label:
-    - "midtime"
-    - "midmem"
+    - "hightime"
+    - "highmem"
     - "highcpu"
     - "midsharedmem"
     - "gpu"
@@ -325,5 +346,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/first_place"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/first_place/first_place"
   viash_version: "0.8.5"
-  git_commit: "b4b1926bb14c87cd855aa7e4893894f8c929d8e6"
+  git_commit: "1d2323716c4faff6a7ed38aa220e0203bb8b675b"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

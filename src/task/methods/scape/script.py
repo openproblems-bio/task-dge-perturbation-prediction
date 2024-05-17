@@ -1,4 +1,4 @@
-import sys, os, fastparquet, anndata
+import sys, os, fastparquet, anndata, shutil
 print(sys.executable)
 print(os.getcwd())
 import pandas as pd
@@ -40,7 +40,7 @@ model_dir = par["output_dir"] or tempfile.TemporaryDirectory(dir = meta["temp_di
 # remove temp dir on exit
 if not par["output_dir"]:
 	import atexit
-	atexit.register(lambda: os.rmdir(model_dir))
+	atexit.register(lambda: shutil.rmtree(model_dir))
 
 # load log pvals
 df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")

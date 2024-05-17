@@ -79,6 +79,7 @@ functionality:
     - name: methods/third_place
     - name: methods/scape
     - name: methods/jn_ap_op2
+    - name: methods/first_place
     - name: metrics/mean_rowwise_error
     - name: metrics/mean_cosine_sim
   repositories:

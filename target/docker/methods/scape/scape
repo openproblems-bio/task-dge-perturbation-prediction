@@ -445,7 +445,7 @@ function ViashDockerCheckCommands {
 #   ViashDockerFile
 function ViashDockerfile {
   cat << 'VIASHDOCKER'
-FROM ghcr.io/openproblems-bio/base_python:1.0.4
+FROM ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
 
 ENTRYPOINT []
 
@@ -454,9 +454,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "tensorflow~=2.14.0" "tensorflow-io-gcs-filesystem>=0.31.0" "pandas~=1.5.3" "scikit-learn~=1.2.2" "fastparquet~=2023.10.1" "git+https://github.com/scapeML/scape.git"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods scape"
-LABEL org.opencontainers.image.created="2024-05-16T22:21:18Z"
+LABEL org.opencontainers.image.created="2024-05-17T10:28:02Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="b4b1926bb14c87cd855aa7e4893894f8c929d8e6"
+LABEL org.opencontainers.image.revision="1d2323716c4faff6a7ed38aa220e0203bb8b675b"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -1093,7 +1093,7 @@ function interrupt {
 trap clean_up EXIT
 trap interrupt INT SIGINT
 cat > "\$tempscript" << 'VIASHMAIN'
-import sys, os, fastparquet, anndata
+import sys, os, fastparquet, anndata, shutil
 print(sys.executable)
 print(os.getcwd())
 import pandas as pd
@@ -1151,7 +1151,7 @@ model_dir = par["output_dir"] or tempfile.TemporaryDirectory(dir = meta["temp_di
 # remove temp dir on exit
 if not par["output_dir"]:
 	import atexit
-	atexit.register(lambda: os.rmdir(model_dir))
+	atexit.register(lambda: shutil.rmtree(model_dir))
 
 # load log pvals
 df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")

@@ -2889,7 +2889,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/compute_pseudobulk",
     "viash_version" : "0.8.5",
-    "git_commit" : "b4b1926bb14c87cd855aa7e4893894f8c929d8e6",
+    "git_commit" : "1d2323716c4faff6a7ed38aa220e0203bb8b675b",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

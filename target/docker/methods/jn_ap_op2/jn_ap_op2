@@ -413,18 +413,18 @@ function ViashDockerCheckCommands {
 #   ViashDockerFile
 function ViashDockerfile {
   cat << 'VIASHDOCKER'
-FROM ghcr.io/openproblems-bio/base_python:1.0.4
+FROM ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
 
 ENTRYPOINT []
 
  
 RUN pip install --upgrade pip && \
-  pip install --upgrade --no-cache-dir "fastparquet" "torch" "pandas" "category_encoders"
+  pip install --upgrade --no-cache-dir "fastparquet" "pandas" "category_encoders"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods jn_ap_op2"
-LABEL org.opencontainers.image.created="2024-05-16T22:21:18Z"
+LABEL org.opencontainers.image.created="2024-05-17T10:28:02Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="b4b1926bb14c87cd855aa7e4893894f8c929d8e6"
+LABEL org.opencontainers.image.revision="1d2323716c4faff6a7ed38aa220e0203bb8b675b"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -957,12 +957,7 @@ cat > "\$tempscript" << 'VIASHMAIN'
 import pandas as pd
 import os
 os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'  # Make PyTorch deterministic on GPU
-import json
-import math
-import random
-import warnings
-import collections
-from typing import Dict, List, Tuple, Optional, Generator
+from typing import List
 import numpy as np
 import pandas as pd
 import tqdm
