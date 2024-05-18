@@ -49,6 +49,7 @@ functionality:
     - path: predict.py
     - path: prepare_data.py
     - path: train.py
+    - path: closest_sqrt_factor.py
     
 platforms:
   - type: docker
@@ -69,6 +70,7 @@ platforms:
           - scikit-learn==1.3.2
           - transformers==4.35.2
           - matplotlib==3.8.2
+          - torch-summary
 
   - type: native
   - type: nextflow

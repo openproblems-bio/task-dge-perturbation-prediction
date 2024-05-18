@@ -22,7 +22,14 @@ viash run src/task/process_dataset/convert_kaggle_h5ad_to_parquet/config.vsh.yam
   --output_train_h5ad "$OUT/de_train.h5ad" \
   --output_test "$OUT/de_test.parquet" \
   --output_test_h5ad "$OUT/de_test.h5ad" \
-  --output_id_map "$OUT/id_map.csv"
+  --output_id_map "$OUT/id_map.csv" \
+  --dataset_id neurips-2023-kaggle \
+  --dataset_name "NeurIPS2023 scPerturb DGE (Kaggle)" \
+  --dataset_summary 'Original Kaggle dataset' \
+  --dataset_description 'Original Kaggle dataset' \
+  --dataset_url TBD \
+  --dataset_reference TBD \
+  --dataset_organism homo_sapiens
 
 echo ">> Run method"
 viash run src/task/control_methods/sample/config.vsh.yaml -- \
@@ -34,35 +41,9 @@ viash run src/task/control_methods/sample/config.vsh.yaml -- \
 echo ">> Run metric"
 viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --prediction "$OUT/prediction.parquet" \
-  --de_test "$OUT/de_test.parquet" \
+  --method_id "sample" \
+  --de_test_h5ad "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"
-
-echo ">> Manually create meta files"
-cat > "$OUT/dataset_info.yaml" <<'EOF'
-dataset_id: neurips-2023-kaggle
-dataset_name: NeurIPS2023 scPerturb DGE (Kaggle)
-dataset_summary: Differential gene expression sign(logFC) * -log10(p-value) values
-  after 24 hours of treatment with 144 compounds in human PBMCs
-dataset_description: 'For this competition, we designed and generated a novel single-cell
-  perturbational dataset in human peripheral blood mononuclear cells (PBMCs). We selected
-  144 compounds from the Library of Integrated Network-Based Cellular Signatures (LINCS)
-  Connectivity Map dataset (PMID: 29195078) and measured single-cell gene expression
-  profiles after 24 hours of treatment. The experiment was repeated in three healthy
-  human donors, and the compounds were selected based on diverse transcriptional signatures
-  observed in CD34+ hematopoietic stem cells (data not released). We performed this
-  experiment in human PBMCs because the cells are commercially available with pre-obtained
-  consent for public release and PBMCs are a primary, disease-relevant tissue that
-  contains multiple mature cell types (including T-cells, B-cells, myeloid cells,
-  and NK cells) with established markers for annotation of cell types. To supplement
-  this dataset, we also measured cells from each donor at baseline with joint scRNA
-  and single-cell chromatin accessibility measurements using the 10x Multiome assay.
-  We hope that the addition of rich multi-omic data for each donor and cell type at
-  baseline will help establish biological priors that explain the susceptibility of
-  particular genes to exhibit perturbation responses in difference biological contexts.'
-dataset_url: TBD
-dataset_reference: TBD
-dataset_organism: homo_sapiens
-EOF
 
 cat > "$OUT/state.yaml" <<'EOF'
 id: neurips-2023-kaggle
@@ -71,9 +52,7 @@ de_test: !file de_test.parquet
 de_train_h5ad: !file de_train.h5ad
 de_test_h5ad: !file de_test.h5ad
 id_map: !file id_map.csv
-dataset_info: !file dataset_info.yaml
 EOF
-
 
 echo ">> Uploading results to S3"
 aws s3 sync --profile op2 \

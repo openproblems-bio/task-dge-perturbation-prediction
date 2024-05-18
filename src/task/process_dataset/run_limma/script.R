@@ -128,11 +128,16 @@ layers <- map(setNames(layer_names, layer_names), function(layer_name) {
     as.matrix()
 })
 
+# copy uns
+uns_names <- c("dataset_id", "dataset_name", "dataset_url", "dataset_reference", "dataset_summary", "dataset_description", "dataset_organism")
+new_uns <- adata$uns[uns_names]
+
 # create anndata object
 output <- anndata::AnnData(
   obs = new_obs,
   var = new_var,
-  layers = setNames(layers, layer_names)
+  layers = setNames(layers, layer_names),
+  uns = new_uns
 )
 
 # write to file

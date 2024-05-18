@@ -1,0 +1,58 @@
+functionality:
+  name: add_uns_metadata
+  namespace: process_dataset
+  info:
+    type: process_dataset
+    type_info:
+      label: Add metadata
+      summary: Add metadata to the pseudobulked data
+      description: |
+        Add metadata to the pseudobulked single-cell dataset for the DGE regression task.
+  arguments:
+    - name: --input
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-raw/pseudobulk_cleaned.h5ad
+    - name: "--dataset_id"
+      type: string
+      description: Unique identifier of the dataset.
+      required: true
+    - name: "--dataset_name"
+      type: string
+      description: Nicely formatted name.
+      required: true
+    - name: "--dataset_url"
+      type: string
+      description: Link to the original source of the dataset.
+      required: false
+    - name: "--dataset_reference"
+      type: string
+      description: Bibtex reference of the paper in which the dataset was published.
+      required: false
+    - name: "--dataset_summary"
+      type: string
+      description: Short description of the dataset.
+      required: true
+    - name: "--dataset_description"
+      type: string
+      description: Long description of the dataset.
+      required: true
+    - name: "--dataset_organism"
+      type: string
+      description: The organism of the dataset.
+      required: true
+    - name: --output
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-data/pseudobulk_uns.h5ad
+  resources:
+    - type: python_script
+      path: script.py
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_python:1.0.4
+  - type: nextflow
+    directives:
+      label: [ midtime, midmem, lowcpu ]

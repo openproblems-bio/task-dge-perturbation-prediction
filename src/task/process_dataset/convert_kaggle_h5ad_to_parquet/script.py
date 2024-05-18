@@ -47,6 +47,12 @@ input_test.layers["sign_log10_pval"] = input_test.X
 del input_train.X
 del input_test.X
 
+print(">> Store metadata in uns", flush=True)
+for key in ["dataset_id", "dataset_name", "dataset_url", "dataset_reference",\
+            "dataset_summary", "dataset_description", "dataset_organism"]:
+  input_train.uns[key] = par[key]
+  input_test.uns[key] = par[key]
+
 print(">> Convert AnnData to DataFrame", flush=True)
 de_train = anndata_to_dataframe(input_train)
 de_test = anndata_to_dataframe(input_test, add_id=True)

@@ -12,17 +12,29 @@ workflow run_wf {
     )
 
     | clean_pseudobulk.run(
-      fromState: [
-        input: "pseudobulk",
-      ],
+      fromState: [input: "pseudobulk",],
       toState: [pseudobulk_filtered: "output"]
+    )
+
+    | add_uns_metadata.run(
+      fromState: [
+        input: "pseudobulk_filtered",
+        dataset_id: "dataset_id",
+        dataset_name: "dataset_name",
+        dataset_summary: "dataset_summary",
+        dataset_description: "dataset_description",
+        dataset_url: "dataset_url",
+        dataset_reference: "dataset_reference",
+        dataset_organism: "dataset_organism"
+      ],
+      toState: [pseudobulk_filtered_with_uns: "output"]
     )
 
     | run_limma.run(
       key: "limma_train",
       fromState: { id, state ->
         [
-          input: state.pseudobulk_filtered,
+          input: state.pseudobulk_filtered_with_uns,
           input_splits: ["train", "control", "public_test"],
           output_splits: ["train", "control", "public_test"]
         ]
@@ -34,7 +46,7 @@ workflow run_wf {
       key: "limma_test",
       fromState: { id, state ->
         [
-          input: state.pseudobulk_filtered,
+          input: state.pseudobulk_filtered_with_uns,
           input_splits: ["train", "control", "public_test", "private_test"],
           output_splits: ["private_test"]
         ]
@@ -54,29 +66,13 @@ workflow run_wf {
       ]
     )
 
-    | setState { id, state ->
-      def dataset_info = [
-        dataset_id: state.dataset_id,
-        dataset_name: state.dataset_name,
-        dataset_summary: state.dataset_summary,
-        dataset_description: state.dataset_description,
-        dataset_url: state.dataset_url,
-        dataset_reference: state.dataset_reference,
-        dataset_organism: state.dataset_organism,
-      ]
-      def dataset_info_yaml_blob = toYamlBlob(dataset_info)
-      def dataset_info_file = tempFile("dataset_info.yaml")
-      dataset_info_file.write(dataset_info_yaml_blob)
-
-      [
-        de_train: state.de_train,
-        de_train_h5ad: state.de_train_h5ad,
-        de_test: state.de_test,
-        de_test_h5ad: state.de_test_h5ad,
-        id_map: state.id_map,
-        dataset_info: dataset_info_file
-      ]
-    }
+    | setState([
+      "de_train",
+      "de_train_h5ad",
+      "de_test",
+      "de_test_h5ad",
+      "id_map"
+    ])
 
   emit:
   output_ch

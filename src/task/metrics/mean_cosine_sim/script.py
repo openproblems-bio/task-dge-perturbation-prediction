@@ -4,25 +4,26 @@ import numpy as np
 
 ## VIASH START
 par = {
-    "de_test": "resources/neurips-2023-data/de_test.parquet",
-    "prediction": "resources/neurips-2023-data/output_rf.parquet",
+    "de_test_h5ad": "resources/neurips-2023-data/de_test.h5ad",
+    "prediction": "resources/neurips-2023-data/prediction.parquet",
+    "method_id": "foo",
     "output": "resources/neurips-2023-data/score.h5ad",
 }
 ## VIASH END
 
 print("Load data", flush=True)
-de_test = pd.read_parquet(par["de_test"]).set_index('id')
+de_test = ad.read_h5ad(par["de_test_h5ad"])
 prediction = pd.read_parquet(par["prediction"]).set_index('id')
 
 print("Select genes", flush=True)
-genes = list(set(de_test.columns) - set(["cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control"]))
-de_test = de_test.loc[:, genes]
+genes = list(de_test.var_names)
+de_test_X = de_test.layers["sign_log10_pval"]
 prediction = prediction[genes]
 
 print("Calculate mean cosine similarity", flush=True)
 mean_cosine_similarity = 0
-for i in de_test.index:
-    y_i = de_test.iloc[i]
+for i in range(de_test_X.shape[0]):
+    y_i = de_test_X[i,]
     y_hat_i = prediction.iloc[i]
 
     dot_product = np.dot(y_i, y_hat_i)
@@ -34,14 +35,13 @@ for i in de_test.index:
 
     mean_cosine_similarity += cosine_similarity
 
-mean_cosine_similarity /= de_test.shape[0]
+mean_cosine_similarity /= de_test_X.shape[0]
 
 print("Create output", flush=True)
 output = ad.AnnData(
-    uns = {
-        # this info is not stored in the parquet files
-        "dataset_id": "unknown",
-        "method_id": "unknown",
+    uns={
+        "dataset_id": de_test.uns["dataset_id"],
+        "method_id": par["method_id"],
         "metric_ids": ["mean_cosine_sim"],
         "metric_values": [mean_cosine_similarity]
     }

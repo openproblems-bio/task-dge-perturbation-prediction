@@ -20,15 +20,12 @@ functionality:
       direction: output
       example: resources/neurips-2023-data/pseudobulk_cleaned.h5ad
   resources:
-    - type: python_script
-      path: script.py
-    - path: filter_genes.R
+    - type: r_script
+      path: script.R
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_r:1.0.2
+    image: ghcr.io/openproblems-bio/base_r:1.0.4
     setup:
-      - type: python
-        packages: [ pyarrow ]
       - type: r
         cran: [ edgeR, limma, dplyr, tidyr, purrr, tibble ]
   - type: nextflow

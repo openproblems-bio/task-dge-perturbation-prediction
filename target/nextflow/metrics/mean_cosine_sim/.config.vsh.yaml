@@ -4,50 +4,109 @@ functionality:
   version: "main_build"
   arguments:
   - type: "file"
-    name: "--de_test"
+    name: "--de_test_h5ad"
     info:
       label: "DE test"
       summary: "Differential expression results for testing."
-      file_type: "parquet"
-      columns:
-      - name: "id"
-        type: "integer"
-        description: "Index of the test observation"
-        required: true
-      - name: "cell_type"
-        type: "string"
-        description: "The annotated cell type of each cell based on RNA expression."
-        required: true
-      - name: "sm_name"
-        type: "string"
-        description: "The primary name for the (parent) compound (in a standardized\
-          \ representation)\nas chosen by LINCS. This is provided to map the data\
-          \ in this experiment to \nthe LINCS Connectivity Map data.\n"
-        required: true
-      - name: "sm_lincs_id"
-        type: "string"
-        description: "The global LINCS ID (parent) compound (in a standardized representation).\n\
-          This is provided to map the data in this experiment to the LINCS Connectivity\n\
-          Map data.\n"
-        required: true
-      - name: "SMILES"
-        type: "string"
-        description: "Simplified molecular-input line-entry system (SMILES) representations\
-          \ of the\ncompounds used in the experiment. This is a 1D representation\
-          \ of molecular\nstructure. These SMILES are provided by Cellarity based\
-          \ on the specific\ncompounds ordered for this experiment.\n"
-        required: true
-      - name: "split"
-        type: "string"
-        description: "Split. Must be one of 'control', 'train', 'public_test', or\
-          \ 'private_test'"
-        required: true
-      - name: "control"
-        type: "boolean"
-        description: "Boolean indicating whether this instance was used as a control."
-        required: true
+      file_type: "h5ad"
+      slots:
+        obs:
+        - name: "cell_type"
+          type: "string"
+          description: "The annotated cell type of each cell based on RNA expression."
+          required: true
+        - name: "sm_name"
+          type: "string"
+          description: "The primary name for the (parent) compound (in a standardized\
+            \ representation)\nas chosen by LINCS. This is provided to map the data\
+            \ in this experiment to \nthe LINCS Connectivity Map data.\n"
+          required: true
+        - name: "sm_lincs_id"
+          type: "string"
+          description: "The global LINCS ID (parent) compound (in a standardized representation).\n\
+            This is provided to map the data in this experiment to the LINCS Connectivity\n\
+            Map data.\n"
+          required: true
+        - name: "SMILES"
+          type: "string"
+          description: "Simplified molecular-input line-entry system (SMILES) representations\
+            \ of the\ncompounds used in the experiment. This is a 1D representation\
+            \ of molecular\nstructure. These SMILES are provided by Cellarity based\
+            \ on the specific\ncompounds ordered for this experiment.\n"
+          required: true
+        - name: "split"
+          type: "string"
+          description: "Split. Must be one of 'control', 'train', 'public_test', or\
+            \ 'private_test'"
+          required: true
+        - name: "control"
+          type: "boolean"
+          description: "Boolean indicating whether this instance was used as a control."
+          required: true
+        layers:
+        - name: "P.Value"
+          type: "double"
+          description: "P-value of the differential expression test"
+          required: true
+        - name: "adj.P.Value"
+          type: "double"
+          description: "Adjusted P-value of the differential expression test"
+          required: true
+        - name: "is_de"
+          type: "boolean"
+          description: "Whether the gene is differentially expressed"
+          required: true
+        - name: "is_de_adj"
+          type: "boolean"
+          description: "Whether the gene is differentially expressed after adjustment"
+          required: true
+        - name: "logFC"
+          type: "double"
+          description: "Log fold change of the differential expression test"
+          required: true
+        - name: "sign_log10_pval"
+          type: "double"
+          description: "Differential expression value (-log10(p-value) * sign(LFC))\
+            \ for each gene.\nHere, LFC is the estimated log-fold change in expression\
+            \ between the treatment\nand control condition after shrinkage as calculated\
+            \ by Limma. Positive LFC means\nthe gene goes up in the treatment condition\
+            \ relative to the control.\n"
+          required: true
+        uns:
+        - type: "string"
+          name: "dataset_id"
+          description: "A unique identifier for the dataset. This is different from\
+            \ the `obs.dataset_id` field, which is the identifier for the dataset\
+            \ from which the cell data is derived."
+          required: true
+        - name: "dataset_name"
+          type: "string"
+          description: "A human-readable name for the dataset."
+          required: true
+        - type: "string"
+          name: "dataset_url"
+          description: "Link to the original source of the dataset."
+          required: false
+        - name: "dataset_reference"
+          type: "string"
+          description: "Bibtex reference of the paper in which the dataset was published."
+          required: false
+          multiple: true
+        - name: "dataset_summary"
+          type: "string"
+          description: "Short description of the dataset."
+          required: true
+        - name: "dataset_description"
+          type: "string"
+          description: "Long description of the dataset."
+          required: true
+        - name: "dataset_organism"
+          type: "string"
+          description: "The organism of the sample in the dataset."
+          required: false
+          multiple: true
     example:
-    - "resources/neurips-2023-data/de_test.parquet"
+    - "resources/neurips-2023-data/de_test.h5ad"
     must_exist: true
     create_parent: true
     required: true
@@ -70,6 +129,15 @@ functionality:
     - "resources/neurips-2023-data/prediction.parquet"
     must_exist: true
     create_parent: true
+    required: true
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "string"
+    name: "--method_id"
+    info:
+      test_default: "test"
     required: true
     direction: "input"
     multiple: false
@@ -148,7 +216,7 @@ functionality:
 platforms:
 - type: "docker"
   id: "docker"
-  image: "ghcr.io/openproblems-bio/base_python:1.0.2"
+  image: "ghcr.io/openproblems-bio/base_python:1.0.4"
   target_organization: "openproblems-bio/task-dge-perturbation-prediction"
   target_registry: "ghcr.io"
   namespace_separator: "/"
@@ -197,6 +265,6 @@ info:
   platform: "nextflow"
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim/mean_cosine_sim"
-  viash_version: "0.8.5"
-  git_commit: "66faa27790d46f5151451f7ebf92e85308bcb2cd"
+  viash_version: "0.8.6"
+  git_commit: "4fa04bb0b8fe65943cf040dad5a4cb980185d354"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

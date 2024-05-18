@@ -44,5 +44,5 @@ def train(par, paths):
     print(f"Y:{y.shape}")
     cell_types_sm_names = de_train[['cell_type', 'sm_name']]
     print("\nTraining starting...")
-    train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, train_config, par["models"], paths)
+    train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, train_config, par, paths)
     print("\nDone.")

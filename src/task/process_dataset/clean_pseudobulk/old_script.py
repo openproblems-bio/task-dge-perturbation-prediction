@@ -1,14 +1,26 @@
 import anndata as ad
 import subprocess
 import os
+import tempfile
+import atexit
+import shutil
 
 ## VIASH START
 par = {
     "input": "resources/neurips-2023-data/pseudobulk.h5ad",
     "output": "resources/neurips-2023-data/pseudobulk_cleaned.h5ad"
 }
-meta = {"resources_dir": "src/task/process_dataset/clean_pseudobulk"}
+meta = {
+    "resources_dir": "src/task/process_dataset/clean_pseudobulk",
+    "temp_dir": "/tmp"
+}
 ## VIASH END
+
+temp_dir = tempfile.TemporaryDirectory(dir=meta["temp_dir"]).name
+# check if temp_dir exists
+if not os.path.exists(temp_dir):
+    os.makedirs(temp_dir)
+atexit = atexit.register(lambda: shutil.rmtree(temp_dir))
 
 print(">> Load dataset", flush=True)
 bulk_adata = ad.read_h5ad(par["input"])
@@ -45,10 +57,11 @@ bulk_adata = bulk_adata[~((bulk_adata.obs.sm_name == "R428") & (bulk_adata.obs.c
 bulk_adata = bulk_adata[bulk_adata.obs.sm_name != "UNII-BXU45ZH6LI"]
 
 print(">> Save dataset for R script for gene filtering", flush=True)
-bulk_adata.write_h5ad(par["input"], compression="gzip")
+temp_h5ad = f"{temp_dir}/bulk_temp.h5ad"
+bulk_adata.write_h5ad(temp_h5ad, compression="gzip")
 
 print(">> Filter out genes", flush=True)
-command = ["Rscript", os.path.join(meta["resources_dir"], "filter_genes.R"), par["input"]]
+command = ["Rscript", os.path.join(meta["resources_dir"], "/filter_genes.R"), temp_h5ad]
 
 result = subprocess.run(command, capture_output=True, text=True)
 

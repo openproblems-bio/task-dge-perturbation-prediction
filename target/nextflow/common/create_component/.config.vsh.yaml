@@ -132,6 +132,6 @@ info:
   platform: "nextflow"
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/common/create_component"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/common/create_component/create_component"
-  viash_version: "0.8.5"
-  git_commit: "66faa27790d46f5151451f7ebf92e85308bcb2cd"
+  viash_version: "0.8.6"
+  git_commit: "4fa04bb0b8fe65943cf040dad5a4cb980185d354"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

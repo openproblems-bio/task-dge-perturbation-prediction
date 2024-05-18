@@ -30,19 +30,14 @@ functionality:
       type: string
       description: The organism of the dataset.
       required: true
-    - name: --dataset_info
-      type: file
-      description: A yaml file containing the dataset information.
-      required: true
-      direction: output
-      default: dataset_info.yaml
   resources:
     - type: nextflow_script
       path: main.nf
       entrypoint: run_wf
   dependencies:
-    - name: process_dataset/clean_pseudobulk
     - name: process_dataset/compute_pseudobulk
+    - name: process_dataset/clean_pseudobulk
+    - name: process_dataset/add_uns_metadata
     - name: process_dataset/run_limma
     - name: process_dataset/convert_h5ad_to_parquet
 platforms:

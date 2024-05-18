@@ -203,7 +203,7 @@ def cross_validate_models(X, y, kf_cv, cell_types_sm_names, paths, config=None, 
                     'train_sm_name': cell_types_sm_names.iloc[train_idx]['sm_name'].tolist(),
                     'val_sm_name': cell_types_sm_names.iloc[val_idx]['sm_name'].tolist()}
         for Model in [LSTM, Conv, GRU]:
-            model = Model(scheme)
+            model = Model(scheme, X.shape, y.shape)
             model, results = train_function(model, x_train, y_train, x_val, y_val, info_data, config=config, clip_norm=clip_norm)
             model.to('cpu')
             trained_models.append(model)
@@ -215,7 +215,7 @@ def cross_validate_models(X, y, kf_cv, cell_types_sm_names, paths, config=None, 
                 torch.cuda.empty_cache()
     return trained_models
 
-def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, config, model_names, paths):
+def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, config, par, paths):
     kf_cv = KF(n_splits=config["KF_N_SPLITS"], shuffle=True, random_state=42)
     trained_models = {'initial': [], 'light': [], 'heavy': []}
     print(paths["model_dir"])
@@ -224,8 +224,18 @@ def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, conf
         os.makedirs(paths["model_dir"], exist_ok=True)
     if not os.path.exists(paths["logs_dir"]):
         os.makedirs(paths["logs_dir"], exist_ok=True)
+    shapes = {
+        "xshapes": {
+            'initial': X_vec.shape,
+            'light': X_vec_light.shape,
+            'heavy': X_vec_heavy.shape
+        },
+        "yshape": y.shape
+    }
+    with open(f'{paths["model_dir"]}/shapes.json', 'w') as file:
+        json.dump(shapes, file)
     for scheme, clip_norm, input_features in zip(['initial', 'light', 'heavy'], config["CLIP_VALUES"], [X_vec, X_vec_light, X_vec_heavy]):
-        if scheme in model_names:
+        if scheme in par["models"]:
             seed_everything()
             models = cross_validate_models(input_features, y, kf_cv, cell_types_sm_names, config=config, scheme=scheme, clip_norm=clip_norm, paths=paths)
             trained_models[scheme].extend(models)
@@ -266,11 +276,15 @@ def weighted_average_prediction(X_test, trained_models, model_wise=[0.25, 0.35, 
     return np.stack(all_preds, axis=1).sum(axis=1)
 
 def load_trained_models(path, kf_n_splits=5):
+    with open(f'{path}/shapes.json', 'r') as f:
+        shapes = json.load(f)
+    xshapes = shapes['xshapes']
+    yshape = shapes['yshape']
     trained_models = {'initial': [], 'light': [], 'heavy': []}
     for scheme in ['initial', 'light', 'heavy']:
         for fold in range(kf_n_splits):
             for Model in [LSTM, Conv, GRU]:
-                model = Model(scheme)
+                model = Model(scheme, xshapes[scheme], yshape)
                 for weights_path in os.listdir(path):
                     if model.name in weights_path and scheme in weights_path and f'fold{fold}' in weights_path:
                         model.load_state_dict(torch.load(f'{path}/{weights_path}', map_location='cpu'))

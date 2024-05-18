@@ -4,26 +4,27 @@ import numpy as np
 
 ## VIASH START
 par = {
-    "de_test": "resources/neurips-2023-data/de_test.parquet",
+    "de_test_h5ad": "resources/neurips-2023-data/de_test.h5ad",
     "prediction": "resources/neurips-2023-data/output_rf.parquet",
+    "method_id": "foo",
     "output": "resources/neurips-2023-data/score.h5ad",
 }
 ## VIASH END
 
 print("Load data", flush=True)
-de_test = pd.read_parquet(par["de_test"]).set_index('id')
+de_test = ad.read_h5ad(par["de_test_h5ad"])
 prediction = pd.read_parquet(par["prediction"]).set_index('id')
 
 print("Select genes", flush=True)
-genes = list(set(de_test.columns) - set(["cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control"]))
-de_test = de_test.loc[:, genes]
+genes = list(de_test.var_names)
+de_test_X = de_test.layers["sign_log10_pval"]
 prediction = prediction[genes]
 
 print("Calculate mean rowwise RMSE", flush=True)
 mean_rowwise_rmse = 0
 mean_rowwise_mae = 0
-for i in de_test.index:
-    diff = de_test.iloc[i] - prediction.iloc[i]
+for i in range(de_test_X.shape[0]):
+    diff = de_test_X[i,] - prediction.iloc[i]
     mean_rowwise_rmse += np.sqrt((diff**2).mean())
     mean_rowwise_mae += np.abs(diff).mean()
 
@@ -32,10 +33,9 @@ mean_rowwise_mae /= de_test.shape[0]
 
 print("Create output", flush=True)
 output = ad.AnnData(
-    uns = {
-        # this info is not stored in the parquet files
-        "dataset_id": "unknown",
-        "method_id": "unknown",
+    uns={
+        "dataset_id": de_test.uns["dataset_id"],
+        "method_id": par["method_id"],
         "metric_ids": ["mean_rowwise_rmse", "mean_rowwise_mae"],
         "metric_values": [mean_rowwise_rmse, mean_rowwise_mae]
     }
