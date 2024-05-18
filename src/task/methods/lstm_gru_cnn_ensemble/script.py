@@ -11,10 +11,10 @@ par = {
     "epochs": 1,
     "kf_n_splits": 2,
     "output": "output.parquet",
-    "extra_output": None
+    "output_model": None
 }
 meta = {
-    "resources_dir": "src/task/methods/first_place",
+    "resources_dir": "src/task/methods/lstm_gru_cnn_ensemble",
     "temp_dir": "/tmp"
 }
 ## VIASH END
@@ -27,19 +27,19 @@ from train import train
 from predict import predict
 
 # create a temporary directory for storing models
-extra_output = par["extra_output"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
+output_model = par["output_model"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
 paths = {
     "output": par["output"],
-    "extra_output": extra_output,
-    "train_data_aug_dir": f"{extra_output}/train_data_aug_dir",
-    "model_dir": f"{extra_output}/model_dir",
-    "logs_dir": f"{extra_output}/logs"
+    "output_model": output_model,
+    "train_data_aug_dir": f"{output_model}/train_data_aug_dir",
+    "model_dir": f"{output_model}/model_dir",
+    "logs_dir": f"{output_model}/logs"
 }
 
 # remove temp dir on exit
-if not par["extra_output"]:
+if not par["output_model"]:
 	import atexit
-	atexit.register(lambda: shutil.rmtree(extra_output))
+	atexit.register(lambda: shutil.rmtree(output_model))
 
 # prepare data
 prepare_data(par, paths)

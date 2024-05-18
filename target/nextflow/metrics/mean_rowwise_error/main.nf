@@ -3044,9 +3044,7 @@ meta = [
           "name" : "mean_rowwise_rmse",
           "label" : "Mean Rowwise RMSE",
           "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix.",
-          "description" : "We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum\\\\_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum\\\\_{j=1}^{n} (y\\\\_{ij} - \\\\widehat{y}\\\\_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere \\\\\\\\(R\\\\\\\\) is the number of scored rows, and \\\\\\\\(y_{ij}\\\\\\\\) and \\\\\\\\(\\\\widehat{y}_{ij}\\\\\\\\) are the actual and predicted values, respectively, for row \\\\\\\\(i\\\\\\\\) and column \\\\\\\\(j\\\\\\\\), and \\\\\\\\(n\\\\\\\\) is the number of columns.\n",
-          "repository_url" : "...",
-          "documentation_url" : "...",
+          "description" : "We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum\\\\_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum\\\\_{j=1}^{n} (y\\\\_{ij} - \\\\widehat{y}\\\\_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(y_{ij}\\\\\\\\)$ and $\\\\\\\\(\\\\widehat{y}_{ij}\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$ and column $\\\\\\\\(j\\\\\\\\)$, and $\\\\\\\\(n\\\\\\\\)$ bis the number of columns.\n",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3055,9 +3053,7 @@ meta = [
           "name" : "mean_rowwise_mae",
           "label" : "Mean Rowwise MAE",
           "summary" : "The mean of the absolute error (MAE) of each row in the matrix.",
-          "description" : "We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere \\\\(R\\\\) is the number of scored rows, and \\\\(y_{ij}\\\\) and \\\\(\\\\widehat{y}_{ij}\\\\) are the actual and predicted values, respectively, for row \\\\(i\\\\) and column \\\\(j\\\\), and \\\\(n\\\\) is the number of columns.\n",
-          "repository_url" : "...",
-          "documentation_url" : "...",
+          "description" : "We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(y_{ij}\\\\\\\\)$ and $\\\\\\\\(\\\\widehat{y}_{ij}\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$ and column $\\\\\\\\(j\\\\\\\\)$, and $\\\\\\\\(n\\\\\\\\)$ bis the number of columns.\n",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3138,7 +3134,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error",
     "viash_version" : "0.8.6",
-    "git_commit" : "4fa04bb0b8fe65943cf040dad5a4cb980185d354",
+    "git_commit" : "ba4429da5363a0602360d285a78940c04fc934c0",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

@@ -3041,12 +3041,10 @@ meta = [
     "info" : {
       "metrics" : [
         {
-          "name" : "mean_socine_sim",
+          "name" : "mean_cosine_sim",
           "label" : "Mean Cosine Similarity",
           "summary" : "The mean of cosine similarities per row (perturbation).",
-          "description" : "We use the **Mean Cosine Similarity** to score submissions, computed as follows:\n\n$$\n\\\\textrm{Mean-Cosine} = \\\\frac{1}{R} \\\\sum_{i=1}^R \\\\frac{\\\\mathbf{y}_i \\\\cdot \\\\mathbf{\\\\hat{y}}_i}{\\\\|\\\\mathbf{y}_i\\\\| \\\\|\\\\mathbf{\\\\hat{y}}_i\\\\|}\n$$\n\nwhere \\\\\\\\(R\\\\\\\\) is the number of scored rows, and \\\\\\\\(\\\\mathbf{y}_i\\\\\\\\) and \\\\\\\\(\\\\mathbf{\\\\hat{y}}_i\\\\\\\\) are the actual and predicted values, respectively, for row \\\\\\\\(i\\\\\\\\).\n",
-          "repository_url" : "...",
-          "documentation_url" : "...",
+          "description" : "We use the **Mean Cosine Similarity** to score submissions, computed as follows:\n\n$$\n\\\\textrm{Mean-Cosine} = \\\\frac{1}{R} \\\\sum_{i=1}^R \\\\frac{\\\\mathbf{y}_i \\\\cdot \\\\mathbf{\\\\hat{y}}_i}{\\\\|\\\\mathbf{y}_i\\\\| \\\\|\\\\mathbf{\\\\hat{y}}_i\\\\|}\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(\\\\mathbf{y}_i\\\\\\\\)$ and $\\\\\\\\(\\\\mathbf{\\\\hat{y}}_i\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$.\n",
           "min" : -1,
           "max" : 1,
           "maximize" : true
@@ -3127,7 +3125,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim",
     "viash_version" : "0.8.6",
-    "git_commit" : "4fa04bb0b8fe65943cf040dad5a4cb980185d354",
+    "git_commit" : "ba4429da5363a0602360d285a78940c04fc934c0",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

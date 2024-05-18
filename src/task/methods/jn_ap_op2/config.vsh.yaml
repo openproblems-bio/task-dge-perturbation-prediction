@@ -3,7 +3,8 @@ __merge__: ../../api/comp_method.yaml
 functionality:
   name: jn_ap_op2
   info:
-    label: A deep NN model proposed by Antoine Passiemier and Jalil Nourisa
+    label: JN-AP-OP2
+    rank: 20
     summary: "Deep learning architecture composed of 2 modules: a sample-centric MLP and a gene-centric MLP"
     description: |
       We first encode each sample using leave-one-out encoder based on compound and cell type. This produces X with the dimension of n_samples, n_genes, n_encode,
@@ -42,4 +43,4 @@ platforms:
   - type: native
   - type: nextflow
     directives:
-      label: [ hightime, highmem, highcpu, gpu ]
+      label: [ hightime, midmem, highcpu, gpu ]

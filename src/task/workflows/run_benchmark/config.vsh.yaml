@@ -73,11 +73,10 @@ functionality:
     - name: control_methods/mean_outcome
     - name: control_methods/mean_across_celltypes
     - name: control_methods/mean_across_compounds
-    - name: methods/random_forest
-    - name: methods/third_place
+    - name: methods/nn_retraining_with_pseudolabels
     - name: methods/scape
     - name: methods/jn_ap_op2
-    - name: methods/first_place
+    - name: methods/lstm_gru_cnn_ensemble
     - name: metrics/mean_rowwise_error
     - name: metrics/mean_cosine_sim
   repositories:

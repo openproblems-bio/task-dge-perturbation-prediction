@@ -3,6 +3,7 @@ functionality:
   name: scape
   info:
     label: ScAPE
+    rank: 16
     summary: Neural network model for drug effect prediction
     description: |
       ScAPE is utilises a neural network (NN) model to estimate drug effects on gene expression in
@@ -18,12 +19,6 @@ functionality:
     documentation_url: https://docs.google.com/document/d/1w0GIJ8VoQx3HEJNmLXoU-Y_STB-h5-bXusL80_6EVuU/edit
     repository_url: https://github.com/scapeML/scape
   arguments:
-    - type: file
-      name: --output_dir
-      direction: output
-      description: Additional output directory for the model.
-      required: false
-      example: path/to/output_dir
     - type: string
       name: --cell
       description: Pre-defined cell type held for pre-training.

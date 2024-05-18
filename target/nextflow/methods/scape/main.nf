@@ -3052,12 +3052,9 @@ meta = [
       },
       {
         "type" : "file",
-        "name" : "--output_dir",
-        "description" : "Additional output directory for the model.",
-        "example" : [
-          "path/to/output_dir"
-        ],
-        "must_exist" : true,
+        "name" : "--output_model",
+        "description" : "Optional model output. If no value is passed, the model will be removed at the end of the run.",
+        "must_exist" : false,
         "create_parent" : true,
         "required" : false,
         "direction" : "output",
@@ -3196,6 +3193,7 @@ meta = [
     ],
     "info" : {
       "label" : "ScAPE",
+      "rank" : 16,
       "summary" : "Neural network model for drug effect prediction",
       "description" : "ScAPE is utilises a neural network (NN) model to estimate drug effects on gene expression in\nperipheral blood mononuclear cells (PBMCs). The model took drug and cell features as input,\nwith these features primarily derived from the median of signed log-pvalues and log fold-changes\ngrouped by drug and cell type. The NN was trained using a leave-one-drug-out cross-validation\nstrategy, focusing on NK cells as a representative cell type due to their similarity to B cells\nand Myeloid cells in principal component analysis. Model performance was evaluated by comparing\nits predictions against two baselines: predicting zero effect and predicting the median\nlog-pvalue for each drug. The final submission combined predictions from models trained on\ndifferent gene and drug subsets, aiming to enhance overall prediction accuracy.\n",
       "reference" : "pablormier2023scape",
@@ -3282,7 +3280,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape",
     "viash_version" : "0.8.6",
-    "git_commit" : "4fa04bb0b8fe65943cf040dad5a4cb980185d354",
+    "git_commit" : "ba4429da5363a0602360d285a78940c04fc934c0",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3318,7 +3316,7 @@ par = {
   'de_train_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'id_map': $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo "r'${VIASH_PAR_ID_MAP//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'output_dir': $( if [ ! -z ${VIASH_PAR_OUTPUT_DIR+x} ]; then echo "r'${VIASH_PAR_OUTPUT_DIR//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'output_model': $( if [ ! -z ${VIASH_PAR_OUTPUT_MODEL+x} ]; then echo "r'${VIASH_PAR_OUTPUT_MODEL//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'cell': $( if [ ! -z ${VIASH_PAR_CELL+x} ]; then echo "r'${VIASH_PAR_CELL//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'epochs': $( if [ ! -z ${VIASH_PAR_EPOCHS+x} ]; then echo "int(r'${VIASH_PAR_EPOCHS//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
   'epochs_enhanced': $( if [ ! -z ${VIASH_PAR_EPOCHS_ENHANCED+x} ]; then echo "int(r'${VIASH_PAR_EPOCHS_ENHANCED//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
@@ -3349,11 +3347,11 @@ dep = {
 
 print(f"par: {par}")
 
-# if output_dir is not provided, create a temporary directory
-model_dir = par["output_dir"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
+# if output_model is not provided, create a temporary directory
+model_dir = par["output_model"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
 
 # remove temp dir on exit
-if not par["output_dir"]:
+if not par["output_model"]:
 	import atexit
 	atexit.register(lambda: shutil.rmtree(model_dir))
 

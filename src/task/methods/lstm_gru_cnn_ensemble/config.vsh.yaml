@@ -1,9 +1,10 @@
 __merge__: ../../api/comp_method.yaml
 
 functionality:
-  name: first_place
+  name: lstm_gru_cnn_ensemble
   info:
-    label: First Place
+    label: LSTM-GRU-CNN Ensemble
+    rank: 1
     summary: An ensemble of LSTM, GRU, and 1D CNN models
     description: |
       An ensemble of LSTM, GRU, and 1D CNN models with a variety of input features derived from ChemBERTa embeddings,
@@ -15,12 +16,6 @@ functionality:
     repository_url: https://github.com/Jean-KOUAGOU/1st-place-solution-single-cell-pbs/tree/main
 
   arguments:
-    - name: "--extra_output"
-      type: "file"
-      default: "resources/neurips-2023-data/extra_output/"
-      description: "Extra output directory. Will contain folders `prepared_data`, `trained_models`, and `logs`."
-      direction: output
-      required: false
     - name: --epochs
       type: integer
       default: 250

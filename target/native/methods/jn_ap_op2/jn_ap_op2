@@ -189,6 +189,11 @@ function ViashHelp {
   echo "        type: file, required parameter, output, file must exist"
   echo "        example: resources/neurips-2023-data/prediction.parquet"
   echo ""
+  echo "    --output_model"
+  echo "        type: file, output"
+  echo "        Optional model output. If no value is passed, the model will be removed"
+  echo "        at the end of the run."
+  echo ""
   echo "    --n_replica"
   echo "        type: integer"
   echo "        default: 10"
@@ -266,6 +271,17 @@ while [[ $# -gt 0 ]]; do
         --output=*)
             [ -n "$VIASH_PAR_OUTPUT" ] && ViashError Bad arguments for option \'--output=*\': \'$VIASH_PAR_OUTPUT\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
             VIASH_PAR_OUTPUT=$(ViashRemoveFlags "$1")
+            shift 1
+            ;;
+        --output_model)
+            [ -n "$VIASH_PAR_OUTPUT_MODEL" ] && ViashError Bad arguments for option \'--output_model\': \'$VIASH_PAR_OUTPUT_MODEL\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_OUTPUT_MODEL="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --output_model. Use "--help" to get more information on the parameters. && exit 1
+            shift 2
+            ;;
+        --output_model=*)
+            [ -n "$VIASH_PAR_OUTPUT_MODEL" ] && ViashError Bad arguments for option \'--output_model=*\': \'$VIASH_PAR_OUTPUT_MODEL\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_OUTPUT_MODEL=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         --n_replica)
@@ -478,6 +494,9 @@ fi
 # create parent directories of output files, if so desired
 if [ ! -z "$VIASH_PAR_OUTPUT" ] && [ ! -d "$(dirname "$VIASH_PAR_OUTPUT")" ]; then
   mkdir -p "$(dirname "$VIASH_PAR_OUTPUT")"
+fi
+if [ ! -z "$VIASH_PAR_OUTPUT_MODEL" ] && [ ! -d "$(dirname "$VIASH_PAR_OUTPUT_MODEL")" ]; then
+  mkdir -p "$(dirname "$VIASH_PAR_OUTPUT_MODEL")"
 fi
 
 
@@ -835,6 +854,7 @@ par = {
   'de_train_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'id_map': $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo "r'${VIASH_PAR_ID_MAP//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'output_model': $( if [ ! -z ${VIASH_PAR_OUTPUT_MODEL+x} ]; then echo "r'${VIASH_PAR_OUTPUT_MODEL//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'n_replica': $( if [ ! -z ${VIASH_PAR_N_REPLICA+x} ]; then echo "int(r'${VIASH_PAR_N_REPLICA//\'/\'\"\'\"r\'}')"; else echo None; fi ),
   'submission_names': $( if [ ! -z ${VIASH_PAR_SUBMISSION_NAMES+x} ]; then echo "r'${VIASH_PAR_SUBMISSION_NAMES//\'/\'\"\'\"r\'}'.split(';')"; else echo None; fi )
 }

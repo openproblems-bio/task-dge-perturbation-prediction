@@ -25,7 +25,7 @@ par = {
     "output": "output.parquet",
     "reps": 2,
 }
-meta = {"resources_dir": "src/task/methods/third_place"}
+meta = {"resources_dir": "src/task/methods/nn_retraining_with_pseudolabels"}
 ## VIASH END
 
 def main(par, meta):

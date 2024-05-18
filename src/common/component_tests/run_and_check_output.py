@@ -7,8 +7,8 @@ import re
 
 ## VIASH START
 meta = {
-    "executable": "target/docker/methods/first_place/first_place",
-    "config": "target/docker/methods/first_place/.config.vsh.yaml",
+    "executable": "target/docker/methods/lstm_gru_cnn_ensemble/lstm_gru_cnn_ensemble",
+    "config": "target/docker/methods/lstm_gru_cnn_ensemble/.config.vsh.yaml",
     "resources_dir": "resources"
 }
 ## VIASH END

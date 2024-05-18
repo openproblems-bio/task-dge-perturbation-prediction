@@ -19,9 +19,8 @@ workflow run_wf {
     mean_across_compounds,
     sample,
     zeros,
-    random_forest,
-    first_place,
-    third_place,
+    lstm_gru_cnn_ensemble,
+    nn_retraining_with_pseudolabels,
     jn_ap_op2,
     scape
   ]
@@ -78,6 +77,8 @@ workflow run_wf {
           de_train: state.de_train,
           de_train_h5ad: state.de_train_h5ad,
           id_map: state.id_map,
+          output: 'predictions/$id.$key.output.parquet',
+          output_model: null
         ]
         if (comp.config.functionality.info.type == "control_method") {
           new_args.de_test = state.de_test

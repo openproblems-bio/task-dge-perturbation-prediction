@@ -18,7 +18,7 @@ par = dict(
 	de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
 	id_map = "resources/neurips-2023-data/id_map.csv",
 	output = "output/neurips-2023-data/output_rf.parquet",
-	output_dir = None,
+	output_model = None,
 	cell = "NK cells",
 	epochs = 2,
 	epochs_enhanced = 2,
@@ -34,11 +34,11 @@ meta = dict(
 
 print(f"par: {par}")
 
-# if output_dir is not provided, create a temporary directory
-model_dir = par["output_dir"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
+# if output_model is not provided, create a temporary directory
+model_dir = par["output_model"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
 
 # remove temp dir on exit
-if not par["output_dir"]:
+if not par["output_model"]:
 	import atexit
 	atexit.register(lambda: shutil.rmtree(model_dir))
 

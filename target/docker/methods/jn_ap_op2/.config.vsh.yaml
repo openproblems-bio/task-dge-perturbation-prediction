@@ -211,6 +211,18 @@ functionality:
     multiple: false
     multiple_sep: ":"
     dest: "par"
+  - type: "file"
+    name: "--output_model"
+    description: "Optional model output. If no value is passed, the model will be\
+      \ removed at the end of the run."
+    info: null
+    must_exist: false
+    create_parent: true
+    required: false
+    direction: "output"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
   - type: "integer"
     name: "--n_replica"
     info:
@@ -247,7 +259,8 @@ functionality:
     path: "resources/neurips-2023-data"
     dest: "resources/neurips-2023-data"
   info:
-    label: "A deep NN model proposed by Antoine Passiemier and Jalil Nourisa"
+    label: "JN-AP-OP2"
+    rank: 20
     summary: "Deep learning architecture composed of 2 modules: a sample-centric MLP\
       \ and a gene-centric MLP"
     description: "We first encode each sample using leave-one-out encoder based on\
@@ -298,7 +311,7 @@ platforms:
   directives:
     label:
     - "hightime"
-    - "highmem"
+    - "midmem"
     - "highcpu"
     - "gpu"
     tag: "$id"
@@ -328,5 +341,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/jn_ap_op2"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/jn_ap_op2/jn_ap_op2"
   viash_version: "0.8.6"
-  git_commit: "4fa04bb0b8fe65943cf040dad5a4cb980185d354"
+  git_commit: "ba4429da5363a0602360d285a78940c04fc934c0"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

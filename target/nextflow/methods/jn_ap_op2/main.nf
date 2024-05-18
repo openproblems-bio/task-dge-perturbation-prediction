@@ -3051,6 +3051,18 @@ meta = [
         "dest" : "par"
       },
       {
+        "type" : "file",
+        "name" : "--output_model",
+        "description" : "Optional model output. If no value is passed, the model will be removed at the end of the run.",
+        "must_exist" : false,
+        "create_parent" : true,
+        "required" : false,
+        "direction" : "output",
+        "multiple" : false,
+        "multiple_sep" : ":",
+        "dest" : "par"
+      },
+      {
         "type" : "integer",
         "name" : "--n_replica",
         "info" : {
@@ -3107,7 +3119,8 @@ meta = [
       }
     ],
     "info" : {
-      "label" : "A deep NN model proposed by Antoine Passiemier and Jalil Nourisa",
+      "label" : "JN-AP-OP2",
+      "rank" : 20,
       "summary" : "Deep learning architecture composed of 2 modules: a sample-centric MLP and a gene-centric MLP",
       "description" : "We first encode each sample using leave-one-out encoder based on compound and cell type. This produces X with the dimension of n_samples, n_genes, n_encode,\nwhere n_encode is 2. Then, X is passed to a MLP1 sample-wise with input of n_samples, n_genes*n_encode, which outputs the same dimension data.\nThe purpose of this MLP is to learn inter-gene relationships. Then, we group the output of MLP1 with X (original encoded data) and feed it\nto MLP2 which receives n_smaples*n_genes, (n_encode + n_encode) and results n_samples*n_genes. This MLP2 trains on each (compound, cell_type, gene)\ncombination. This is to overcome the underdetermination problem due to lack of sufficient (compound, cell_type) samples. \n",
       "documentation_url" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/461159",
@@ -3157,7 +3170,7 @@ meta = [
       "directives" : {
         "label" : [
           "hightime",
-          "highmem",
+          "midmem",
           "highcpu",
           "gpu"
         ],
@@ -3194,7 +3207,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/jn_ap_op2",
     "viash_version" : "0.8.6",
-    "git_commit" : "4fa04bb0b8fe65943cf040dad5a4cb980185d354",
+    "git_commit" : "ba4429da5363a0602360d285a78940c04fc934c0",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3546,6 +3559,7 @@ par = {
   'de_train_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'id_map': $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo "r'${VIASH_PAR_ID_MAP//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'output_model': $( if [ ! -z ${VIASH_PAR_OUTPUT_MODEL+x} ]; then echo "r'${VIASH_PAR_OUTPUT_MODEL//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'n_replica': $( if [ ! -z ${VIASH_PAR_N_REPLICA+x} ]; then echo "int(r'${VIASH_PAR_N_REPLICA//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
   'submission_names': $( if [ ! -z ${VIASH_PAR_SUBMISSION_NAMES+x} ]; then echo "r'${VIASH_PAR_SUBMISSION_NAMES//\\'/\\'\\"\\'\\"r\\'}'.split(';')"; else echo None; fi )
 }
@@ -4011,7 +4025,7 @@ meta["defaults"] = [
   },
   "label" : [
     "hightime",
-    "highmem",
+    "midmem",
     "highcpu",
     "gpu"
   ],

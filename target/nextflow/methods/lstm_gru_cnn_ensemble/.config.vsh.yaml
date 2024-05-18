@@ -1,5 +1,5 @@
 functionality:
-  name: "first_place"
+  name: "lstm_gru_cnn_ensemble"
   namespace: "methods"
   version: "main_build"
   arguments:
@@ -212,13 +212,11 @@ functionality:
     multiple_sep: ":"
     dest: "par"
   - type: "file"
-    name: "--extra_output"
-    description: "Extra output directory. Will contain folders `prepared_data`, `trained_models`,\
-      \ and `logs`."
+    name: "--output_model"
+    description: "Optional model output. If no value is passed, the model will be\
+      \ removed at the end of the run."
     info: null
-    default:
-    - "resources/neurips-2023-data/extra_output"
-    must_exist: true
+    must_exist: false
     create_parent: true
     required: false
     direction: "output"
@@ -290,7 +288,8 @@ functionality:
     path: "resources/neurips-2023-data"
     dest: "resources/neurips-2023-data"
   info:
-    label: "First Place"
+    label: "LSTM-GRU-CNN Ensemble"
+    rank: 1
     summary: "An ensemble of LSTM, GRU, and 1D CNN models"
     description: "An ensemble of LSTM, GRU, and 1D CNN models with a variety of input\
       \ features derived from ChemBERTa embeddings,\none-hot encoding of cell type/small\
@@ -377,10 +376,10 @@ platforms:
   debug: false
   container: "docker"
 info:
-  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/first_place/config.vsh.yaml"
-  platform: "native"
-  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/native/methods/first_place"
-  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/native/methods/first_place/first_place"
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/lstm_gru_cnn_ensemble/config.vsh.yaml"
+  platform: "nextflow"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lstm_gru_cnn_ensemble"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lstm_gru_cnn_ensemble/lstm_gru_cnn_ensemble"
   viash_version: "0.8.6"
-  git_commit: "4fa04bb0b8fe65943cf040dad5a4cb980185d354"
+  git_commit: "ba4429da5363a0602360d285a78940c04fc934c0"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

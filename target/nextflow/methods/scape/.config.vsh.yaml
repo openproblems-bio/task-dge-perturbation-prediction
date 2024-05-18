@@ -212,12 +212,11 @@ functionality:
     multiple_sep: ":"
     dest: "par"
   - type: "file"
-    name: "--output_dir"
-    description: "Additional output directory for the model."
+    name: "--output_model"
+    description: "Optional model output. If no value is passed, the model will be\
+      \ removed at the end of the run."
     info: null
-    example:
-    - "path/to/output_dir"
-    must_exist: true
+    must_exist: false
     create_parent: true
     required: false
     direction: "output"
@@ -319,6 +318,7 @@ functionality:
     dest: "resources/neurips-2023-data"
   info:
     label: "ScAPE"
+    rank: 16
     summary: "Neural network model for drug effect prediction"
     description: "ScAPE is utilises a neural network (NN) model to estimate drug effects\
       \ on gene expression in\nperipheral blood mononuclear cells (PBMCs). The model\
@@ -401,5 +401,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape/scape"
   viash_version: "0.8.6"
-  git_commit: "4fa04bb0b8fe65943cf040dad5a4cb980185d354"
+  git_commit: "ba4429da5363a0602360d285a78940c04fc934c0"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

@@ -24,6 +24,12 @@ functionality:
       __merge__: file_prediction.yaml
       required: true
       direction: output
+    - name: "--output_model"
+      type: "file"
+      description: "Optional model output. If no value is passed, the model will be removed at the end of the run."
+      direction: output
+      required: false
+      must_exist: false
   test_resources:
     - type: python_script
       path: /src/common/component_tests/run_and_check_output.py
