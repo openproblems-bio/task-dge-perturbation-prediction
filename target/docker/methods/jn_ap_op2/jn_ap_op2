@@ -427,9 +427,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet" "pandas" "category_encoders"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods jn_ap_op2"
-LABEL org.opencontainers.image.created="2024-05-18T22:09:11Z"
+LABEL org.opencontainers.image.created="2024-05-18T23:07:18Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="ba4429da5363a0602360d285a78940c04fc934c0"
+LABEL org.opencontainers.image.revision="b4afd62d8d6e43a93d0a032f9707bc061197b503"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

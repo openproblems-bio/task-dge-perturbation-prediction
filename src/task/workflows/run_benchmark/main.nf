@@ -22,7 +22,8 @@ workflow run_wf {
     lstm_gru_cnn_ensemble,
     nn_retraining_with_pseudolabels,
     jn_ap_op2,
-    scape
+    scape,
+    transformer_ensemble
   ]
 
   // construct list of metrics
