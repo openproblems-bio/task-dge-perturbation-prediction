@@ -1,4 +1,4 @@
-import sys, os, fastparquet, anndata, shutil
+import sys, os, fastparquet, anndata, shutil, argparse
 print(sys.executable)
 print(os.getcwd())
 import pandas as pd
@@ -19,7 +19,8 @@ par = dict(
 	id_map = "resources/neurips-2023-data/id_map.csv",
 	output = "output/neurips-2023-data/output_rf.parquet",
 	output_model = None,
-	cell = "NK cells",
+	# cell = "NK cells",
+	cell = "lol",
 	epochs = 2,
 	epochs_enhanced = 2,
 	n_genes = 10,
@@ -37,6 +38,7 @@ print(f"par: {par}")
 # if output_model is not provided, create a temporary directory
 model_dir = par["output_model"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
 
+
 # remove temp dir on exit
 if not par["output_model"]:
 	import atexit
@@ -44,6 +46,13 @@ if not par["output_model"]:
 
 # load log pvals
 df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")
+
+# if held-out cell type is not in the data, select a random cell type
+if par["cell"] not in df_de.index.get_level_values("cell_type").unique():
+	print(f"Input cell type ({par['cell']}) not found in the data.")
+	par["cell"] = np.random.choice(df_de.index.get_level_values("cell_type").unique())
+	print(f"Randomly selecting a cell type from the data: {par['cell']}.")
+
 
 # load logfc
 adata = anndata.read_h5ad(par["de_train_h5ad"])

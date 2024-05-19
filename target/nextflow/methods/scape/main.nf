@@ -3280,7 +3280,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape",
     "viash_version" : "0.8.6",
-    "git_commit" : "b4afd62d8d6e43a93d0a032f9707bc061197b503",
+    "git_commit" : "a6413da0979d7c359df0da750057892c450f621f",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3295,7 +3295,7 @@ def innerWorkflowFactory(args) {
   def rawScript = '''set -e
 tempscript=".viash_script.sh"
 cat > "$tempscript" << VIASHMAIN
-import sys, os, fastparquet, anndata, shutil
+import sys, os, fastparquet, anndata, shutil, argparse
 print(sys.executable)
 print(os.getcwd())
 import pandas as pd
@@ -3350,6 +3350,7 @@ print(f"par: {par}")
 # if output_model is not provided, create a temporary directory
 model_dir = par["output_model"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
 
+
 # remove temp dir on exit
 if not par["output_model"]:
 	import atexit
@@ -3357,6 +3358,13 @@ if not par["output_model"]:
 
 # load log pvals
 df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")
+
+# if held-out cell type is not in the data, select a random cell type
+if par["cell"] not in df_de.index.get_level_values("cell_type").unique():
+	print(f"Input cell type ({par['cell']}) not found in the data.")
+	par["cell"] = np.random.choice(df_de.index.get_level_values("cell_type").unique())
+	print(f"Randomly selecting a cell type from the data: {par['cell']}.")
+
 
 # load logfc
 adata = anndata.read_h5ad(par["de_train_h5ad"])

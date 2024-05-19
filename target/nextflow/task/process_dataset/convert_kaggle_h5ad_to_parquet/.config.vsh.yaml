@@ -224,5 +224,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/task/process_dataset/convert_kaggle_h5ad_to_parquet"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/task/process_dataset/convert_kaggle_h5ad_to_parquet/convert_kaggle_h5ad_to_parquet"
   viash_version: "0.8.6"
-  git_commit: "b4afd62d8d6e43a93d0a032f9707bc061197b503"
+  git_commit: "a6413da0979d7c359df0da750057892c450f621f"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
