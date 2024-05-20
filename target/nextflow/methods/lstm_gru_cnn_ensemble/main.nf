@@ -3174,7 +3174,7 @@ meta = [
     ],
     "info" : {
       "label" : "LSTM-GRU-CNN Ensemble",
-      "rank" : 1,
+      "neurips2023_rank" : 1,
       "summary" : "An ensemble of LSTM, GRU, and 1D CNN models",
       "description" : "An ensemble of LSTM, GRU, and 1D CNN models with a variety of input features derived from ChemBERTa embeddings,\none-hot encoding of cell type/small molecule pairs, and various statistical measures of target gene expression.\nThe models were trained with a combination of MSE, MAE, LogCosh, and BCE loss functions to improve their\nrobustness and predictive performance. The approach also included data augmentation techniques to ensure\ngeneralization and account for noise in the data.\n",
       "documentation_url" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/459258",
@@ -3244,7 +3244,7 @@ meta = [
           "hightime",
           "highmem",
           "highcpu",
-          "midsharedmem",
+          "highsharedmem",
           "gpu"
         ],
         "tag" : "$id"
@@ -3280,7 +3280,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lstm_gru_cnn_ensemble",
     "viash_version" : "0.8.6",
-    "git_commit" : "061da006789d2c0e04e4e4d0ba5978cf5aa92116",
+    "git_commit" : "d34d1a6016414256da9985a59d628c440b6abb9e",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3718,7 +3718,7 @@ meta["defaults"] = [
     "hightime",
     "highmem",
     "highcpu",
-    "midsharedmem",
+    "highsharedmem",
     "gpu"
   ],
   "tag" : "$id"

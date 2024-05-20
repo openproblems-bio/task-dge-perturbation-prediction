@@ -4,7 +4,7 @@ functionality:
   name: lstm_gru_cnn_ensemble
   info:
     label: LSTM-GRU-CNN Ensemble
-    rank: 1
+    neurips2023_rank: 1
     summary: An ensemble of LSTM, GRU, and 1D CNN models
     description: |
       An ensemble of LSTM, GRU, and 1D CNN models with a variety of input features derived from ChemBERTa embeddings,
@@ -70,4 +70,4 @@ platforms:
   - type: native
   - type: nextflow
     directives:
-      label: [hightime,highmem,highcpu,midsharedmem,gpu]
+      label: [hightime,highmem,highcpu,highsharedmem,gpu]

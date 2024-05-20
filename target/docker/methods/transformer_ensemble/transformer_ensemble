@@ -424,9 +424,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet" "pyarrow" "pandas~=2.0.3" "scikit-learn~=1.0.1" "tqdm~=4.66.1" "numpy~=1.23" "matplotlib~=3.5.0" "PyYAML~=6.0.1" "lion-pytorch"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods transformer_ensemble"
-LABEL org.opencontainers.image.created="2024-05-20T23:28:16Z"
+LABEL org.opencontainers.image.created="2024-05-20T23:43:21Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="061da006789d2c0e04e4e4d0ba5978cf5aa92116"
+LABEL org.opencontainers.image.revision="d34d1a6016414256da9985a59d628c440b6abb9e"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -1050,10 +1050,13 @@ argsets = [
 print(f"Train and predict models", flush=True)
 for argset in argsets:
   print(f"Generate model {argset['dir']}", flush=True)
-  train_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'], uncommon=argset['uncommon'], sampling_strategy=argset['sampling_strategy'])
+  train_main(par, n_components_list, argset['dir'], 
+             mean_std=argset['mean_std'], uncommon=argset['uncommon'],
+             sampling_strategy=argset['sampling_strategy'], device=device)
 
   print(f"Predict model {argset['dir']}", flush=True)
-  predict_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'], uncommon=argset['uncommon'])
+  predict_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'],
+               uncommon=argset['uncommon'], device=device)
 
 print(f"Combine predictions", flush=True)
 seq_main(

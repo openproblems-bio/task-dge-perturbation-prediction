@@ -3,7 +3,7 @@ functionality:
   name: scape
   info:
     label: ScAPE
-    rank: 16
+    neurips2023_rank: 16
     summary: Neural network model for drug effect prediction
     description: |
       ScAPE is utilises a neural network (NN) model to estimate drug effects on gene expression in
@@ -64,16 +64,25 @@ functionality:
       path: script.py
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
+    image: nvcr.io/nvidia/tensorflow:24.03-tf2-py3
     setup:
+      - type: apt
+        packages:
+          - procps
       - type: python
         packages:
-          - tensorflow~=2.14.0
+          - anndata~=0.8.0
+          - scanpy
+          - pyyaml
+          - requests
+          - jsonschema
+      - type: python
+        packages:
+          # - tensorflow~=2.14.0
           - tensorflow-io-gcs-filesystem>=0.31.0
-          - pandas~=1.5.3
           - scikit-learn~=1.2.2
           - fastparquet~=2023.10.1
           - git+https://github.com/scapeML/scape.git
   - type: nextflow
     directives:
-      label: [ hightime, highmem, highcpu, gpu ]
+      label: [ hightime, highmem, highcpu, gpu, midsharedmem ]

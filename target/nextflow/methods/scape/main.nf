@@ -3193,7 +3193,7 @@ meta = [
     ],
     "info" : {
       "label" : "ScAPE",
-      "rank" : 16,
+      "neurips2023_rank" : 16,
       "summary" : "Neural network model for drug effect prediction",
       "description" : "ScAPE is utilises a neural network (NN) model to estimate drug effects on gene expression in\nperipheral blood mononuclear cells (PBMCs). The model took drug and cell features as input,\nwith these features primarily derived from the median of signed log-pvalues and log fold-changes\ngrouped by drug and cell type. The NN was trained using a leave-one-drug-out cross-validation\nstrategy, focusing on NK cells as a representative cell type due to their similarity to B cells\nand Myeloid cells in principal component analysis. Model performance was evaluated by comparing\nits predictions against two baselines: predicting zero effect and predicting the median\nlog-pvalue for each drug. The final submission combined predictions from models trained on\ndifferent gene and drug subsets, aiming to enhance overall prediction accuracy.\n",
       "reference" : "pablormier2023scape",
@@ -3213,7 +3213,7 @@ meta = [
     {
       "type" : "docker",
       "id" : "docker",
-      "image" : "ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4",
+      "image" : "nvcr.io/nvidia/tensorflow:24.03-tf2-py3",
       "target_organization" : "openproblems-bio/task-dge-perturbation-prediction",
       "target_registry" : "ghcr.io",
       "namespace_separator" : "/",
@@ -3223,12 +3223,29 @@ meta = [
       "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
       "setup" : [
         {
+          "type" : "apt",
+          "packages" : [
+            "procps"
+          ],
+          "interactive" : false
+        },
+        {
           "type" : "python",
           "user" : false,
           "packages" : [
-            "tensorflow~=2.14.0",
+            "anndata~=0.8.0",
+            "scanpy",
+            "pyyaml",
+            "requests",
+            "jsonschema"
+          ],
+          "upgrade" : true
+        },
+        {
+          "type" : "python",
+          "user" : false,
+          "packages" : [
             "tensorflow-io-gcs-filesystem>=0.31.0",
-            "pandas~=1.5.3",
             "scikit-learn~=1.2.2",
             "fastparquet~=2023.10.1",
             "git+https://github.com/scapeML/scape.git"
@@ -3245,7 +3262,8 @@ meta = [
           "hightime",
           "highmem",
           "highcpu",
-          "gpu"
+          "gpu",
+          "midsharedmem"
         ],
         "tag" : "$id"
       },
@@ -3280,7 +3298,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape",
     "viash_version" : "0.8.6",
-    "git_commit" : "061da006789d2c0e04e4e4d0ba5978cf5aa92116",
+    "git_commit" : "d34d1a6016414256da9985a59d628c440b6abb9e",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3841,7 +3859,8 @@ meta["defaults"] = [
     "hightime",
     "highmem",
     "highcpu",
-    "gpu"
+    "gpu",
+    "midsharedmem"
   ],
   "tag" : "$id"
 }'''),

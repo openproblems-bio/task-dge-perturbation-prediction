@@ -273,7 +273,7 @@ functionality:
     dest: "resources/neurips-2023-kaggle/train_obs.csv.zip"
   info:
     label: "Py-boost"
-    rank: 18
+    neurips2023_rank: 18
     summary: "Py-boost predicting t-scores"
     description: "An ensemble of four models was considered: \n\n* Py-boost (a ridge\
       \ regression-based recommender system)\n* ExtraTrees (a decision tree ensemble\
@@ -351,5 +351,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/pyboost"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/pyboost/pyboost"
   viash_version: "0.8.6"
-  git_commit: "061da006789d2c0e04e4e4d0ba5978cf5aa92116"
+  git_commit: "d34d1a6016414256da9985a59d628c440b6abb9e"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

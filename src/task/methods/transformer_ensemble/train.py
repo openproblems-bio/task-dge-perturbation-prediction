@@ -102,20 +102,20 @@ def train_func(X_train, Y_reduced, X_val, Y_val, n_components, num_epochs, batch
     counter = 0
     pbar = tqdm(range(num_epochs), position=0, leave=True)
     for epoch in range(num_epochs):
-        _ = train_epoch(model, dataloader, optimizer, criterion)
+        _ = train_epoch(model, dataloader, optimizer, criterion, device=device)
 
         if counter >= early_stopping:
             break
         if scaler:
             val_loss, val_targets_stacked, val_predictions_stacked = validate(model, val_dataloader, criterion,
-                                                                              label_reducer, scaler)
+                                                                              label_reducer, scaler, device=device)
             # Calculate MRRMSE for the entire validation set
             val_mrrmse = calculate_mrrmse_np(
                 val_targets_stacked.cpu().detach().numpy(),
                 scaler.inverse_transform((label_reducer.inverse_transform(
                     val_predictions_stacked.cpu().detach().numpy()))))
         else:
-            val_loss, val_targets_stacked, val_predictions_stacked = validate(model, val_dataloader, criterion)
+            val_loss, val_targets_stacked, val_predictions_stacked = validate(model, val_dataloader, criterion, device=device)
             val_mrrmse = calculate_mrrmse_np(val_targets_stacked.cpu().detach().numpy(),
 
                                              val_predictions_stacked.cpu().detach().numpy())

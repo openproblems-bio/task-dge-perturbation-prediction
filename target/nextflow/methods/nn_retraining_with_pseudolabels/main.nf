@@ -3113,7 +3113,7 @@ meta = [
     ],
     "info" : {
       "label" : "NN retraining with pseudolabels",
-      "rank" : 3,
+      "neurips2023_rank" : 3,
       "summary" : "Neural networks with pseudolabeling and ensemble modelling",
       "description" : "The prediction system is two staged, so I publish two versions of the notebook.\nThe first stage predicts pseudolabels. To be honest, if I stopped on this version, I would not be the third.\nThe predicted pseudolabels on all test data (255 rows) are added to training in the second stage.\n\n## Stage 1 preparing pseudolabels\n\nThe main part of this system is a neural network. Every neural network and its environment was optimized by optuna. Hyperparameters that have been optimized:\na dropout value, a number of neurons in particular layers, an output dimension of an embedding layer, a number of epochs, a learning rate, a batch size, a number of dimension of truncated singular value decomposition.\nThe optimization was done on custom 4-folds cross validation. In order to avoid overfitting to cross validation by optuna I applied 2 repeats for every fold and took an average. Generally, the more, the better. The optuna's criterion was MRRMSE.\nFinally, 7 models were ensembled. Optuna was applied again to determine best weights of linear combination. The prediction of test set is the pseudolabels now and will be used in second stage.\n\n## Stage 2 retraining with pseudolabels\n\nThe pseudolabels (255 rows) were added to the training dataset. I applied 20 models with optimized parameters in different experiments for a model diversity.\nOptuna selected optimal weights for the linear combination of the prediction again.\nModels had high variance, so every model was trained 10 times on all dataset and the median of prediction is taken as a final prediction. The prediction was additionally clipped to colwise min and max. \n",
       "documentation_url" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458750",
@@ -3132,7 +3132,7 @@ meta = [
     {
       "type" : "docker",
       "id" : "docker",
-      "image" : "ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4",
+      "image" : "nvcr.io/nvidia/tensorflow:24.03-tf2-py3",
       "target_organization" : "openproblems-bio/task-dge-perturbation-prediction",
       "target_registry" : "ghcr.io",
       "namespace_separator" : "/",
@@ -3142,15 +3142,29 @@ meta = [
       "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
       "setup" : [
         {
+          "type" : "apt",
+          "packages" : [
+            "procps"
+          ],
+          "interactive" : false
+        },
+        {
           "type" : "python",
           "user" : false,
           "packages" : [
-            "tensorflow==2.12.0",
-            "numpy==1.23.5",
-            "pandas==2.0.3",
-            "matplotlib==3.7.2",
+            "anndata~=0.8.0",
+            "scanpy",
+            "pyyaml",
+            "requests",
+            "jsonschema"
+          ],
+          "upgrade" : true
+        },
+        {
+          "type" : "python",
+          "user" : false,
+          "packages" : [
             "scikit-learn==1.3.2",
-            "pyarrow==13.0.0",
             "fastparquet"
           ],
           "upgrade" : true
@@ -3169,7 +3183,8 @@ meta = [
           "hightime",
           "midmem",
           "highcpu",
-          "gpu"
+          "gpu",
+          "midsharedmem"
         ],
         "tag" : "$id"
       },
@@ -3204,7 +3219,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/nn_retraining_with_pseudolabels",
     "viash_version" : "0.8.6",
-    "git_commit" : "061da006789d2c0e04e4e4d0ba5978cf5aa92116",
+    "git_commit" : "d34d1a6016414256da9985a59d628c440b6abb9e",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3674,7 +3689,8 @@ meta["defaults"] = [
     "hightime",
     "midmem",
     "highcpu",
-    "gpu"
+    "gpu",
+    "midsharedmem"
   ],
   "tag" : "$id"
 }'''),

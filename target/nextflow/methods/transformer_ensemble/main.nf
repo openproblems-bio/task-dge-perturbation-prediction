@@ -3128,7 +3128,7 @@ meta = [
     ],
     "info" : {
       "label" : "Transformer Ensemble",
-      "rank" : 2,
+      "neurips2023_rank" : 2,
       "summary" : "An ensemble of four transformer models, trained on diverse feature sets, with a cluster-based sampling strategy and robust validation for optimal performance.",
       "description" : "This method employs an ensemble of four transformer models,\neach with different weights and trained on slightly varying feature sets.\nThe feature engineering process involved one-hot encoding of categorical labels,\ntarget encoding using mean and standard deviation, and enriching the feature set\nwith the standard deviation of target variables. Additionally, the dataset was\ncarefully examined to ensure data cleanliness. A sophisticated sampling strategy\nbased on K-Means clustering was employed to partition the data into training and\nvalidation sets, ensuring a representative distribution. The model architecture\nleveraged sparse and dense feature encoding, along with a transformer for effective\nlearning.\n",
       "documentation_url" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458738",
@@ -3180,7 +3180,7 @@ meta = [
       "directives" : {
         "label" : [
           "midtime",
-          "highmem",
+          "veryhighmem",
           "highcpu",
           "gpu"
         ],
@@ -3217,7 +3217,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/transformer_ensemble",
     "viash_version" : "0.8.6",
-    "git_commit" : "061da006789d2c0e04e4e4d0ba5978cf5aa92116",
+    "git_commit" : "d34d1a6016414256da9985a59d628c440b6abb9e",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3326,10 +3326,13 @@ argsets = [
 print(f"Train and predict models", flush=True)
 for argset in argsets:
   print(f"Generate model {argset['dir']}", flush=True)
-  train_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'], uncommon=argset['uncommon'], sampling_strategy=argset['sampling_strategy'])
+  train_main(par, n_components_list, argset['dir'], 
+             mean_std=argset['mean_std'], uncommon=argset['uncommon'],
+             sampling_strategy=argset['sampling_strategy'], device=device)
 
   print(f"Predict model {argset['dir']}", flush=True)
-  predict_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'], uncommon=argset['uncommon'])
+  predict_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'],
+               uncommon=argset['uncommon'], device=device)
 
 print(f"Combine predictions", flush=True)
 seq_main(
@@ -3692,7 +3695,7 @@ meta["defaults"] = [
   },
   "label" : [
     "midtime",
-    "highmem",
+    "veryhighmem",
     "highcpu",
     "gpu"
   ],

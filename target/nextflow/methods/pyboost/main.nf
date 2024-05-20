@@ -3139,7 +3139,7 @@ meta = [
     ],
     "info" : {
       "label" : "Py-boost",
-      "rank" : 18,
+      "neurips2023_rank" : 18,
       "summary" : "Py-boost predicting t-scores",
       "description" : "An ensemble of four models was considered: \n\n* Py-boost (a ridge regression-based recommender system)\n* ExtraTrees (a decision tree ensemble with target-encoded features)\n* a k-nearest neighbors recommender system\n* a ridge regression model\n\nEach model offered distinct strengths and weaknesses: ExtraTrees and\nknn were unable to extrapolate beyond the training data, while ridge\nregression provided extrapolation capability. To enhance model performance,\ndata augmentation techniques were used, including averaging differential\nexpressions for compound mixtures and adjusting cell counts to reduce biases.\n\nIn the end, only the py-boost model is used for generating predictions.\n",
       "documentation_url" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458661",
@@ -3225,7 +3225,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/pyboost",
     "viash_version" : "0.8.6",
-    "git_commit" : "061da006789d2c0e04e4e4d0ba5978cf5aa92116",
+    "git_commit" : "d34d1a6016414256da9985a59d628c440b6abb9e",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

@@ -3120,7 +3120,7 @@ meta = [
     ],
     "info" : {
       "label" : "JN-AP-OP2",
-      "rank" : 20,
+      "neurips2023_rank" : 20,
       "summary" : "Deep learning architecture composed of 2 modules: a sample-centric MLP and a gene-centric MLP",
       "description" : "We first encode each sample using leave-one-out encoder based on compound and cell type. This produces X with the dimension of n_samples, n_genes, n_encode,\nwhere n_encode is 2. Then, X is passed to a MLP1 sample-wise with input of n_samples, n_genes*n_encode, which outputs the same dimension data.\nThe purpose of this MLP is to learn inter-gene relationships. Then, we group the output of MLP1 with X (original encoded data) and feed it\nto MLP2 which receives n_smaples*n_genes, (n_encode + n_encode) and results n_samples*n_genes. This MLP2 trains on each (compound, cell_type, gene)\ncombination. This is to overcome the underdetermination problem due to lack of sufficient (compound, cell_type) samples. \n",
       "documentation_url" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/461159",
@@ -3207,7 +3207,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/jn_ap_op2",
     "viash_version" : "0.8.6",
-    "git_commit" : "061da006789d2c0e04e4e4d0ba5978cf5aa92116",
+    "git_commit" : "d34d1a6016414256da9985a59d628c440b6abb9e",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

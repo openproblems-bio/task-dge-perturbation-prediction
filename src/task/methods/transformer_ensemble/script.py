@@ -74,10 +74,13 @@ argsets = [
 print(f"Train and predict models", flush=True)
 for argset in argsets:
   print(f"Generate model {argset['dir']}", flush=True)
-  train_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'], uncommon=argset['uncommon'], sampling_strategy=argset['sampling_strategy'])
+  train_main(par, n_components_list, argset['dir'], 
+             mean_std=argset['mean_std'], uncommon=argset['uncommon'],
+             sampling_strategy=argset['sampling_strategy'], device=device)
 
   print(f"Predict model {argset['dir']}", flush=True)
-  predict_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'], uncommon=argset['uncommon'])
+  predict_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'],
+               uncommon=argset['uncommon'], device=device)
 
 print(f"Combine predictions", flush=True)
 seq_main(

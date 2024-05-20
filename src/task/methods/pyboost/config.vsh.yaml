@@ -4,7 +4,7 @@ functionality:
   name: pyboost
   info:
     label: Py-boost
-    rank: 18
+    neurips2023_rank: 18
     summary: "Py-boost predicting t-scores"
     description: |
       An ensemble of four models was considered: 

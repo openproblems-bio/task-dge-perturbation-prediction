@@ -445,18 +445,25 @@ function ViashDockerCheckCommands {
 #   ViashDockerFile
 function ViashDockerfile {
   cat << 'VIASHDOCKER'
-FROM ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
+FROM nvcr.io/nvidia/tensorflow:24.03-tf2-py3
 
 ENTRYPOINT []
 
  
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y procps && \
+  rm -rf /var/lib/apt/lists/*
+
 RUN pip install --upgrade pip && \
-  pip install --upgrade --no-cache-dir "tensorflow~=2.14.0" "tensorflow-io-gcs-filesystem>=0.31.0" "pandas~=1.5.3" "scikit-learn~=1.2.2" "fastparquet~=2023.10.1" "git+https://github.com/scapeML/scape.git"
+  pip install --upgrade --no-cache-dir "anndata~=0.8.0" "scanpy" "pyyaml" "requests" "jsonschema"
+
+RUN pip install --upgrade pip && \
+  pip install --upgrade --no-cache-dir "tensorflow-io-gcs-filesystem>=0.31.0" "scikit-learn~=1.2.2" "fastparquet~=2023.10.1" "git+https://github.com/scapeML/scape.git"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods scape"
-LABEL org.opencontainers.image.created="2024-05-20T23:28:17Z"
+LABEL org.opencontainers.image.created="2024-05-20T23:43:21Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="061da006789d2c0e04e4e4d0ba5978cf5aa92116"
+LABEL org.opencontainers.image.revision="d34d1a6016414256da9985a59d628c440b6abb9e"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
