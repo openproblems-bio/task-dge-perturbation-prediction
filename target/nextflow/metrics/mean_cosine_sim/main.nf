@@ -3125,7 +3125,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim",
     "viash_version" : "0.8.6",
-    "git_commit" : "a6413da0979d7c359df0da750057892c450f621f",
+    "git_commit" : "ca8854b933fad53f05cb93d851e713ad6ecef187",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
