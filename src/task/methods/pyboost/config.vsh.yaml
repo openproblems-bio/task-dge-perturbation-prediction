@@ -1,0 +1,57 @@
+__merge__: ../../api/comp_method.yaml
+
+functionality:
+  name: pyboost
+  info:
+    label: Py-boost
+    rank: 18
+    summary: "Py-boost predicting t-scores"
+    description: |
+      An ensemble of four models was considered: 
+      
+      * Py-boost (a ridge regression-based recommender system)
+      * ExtraTrees (a decision tree ensemble with target-encoded features)
+      * a k-nearest neighbors recommender system
+      * a ridge regression model
+
+      Each model offered distinct strengths and weaknesses: ExtraTrees and
+      knn were unable to extrapolate beyond the training data, while ridge
+      regression provided extrapolation capability. To enhance model performance,
+      data augmentation techniques were used, including averaging differential
+      expressions for compound mixtures and adjusting cell counts to reduce biases.
+
+      In the end, only the py-boost model is used for generating predictions.
+    documentation_url: https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458661
+    repository_url: https://github.com/Ambros-M/Single-Cell-Perturbations-2023
+  arguments:
+    - type: file
+      name: --train_obs_zip
+      default: "resources/neurips-2023-kaggle/train_obs.csv.zip"
+      example: "resources/neurips-2023-kaggle/train_obs.csv.zip"
+    - type: string
+      name: --predictor_names
+      multiple: true
+      choices: [py_boost, ridge_recommender, knn_recommender, predict_extratrees]
+      default: [py_boost]
+      description: Which predictor(s) to use.
+      info:
+        test_default: [knn_recommender]
+  resources:
+    - type: python_script
+      path: script.py
+    - path: helper.py
+  test_resources:
+    - path: /resources/neurips-2023-kaggle/train_obs.csv.zip
+      dest: resources/neurips-2023-kaggle/train_obs.csv.zip
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
+    setup:
+      - type: python
+        packages:
+          - colorama
+          - py-boost==0.4.3
+  - type: native
+  - type: nextflow
+    directives:
+      label: [midtime,midmem,midcpu,gpu]

@@ -23,7 +23,8 @@ workflow run_wf {
     nn_retraining_with_pseudolabels,
     jn_ap_op2,
     scape,
-    transformer_ensemble
+    transformer_ensemble,
+    pyboost
   ]
 
   // construct list of metrics
