@@ -417,9 +417,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet"
 
 LABEL org.opencontainers.image.description="Companion container for running component control_methods sample"
-LABEL org.opencontainers.image.created="2024-05-20T23:43:21Z"
+LABEL org.opencontainers.image.created="2024-05-20T23:55:05Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="d34d1a6016414256da9985a59d628c440b6abb9e"
+LABEL org.opencontainers.image.revision="95eafa1a2c85eda1a7e91f0a1ca5a93521fe71df"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

@@ -24,7 +24,11 @@ workflow run_wf {
     jn_ap_op2,
     scape,
     transformer_ensemble,
-    pyboost
+    pyboost.run(
+      args: [
+        train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/resources/neurips-2023-kaggle/train_obs.csv.zip")
+      ]
+    )
   ]
 
   // construct list of metrics
