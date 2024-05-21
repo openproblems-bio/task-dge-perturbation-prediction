@@ -26,7 +26,7 @@ workflow run_wf {
     transformer_ensemble,
     pyboost.run(
       args: [
-        train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/resources/neurips-2023-kaggle/train_obs.csv.zip")
+        train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
       ]
     )
   ]
