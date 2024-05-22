@@ -3226,7 +3226,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/pyboost",
     "viash_version" : "0.8.6",
-    "git_commit" : "c501ebc669c00a355dd40e184b8e41589946cf04",
+    "git_commit" : "022cf5405af2316217b0e0dbf2e8deb16940e474",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

@@ -32,8 +32,6 @@ functionality:
     - path: models.py
     - path: utils.py
     - path: train.py
-    - path: predict.py
-    - path: seq.py
 
 platforms:
   - type: docker

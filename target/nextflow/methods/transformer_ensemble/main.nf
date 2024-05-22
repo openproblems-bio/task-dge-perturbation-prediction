@@ -3100,16 +3100,6 @@ meta = [
         "type" : "file",
         "path" : "train.py",
         "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/transformer_ensemble/"
-      },
-      {
-        "type" : "file",
-        "path" : "predict.py",
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/transformer_ensemble/"
-      },
-      {
-        "type" : "file",
-        "path" : "seq.py",
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/transformer_ensemble/"
       }
     ],
     "test_resources" : [
@@ -3218,7 +3208,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/transformer_ensemble",
     "viash_version" : "0.8.6",
-    "git_commit" : "c501ebc669c00a355dd40e184b8e41589946cf04",
+    "git_commit" : "022cf5405af2316217b0e0dbf2e8deb16940e474",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3233,12 +3223,11 @@ def innerWorkflowFactory(args) {
   def rawScript = '''set -e
 tempscript=".viash_script.sh"
 cat > "$tempscript" << VIASHMAIN
-import os
+import pandas as pd
 import sys
-import tempfile
-import shutil
-
 import torch
+import copy
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ## VIASH START
@@ -3271,76 +3260,138 @@ dep = {
 
 ## VIASH END
 
-sys.path.append(meta['resources_dir'])
+sys.path.append(meta["resources_dir"])
 
-from train import train_main
-from predict import predict_main
-from seq import seq_main
+# Fixed training params
+d_model = 128
+batch_size = 32
+early_stopping = 5000
+
+from utils import prepare_augmented_data, prepare_augmented_data_mean_only
+from train import train_k_means_strategy, train_non_k_means_strategy
 
 # determine n_components_list
-import pandas as pd
-de_train = pd.read_parquet(par["de_train"])
-de_train.drop(columns=["cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control"], inplace=True)
-n_components_list = [de_train.shape[1]]
-del de_train
 
-# determine model dirs
-output_model = par.get("output_model") or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
-if not os.path.exists(output_model):
-    os.makedirs(output_model, exist_ok=True)
-if not par.get("output_model"):
-  import atexit
-  atexit.register(lambda: shutil.rmtree(output_model))
+de_train = pd.read_parquet(par["de_train"])
+id_map = pd.read_csv(par["id_map"])
+
+gene_names = list(de_train.columns[6:])
+n_components = len(gene_names)
 
 # train and predict models
 argsets = [
-  {
-    "dir": f"{output_model}/trained_models_kmeans_mean_std",
-    "mean_std": "mean_std",
-    "uncommon": False,
-    "sampling_strategy": "k-means",
-    "weight": .4
-  },
-  {
-    "dir": f"{output_model}/trained_models_kmeans_mean_std_trueuncommon",
-    "mean_std": "mean_std",
-    "uncommon": True,
-    "sampling_strategy": "k-means",
-    "weight": .1
-  },
-  {
-    "dir": f"{output_model}/trained_models_kmeans_mean",
-    "mean_std": "mean",
-    "uncommon": False,
-    "sampling_strategy": "k-means",
-    "weight": .2
-  },
-  {
-    "dir": f"{output_model}/trained_models_nonkmeans_mean",
-    "mean_std": "mean",
-    "uncommon": False,
-    "sampling_strategy": "random",
-    "weight": .3
-  }
+    {
+        "name": "trained_models_kmeans_mean_std",
+        "mean_std": "mean_std",
+        "uncommon": False,
+        "sampling_strategy": "k-means",
+        "weight": 0.4,
+    },
+    {
+        "name": "trained_models_kmeans_mean_std_trueuncommon",
+        "mean_std": "mean_std",
+        "uncommon": True,
+        "sampling_strategy": "k-means",
+        "weight": 0.1,
+    },
+    {
+        "name": "trained_models_kmeans_mean",
+        "mean_std": "mean",
+        "uncommon": False,
+        "sampling_strategy": "k-means",
+        "weight": 0.2,
+    },
+    {
+        "name": "trained_models_nonkmeans_mean",
+        "mean_std": "mean",
+        "uncommon": False,
+        "sampling_strategy": "random",
+        "weight": 0.3,
+    },
 ]
+
+
+predictions = []
 
 print(f"Train and predict models", flush=True)
 for argset in argsets:
-  print(f"Generate model {argset['dir']}", flush=True)
-  train_main(par, n_components_list, argset['dir'], 
-             mean_std=argset['mean_std'], uncommon=argset['uncommon'],
-             sampling_strategy=argset['sampling_strategy'], device=device)
+    print(f"Train and predict model {argset['name']}", flush=True)
 
-  print(f"Predict model {argset['dir']}", flush=True)
-  predict_main(par, n_components_list, argset['dir'], mean_std=argset['mean_std'],
-               uncommon=argset['uncommon'], device=device)
+    print(f"> Prepare augmented data", flush=True)
+    if argset["mean_std"] == "mean_std":
+        one_hot_encode_features, targets, one_hot_test = prepare_augmented_data(
+            de_train=copy.deepcopy(de_train),
+            id_map=copy.deepcopy(id_map),
+            uncommon=argset["uncommon"],
+        )
+    elif argset["mean_std"] == "mean":
+        one_hot_encode_features, targets, one_hot_test = (
+            prepare_augmented_data_mean_only(de_train=de_train, id_map=id_map)
+        )
+
+    print(f"> Train model", flush=True)
+    if argset["sampling_strategy"] == "k-means":
+        label_reducer, scaler, transformer_model = train_k_means_strategy(
+            n_components=n_components,
+            d_model=d_model,
+            one_hot_encode_features=one_hot_encode_features,
+            targets=targets,
+            num_epochs=par["num_train_epochs"],
+            early_stopping=early_stopping,
+            batch_size=batch_size,
+            device=device,
+            mean_std=argset["mean_std"],
+        )
+    else:
+        label_reducer, scaler, transformer_model = train_non_k_means_strategy(
+            n_components=n_components,
+            d_model=d_model,
+            one_hot_encode_features=one_hot_encode_features,
+            targets=targets,
+            num_epochs=par["num_train_epochs"],
+            early_stopping=early_stopping,
+            batch_size=batch_size,
+            device=device,
+            mean_std=argset["mean_std"],
+        )
+
+    print(f"> Predict model", flush=True)
+    unseen_data = torch.tensor(one_hot_test, dtype=torch.float32).to(device)
+
+    num_features = one_hot_encode_features.shape[1]
+    num_targets = targets.shape[1]
+
+    if n_components == num_features:
+        label_reducer = None
+        scaler = None
+
+    print(f"Predict on test data", flush=True)
+    num_samples = len(unseen_data)
+    transformed_data = []
+    for i in range(0, num_samples, batch_size):
+        batch_result = transformer_model(unseen_data[i : i + batch_size])
+        transformed_data.append(batch_result)
+    transformed_data = torch.vstack(transformed_data)
+    if scaler:
+        transformed_data = torch.tensor(
+            scaler.inverse_transform(
+                label_reducer.inverse_transform(transformed_data.cpu().detach().numpy())
+            )
+        ).to(device)
+
+    pred = transformed_data.cpu().detach().numpy()
+    predictions.append(pred)
 
 print(f"Combine predictions", flush=True)
-seq_main(
-  par,
-  model_dirs=[argset['dir'] for argset in argsets],
-  weights=[argset['weight'] for argset in argsets],
-)
+weighted_pred = sum(
+    [argset["weight"] * pred for argset, pred in zip(argsets, predictions)]
+) / sum([argset["weight"] for argset in argsets])
+
+df = pd.DataFrame(weighted_pred, columns=gene_names)
+df.reset_index(drop=True, inplace=True)
+df.reset_index(names="id", inplace=True)
+
+df.to_parquet(par["output"])
 VIASHMAIN
 python -B "$tempscript"
 '''

@@ -1,4 +1,3 @@
-import os
 import numpy as np
 import torch
 import torch.nn as nn
@@ -9,9 +8,8 @@ from sklearn.model_selection import train_test_split
 import copy
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
-import pickle
 
-from utils import prepare_augmented_data, split_data, reduce_labels, calculate_mrrmse_np, prepare_augmented_data_mean_only
+from utils import split_data, reduce_labels, calculate_mrrmse_np
 from models import CustomTransformer_mean_std, CustomTransformer_mean  # Can be changed to other models in models.py
 
 from lion_pytorch import Lion
@@ -57,12 +55,6 @@ def validate(model, val_dataloader, criterion, label_reducer=None, scaler=None, 
     return val_loss, val_targets_stacked, val_predictions_stacked
 
 
-def validate_sampling_strategy(sampling_strategy):
-    allowed_strategies = ['k-means', 'random']
-    if sampling_strategy not in allowed_strategies:
-        raise ValueError(f"Invalid sampling strategy. Choose from: {', '.join(allowed_strategies)}")
-
-
 def train_func(X_train, Y_reduced, X_val, Y_val, n_components, num_epochs, batch_size, label_reducer, scaler,
                d_model=128, early_stopping=5000, device='cpu', mean_std='mean_std'):
     best_mrrmse = float('inf')
@@ -86,7 +78,6 @@ def train_func(X_train, Y_reduced, X_val, Y_val, n_components, num_epochs, batch
                                 batch_size=batch_size, shuffle=False)
     if n_components < X_train.shape[1]:
         lr = 1e-3
-
     else:
         lr = 1e-5
     # optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
@@ -163,7 +154,6 @@ def train_transformer_k_means_learning(X, Y, n_components, num_epochs, batch_siz
     for cluster_id in range(num_clusters):
         # Find the indices of data points in the current cluster
         cluster_indices = np.where(clusters == cluster_id)[0]
-        print(len(cluster_indices))
         if len(cluster_indices) >= 20:
             # Split the data points in the cluster into training and validation
             train_indices, val_indices = train_test_split(cluster_indices, test_size=validation_percentage,
@@ -180,109 +170,46 @@ def train_transformer_k_means_learning(X, Y, n_components, num_epochs, batch_siz
     # Convert the lists to numpy arrays if needed
     X_train, Y_train = np.array(X_train), np.array(Y_train)
     X_val, Y_val = np.array(X_val), np.array(Y_val)
-    transfromer_model = train_func(X_train, Y_train, X_val, Y_val, n_components, num_epochs, batch_size,
+    return train_func(X_train, Y_train, X_val, Y_val, n_components, num_epochs, batch_size,
                                    label_reducer, scaler, d_model, early_stopping, device, mean_std)
 
-    return label_reducer, scaler, transfromer_model
-
  
-def train_k_means_strategy(n_components_list, d_models_list, one_hot_encode_features, targets, num_epochs,
-                           early_stopping, batch_size, device, output_folder, mean_std):
+def train_k_means_strategy(n_components, d_model, one_hot_encode_features, targets, num_epochs,
+                           early_stopping, batch_size, device, mean_std):
     # Training loop for k_means sampling strategy
-    for n_components in n_components_list:
-        for d_model in d_models_list:
-            label_reducer, scaler, transformer_model = train_transformer_k_means_learning(
-                one_hot_encode_features,
-                targets,
-                n_components,
-                num_epochs=num_epochs,
-                early_stopping=early_stopping,
-                batch_size=batch_size,
-                d_model=d_model, device=device, mean_std=mean_std)
-            os.makedirs(f'{output_folder}', exist_ok=True)
-            # Save the trained models
-            with open(f'{output_folder}/label_reducer_{n_components}_{d_model}.pkl', 'wb') as file:
-                pickle.dump(label_reducer, file)
-
-            with open(f'{output_folder}/scaler_{n_components}_{d_model}.pkl', 'wb') as file:
-                pickle.dump(scaler, file)
-                
-            torch.save(transformer_model[2].state_dict(),
-                       f'{output_folder}/transformer_model_{n_components}_{d_model}.pt')
+    return train_transformer_k_means_learning(
+        X=one_hot_encode_features,
+        Y=targets,
+        n_components=n_components,
+        num_epochs=num_epochs,
+        early_stopping=early_stopping,
+        batch_size=batch_size,
+        d_model=d_model,
+        device=device,
+        mean_std=mean_std
+    )
 
 
-def train_non_k_means_strategy(n_components_list, d_models_list, one_hot_encode_features, targets, num_epochs,
-                               early_stopping, batch_size, device, seed, validation_percentage, output_folder,mean_std):
+def train_non_k_means_strategy(n_components, d_model, one_hot_encode_features, targets, num_epochs,
+                               early_stopping, batch_size, device, mean_std, seed=None, validation_percentage=0.2):
     # Split the data for non-k_means sampling strategy
-    X_train, X_val, y_train, y_val = split_data(one_hot_encode_features, targets, test_size=validation_percentage,
-                                                shuffle=True, random_state=seed)
+    X_train, X_val, y_train, y_val = split_data(
+        one_hot_encode_features, targets, test_size=validation_percentage,
+        shuffle=True, random_state=seed
+    )
 
     # Training loop for non-k_means sampling strategy
-    for n_components in n_components_list:
-        for d_model in d_models_list:
-            label_reducer, scaler, Y_reduced = reduce_labels(y_train, n_components)
-            transformer_model = train_func(X_train, y_train, X_val, y_val,
-                                           n_components,
-                                           num_epochs=num_epochs,
-                                           early_stopping=early_stopping,
-                                           batch_size=batch_size,
-                                           d_model=d_model,
-                                           label_reducer=label_reducer,
-                                           scaler=scaler,
-                                           device=device,mean_std=mean_std)
+    label_reducer, scaler, Y_reduced = reduce_labels(y_train, n_components)
+    return train_func(
+        X_train, y_train, X_val, y_val,
+        n_components,
+        num_epochs=num_epochs,
+        early_stopping=early_stopping,
+        batch_size=batch_size,
+        d_model=d_model,
+        label_reducer=label_reducer,
+        scaler=scaler,
+        device=device,
+        mean_std=mean_std
+    )
 
-            # Save the trained models
-            os.makedirs(f'{output_folder}', exist_ok=True)
-            with open(f'{output_folder}/label_reducer_{n_components}_{d_model}.pkl', 'wb') as file:
-                pickle.dump(label_reducer, file)
-
-            with open(f'{output_folder}/scaler_{n_components}_{d_model}.pkl', 'wb') as file:
-                pickle.dump(scaler, file)
-
-            torch.save(transformer_model[2].state_dict(),
-                       f'{output_folder}/transformer_model_{n_components}_{d_model}.pt')
-
-
-def train_main(
-  par,
-  n_components_list,
-  model_dir,
-  d_models_list=[128],
-  batch_size=32,
-  sampling_strategy="random",
-  validation_percentage=0.2,
-  device='cpu',
-  seed=None,
-  early_stopping=5000,
-  mean_std='mean_std',
-  uncommon=False,
-):
-    data_file = par['de_train']
-    id_map_file = par['id_map']
-    num_epochs = par["num_train_epochs"]
-
-    print('start training')
-
-    # Validate the sampling strategy
-    validate_sampling_strategy(sampling_strategy)
-
-    # Prepare augmented data
-    if mean_std == "mean_std":
-        one_hot_encode_features, targets, _ = prepare_augmented_data(
-          data_file=data_file,
-          id_map_file=id_map_file,
-          uncommon=uncommon
-        )
-    elif mean_std == "mean":
-        one_hot_encode_features, targets, _ = prepare_augmented_data_mean_only(
-          data_file=data_file,
-          id_map_file=id_map_file
-        )
-    if sampling_strategy == 'k-means':
-        train_k_means_strategy(
-            n_components_list, d_models_list, one_hot_encode_features, targets, num_epochs,
-            early_stopping, batch_size, device, model_dir, mean_std)
-    else:
-        train_non_k_means_strategy(
-            n_components_list, d_models_list, one_hot_encode_features, targets, num_epochs,
-            early_stopping, batch_size, device, seed, validation_percentage, model_dir, mean_std)
