@@ -432,9 +432,9 @@ ENTRYPOINT []
  
 RUN :
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset add_uns_metadata"
-LABEL org.opencontainers.image.created="2024-05-21T00:13:51Z"
+LABEL org.opencontainers.image.created="2024-05-22T17:43:25Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="449e07edfd360ab39ff4567ff84866e809c67d3a"
+LABEL org.opencontainers.image.revision="c0fe3a5e1187ea8e305855c6f857d43dbb0228a1"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

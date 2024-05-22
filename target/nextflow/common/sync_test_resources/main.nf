@@ -2902,7 +2902,8 @@ meta = [
           "highcpu" : "cpus = 30",
           "lowtime" : "time = 1.h",
           "midtime" : "time = 4.h",
-          "hightime" : "time = 8.h"
+          "hightime" : "time = 8.h",
+          "veryhightime" : "time = 24.h"
         },
         "script" : [
           "process.errorStrategy = 'ignore'"
@@ -2917,7 +2918,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/common/sync_test_resources",
     "viash_version" : "0.8.6",
-    "git_commit" : "449e07edfd360ab39ff4567ff84866e809c67d3a",
+    "git_commit" : "c0fe3a5e1187ea8e305855c6f857d43dbb0228a1",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
