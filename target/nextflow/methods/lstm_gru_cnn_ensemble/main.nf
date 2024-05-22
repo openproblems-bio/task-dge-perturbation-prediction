@@ -3154,7 +3154,7 @@ meta = [
       },
       {
         "type" : "file",
-        "path" : "closest_sqrt_factor.py",
+        "path" : "divisor_finder.py",
         "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/lstm_gru_cnn_ensemble/"
       }
     ],
@@ -3281,7 +3281,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lstm_gru_cnn_ensemble",
     "viash_version" : "0.8.6",
-    "git_commit" : "c0fe3a5e1187ea8e305855c6f857d43dbb0228a1",
+    "git_commit" : "baf9c73a3b7bd91d42ebcac7d313e257370b2898",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

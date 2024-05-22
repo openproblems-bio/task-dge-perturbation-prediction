@@ -431,9 +431,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "colorama" "py-boost==0.4.3"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods pyboost"
-LABEL org.opencontainers.image.created="2024-05-22T17:43:25Z"
+LABEL org.opencontainers.image.created="2024-05-22T17:48:07Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="c0fe3a5e1187ea8e305855c6f857d43dbb0228a1"
+LABEL org.opencontainers.image.revision="baf9c73a3b7bd91d42ebcac7d313e257370b2898"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

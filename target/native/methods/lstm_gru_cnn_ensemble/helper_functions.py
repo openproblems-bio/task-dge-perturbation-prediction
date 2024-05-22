@@ -12,6 +12,7 @@ import random
 from sklearn.model_selection import KFold as KF
 from models import Conv, LSTM, GRU
 from helper_classes import Dataset
+from divisor_finder import find_balanced_divisors
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -39,7 +40,18 @@ def one_hot_encode(data_train, data_test, out_dir):
     train_features = encoder.transform(data_train)
     test_features = encoder.transform(data_test)
     np.save(f"{out_dir}/one_hot_train.npy", train_features.toarray().astype(float))
-    np.save(f"{out_dir}/one_hot_test.npy", test_features.toarray().astype(float))        
+    np.save(f"{out_dir}/one_hot_test.npy", test_features.toarray().astype(float))    
+
+def pad_to_balanced_shape(x, target_shape):
+    current_size = list(x.shape)
+    target_size = current_size[:-1] + [target_shape[0] * target_shape[1]]
+    padding_needed = target_size[-1] - current_size[-1]
+    if padding_needed > 0:
+        padding = np.zeros(current_size[:-1] + [padding_needed], dtype=x.dtype)
+        padded = np.concatenate((x, padding), axis=-1)
+    else:
+        padded = x
+    return padded    
         
 def build_ChemBERTa_features(smiles_list):
     chemberta = AutoModelForMaskedLM.from_pretrained("DeepChem/ChemBERTa-77M-MTR")
@@ -100,7 +112,12 @@ def combine_features(data_aug_dfs, chem_feats, main_df, one_hot_dfs=None, quanti
             vec_ = np.concatenate([vec_, chem_feat[i]])
         final_vec = np.concatenate([vec_,np.zeros(add_len-vec_.shape[0],)])
         new_vecs.append(final_vec)
-    return np.stack(new_vecs, axis=0).astype(float).reshape(len(main_df), 1, add_len)
+
+    new_final_vec = np.stack(new_vecs, axis=0).astype(float).reshape(len(main_df), 1, add_len)
+    _, input_shape = find_balanced_divisors(new_final_vec.shape[-1])
+    if input_shape[0]*input_shape[1] != new_final_vec.shape[-1]:
+        new_final_vec = pad_to_balanced_shape(new_final_vec, (input_shape[0], input_shape[1]))
+    return new_final_vec
 
 def augment_data(x_, y_):
     copy_x = x_.copy()
@@ -220,7 +237,6 @@ def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, conf
     trained_models = {'initial': [], 'light': [], 'heavy': []}
     print(paths["model_dir"])
     if not os.path.exists(paths["model_dir"]):
-        print("MODEL DIR DID NOT EXIST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         os.makedirs(paths["model_dir"], exist_ok=True)
     if not os.path.exists(paths["logs_dir"]):
         os.makedirs(paths["logs_dir"], exist_ok=True)

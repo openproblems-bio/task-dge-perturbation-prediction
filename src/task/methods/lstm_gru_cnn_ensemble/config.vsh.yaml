@@ -44,7 +44,7 @@ functionality:
     - path: predict.py
     - path: prepare_data.py
     - path: train.py
-    - path: closest_sqrt_factor.py
+    - path: divisor_finder.py
     
 platforms:
   - type: docker

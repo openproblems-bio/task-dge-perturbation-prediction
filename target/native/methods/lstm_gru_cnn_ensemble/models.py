@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from helper_classes import LogCoshLoss
 import numpy as np
-from closest_sqrt_factor import closest_sqrt_factor
+from divisor_finder import closest_sqrt_factor
 from torchsummary import summary
 
 class Conv(nn.Module):
