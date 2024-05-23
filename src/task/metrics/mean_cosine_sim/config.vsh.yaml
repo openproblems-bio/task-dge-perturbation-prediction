@@ -19,19 +19,10 @@ functionality:
         min: -1
         max: 1
         maximize: true
-      - name: mean_cosine_sim_clipped_05
-        label: Mean Cosine Similarity clipped at 0.05
-        summary: The mean of cosine similarities per row (perturbation). Values are clipped to 0.05 adjusted p-values.
-        description: This metric is the same as `mean_cosine_sim`, but with the values clipped to [-log10(0.05), log10(0.05)].
-        repository_url: null
-        documentation_url: null
-        min: -1
-        max: 1
-        maximize: true
-      - name: mean_cosine_sim_clipped_01
-        label: Mean Cosine Similarity clipped at 0.01
-        summary: The mean of cosine similarities per row (perturbation). Values are clipped to 0.01 adjusted p-values.
-        description: This metric is the same as `mean_cosine_sim`, but with the values clipped to [-log10(0.01), log10(0.01)].
+      - name: mean_cosine_sim_clipped_0001
+        label: Mean Cosine Similarity clipped at 0.0001
+        summary: The mean of cosine similarities per row (perturbation). Values are clipped to 0.0001 adjusted p-values.
+        description: This metric is the same as `mean_cosine_sim`, but with the values clipped to [-log10(0.0001), log10(0.0001)].
         repository_url: null
         documentation_url: null
         min: -1

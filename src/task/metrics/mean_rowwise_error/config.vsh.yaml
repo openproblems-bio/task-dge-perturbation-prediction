@@ -19,19 +19,10 @@ functionality:
         min: 0
         max: "+inf"
         maximize: false
-      - name: mean_rowwise_rmse_clipped_05
-        label: Mean Rowwise RMSE clipped at 0.05
-        summary: The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.5 adjusted p-values
-        description: This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.05), log10(0.05)].
-        repository_url: null
-        documentation_url: null
-        min: 0
-        max: "+inf"
-        maximize: false
-      - name: mean_rowwise_rmse_clipped_01
-        label: Mean Rowwise RMSE clipped at 0.01
-        summary: The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.1 adjusted p-values
-        description: This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.01), log10(0.01)].
+      - name: mean_rowwise_rmse_clipped_0001
+        label: Mean Rowwise RMSE clipped at 0.0001
+        summary: The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.0001 adjusted p-values
+        description: This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.0001), log10(0.0001)].
         repository_url: null
         documentation_url: null
         min: 0
@@ -53,19 +44,10 @@ functionality:
         min: 0
         max: "+inf"
         maximize: false
-      - name: mean_rowwise_mae_clipped_05
-        label: Mean Rowwise MAE clipped at 0.05
-        summary: The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.5 adjusted p-values.
-        description: This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.05), log10(0.05)].
-        repository_url: null
-        documentation_url: null
-        min: 0
-        max: "+inf"
-        maximize: false
-      - name: mean_rowwise_mae_clipped_01
-        label: Mean Rowwise MAE clipped at 0.01
-        summary: The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.1 adjusted p-values.
-        description: This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.01), log10(0.01)].
+      - name: mean_rowwise_mae_clipped_0001
+        label: Mean Rowwise MAE clipped at 0.0001
+        summary: The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.0001 adjusted p-values.
+        description: This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.0001), log10(0.0001)].
         repository_url: null
         documentation_url: null
         min: 0

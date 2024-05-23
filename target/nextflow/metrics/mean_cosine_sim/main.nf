@@ -3050,19 +3050,10 @@ meta = [
           "maximize" : true
         },
         {
-          "name" : "mean_cosine_sim_clipped_05",
-          "label" : "Mean Cosine Similarity clipped at 0.05",
-          "summary" : "The mean of cosine similarities per row (perturbation). Values are clipped to 0.05 adjusted p-values.",
-          "description" : "This metric is the same as `mean_cosine_sim`, but with the values clipped to [-log10(0.05), log10(0.05)].",
-          "min" : -1,
-          "max" : 1,
-          "maximize" : true
-        },
-        {
-          "name" : "mean_cosine_sim_clipped_01",
-          "label" : "Mean Cosine Similarity clipped at 0.01",
-          "summary" : "The mean of cosine similarities per row (perturbation). Values are clipped to 0.01 adjusted p-values.",
-          "description" : "This metric is the same as `mean_cosine_sim`, but with the values clipped to [-log10(0.01), log10(0.01)].",
+          "name" : "mean_cosine_sim_clipped_0001",
+          "label" : "Mean Cosine Similarity clipped at 0.0001",
+          "summary" : "The mean of cosine similarities per row (perturbation). Values are clipped to 0.0001 adjusted p-values.",
+          "description" : "This metric is the same as `mean_cosine_sim`, but with the values clipped to [-log10(0.0001), log10(0.0001)].",
           "min" : -1,
           "max" : 1,
           "maximize" : true
@@ -3144,7 +3135,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim",
     "viash_version" : "0.8.6",
-    "git_commit" : "36504666e84c13ec8f84ad011579875b9386e5af",
+    "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3201,55 +3192,43 @@ de_test_X = de_test.layers["sign_log10_pval"]
 prediction = prediction[genes]
 
 print("Clipping values", flush=True)
-threshold_05 = -np.log10(0.05)
-de_test_X_clipped_05 = np.clip(de_test_X, -threshold_05, threshold_05)
-prediction_clipped_05 = np.clip(prediction.values, -threshold_05, threshold_05)
-threshold_01 = -np.log10(0.01)
-de_test_X_clipped_01 = np.clip(de_test_X, -threshold_01, threshold_01)
-prediction_clipped_01 = np.clip(prediction.values, -threshold_01, threshold_01)
+threshold_0001 = -np.log10(0.0001)
+de_test_X_clipped_0001 = np.clip(de_test_X, -threshold_0001, threshold_0001)
+prediction_clipped_0001 = np.clip(prediction.values, -threshold_0001, threshold_0001)
 
 print("Calculate mean cosine similarity", flush=True)
 mean_cosine_similarity = 0
-mean_cosine_similarity_clipped_05 = 0
-mean_cosine_similarity_clipped_01 = 0
+mean_cosine_similarity_clipped_0001 = 0
 for i in range(de_test_X.shape[0]):
     y_i = de_test_X[i,]
     y_hat_i = prediction.iloc[i]
-    y_i_clipped_05 = de_test_X_clipped_05[i,]
-    y_hat_i_clipped_05 = prediction_clipped_05[i]
-    y_i_clipped_01 = de_test_X_clipped_01[i,]
-    y_hat_i_clipped_01 = prediction_clipped_01[i]
+    y_i_clipped_0001 = de_test_X_clipped_0001[i,]
+    y_hat_i_clipped_0001 = prediction_clipped_0001[i]
 
     dot_product = np.dot(y_i, y_hat_i)
-    dot_product_clipped_05 = np.dot(y_i_clipped_05, y_hat_i_clipped_05)
-    dot_product_clipped_01 = np.dot(y_i_clipped_01, y_hat_i_clipped_01)
+    dot_product_clipped_0001 = np.dot(y_i_clipped_0001, y_hat_i_clipped_0001)
 
     norm_y_i = np.linalg.norm(y_i)
-    norm_y_i_clipped_05 = np.linalg.norm(y_i_clipped_05)
-    norm_y_i_clipped_01 = np.linalg.norm(y_i_clipped_01)
+    norm_y_i_clipped_0001 = np.linalg.norm(y_i_clipped_0001)
     norm_y_hat_i = np.linalg.norm(y_hat_i)
-    norm_y_hat_i_clipped_05 = np.linalg.norm(y_hat_i_clipped_05)
-    norm_y_hat_i_clipped_01 = np.linalg.norm(y_hat_i_clipped_01)
+    norm_y_hat_i_clipped_0001 = np.linalg.norm(y_hat_i_clipped_0001)
 
     cosine_similarity = dot_product / (norm_y_i * norm_y_hat_i)
-    cosine_similarity_clipped_05 = dot_product_clipped_05 / (norm_y_i_clipped_05 * norm_y_hat_i_clipped_05)
-    cosine_similarity_clipped_01 = dot_product_clipped_01 / (norm_y_i_clipped_01 * norm_y_hat_i_clipped_01)
+    cosine_similarity_clipped_0001 = dot_product_clipped_0001 / (norm_y_i_clipped_0001 * norm_y_hat_i_clipped_0001)
 
     mean_cosine_similarity += cosine_similarity
-    mean_cosine_similarity_clipped_05 += cosine_similarity_clipped_05
-    mean_cosine_similarity_clipped_01 += cosine_similarity_clipped_01
+    mean_cosine_similarity_clipped_0001 += cosine_similarity_clipped_0001
 
 mean_cosine_similarity /= de_test_X.shape[0]
-mean_cosine_similarity_clipped_05 /= de_test_X.shape[0]
-mean_cosine_similarity_clipped_01 /= de_test_X.shape[0]
+mean_cosine_similarity_clipped_0001 /= de_test_X.shape[0]
 
 print("Create output", flush=True)
 output = ad.AnnData(
     uns={
         "dataset_id": de_test.uns["dataset_id"],
         "method_id": par["method_id"],
-        "metric_ids": ["mean_cosine_sim", "mean_cosine_sim_clipped_05", "mean_cosine_sim_clipped_01"],
-        "metric_values": [mean_cosine_similarity, mean_cosine_similarity_clipped_05, mean_cosine_similarity_clipped_01]
+        "metric_ids": ["mean_cosine_sim", "mean_cosine_sim_clipped_0001"],
+        "metric_values": [mean_cosine_similarity, mean_cosine_similarity_clipped_0001]
     }
 )
 

@@ -3050,19 +3050,10 @@ meta = [
           "maximize" : false
         },
         {
-          "name" : "mean_rowwise_rmse_clipped_05",
-          "label" : "Mean Rowwise RMSE clipped at 0.05",
-          "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.5 adjusted p-values",
-          "description" : "This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.05), log10(0.05)].",
-          "min" : 0,
-          "max" : "+inf",
-          "maximize" : false
-        },
-        {
-          "name" : "mean_rowwise_rmse_clipped_01",
-          "label" : "Mean Rowwise RMSE clipped at 0.01",
-          "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.1 adjusted p-values",
-          "description" : "This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.01), log10(0.01)].",
+          "name" : "mean_rowwise_rmse_clipped_0001",
+          "label" : "Mean Rowwise RMSE clipped at 0.0001",
+          "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.0001 adjusted p-values",
+          "description" : "This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.0001), log10(0.0001)].",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3077,19 +3068,10 @@ meta = [
           "maximize" : false
         },
         {
-          "name" : "mean_rowwise_mae_clipped_05",
-          "label" : "Mean Rowwise MAE clipped at 0.05",
-          "summary" : "The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.5 adjusted p-values.",
-          "description" : "This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.05), log10(0.05)].",
-          "min" : 0,
-          "max" : "+inf",
-          "maximize" : false
-        },
-        {
-          "name" : "mean_rowwise_mae_clipped_01",
-          "label" : "Mean Rowwise MAE clipped at 0.01",
-          "summary" : "The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.1 adjusted p-values.",
-          "description" : "This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.01), log10(0.01)].",
+          "name" : "mean_rowwise_mae_clipped_0001",
+          "label" : "Mean Rowwise MAE clipped at 0.0001",
+          "summary" : "The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.0001 adjusted p-values.",
+          "description" : "This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.0001), log10(0.0001)].",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3171,7 +3153,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error",
     "viash_version" : "0.8.6",
-    "git_commit" : "36504666e84c13ec8f84ad011579875b9386e5af",
+    "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3228,39 +3210,28 @@ de_test_X = de_test.layers["sign_log10_pval"]
 prediction = prediction[genes]
 
 print("Clipping values", flush=True)
-threshold_05 = -np.log10(0.05)
-de_test_X_clipped_05 = np.clip(de_test_X, -threshold_05, threshold_05)
-prediction_clipped_05 = np.clip(prediction.values, -threshold_05, threshold_05)
-
-threshold_01 = -np.log10(0.01)
-de_test_X_clipped_01 = np.clip(de_test_X, -threshold_01, threshold_01)
-prediction_clipped_01 = np.clip(prediction.values, -threshold_01, threshold_01)
+threshold_0001 = -np.log10(0.0001)
+de_test_X_clipped_0001 = np.clip(de_test_X, -threshold_0001, threshold_0001)
+prediction_clipped_0001 = np.clip(prediction.values, -threshold_0001, threshold_0001)
 
 print("Calculate mean rowwise RMSE", flush=True)
 mean_rowwise_rmse = 0
-mean_rowwise_rmse_clipped_05 = 0
-mean_rowwise_rmse_clipped_01 = 0
+mean_rowwise_rmse_clipped_0001 = 0
 mean_rowwise_mae = 0
-mean_rowwise_mae_clipped_05 = 0
-mean_rowwise_mae_clipped_01 = 0
+mean_rowwise_mae_clipped_0001 = 0
 for i in range(de_test_X.shape[0]):
     diff = de_test_X[i,] - prediction.iloc[i]
-    diff_clipped_05 = de_test_X_clipped_05[i,] - prediction_clipped_05[i]
-    diff_clipped_01 = de_test_X_clipped_01[i,] - prediction_clipped_01[i]
+    diff_clipped_0001 = de_test_X_clipped_0001[i,] - prediction_clipped_0001[i]
 
     mean_rowwise_rmse += np.sqrt((diff**2).mean())
-    mean_rowwise_rmse_clipped_05 += np.sqrt((diff_clipped_05**2).mean())
-    mean_rowwise_rmse_clipped_01 += np.sqrt((diff_clipped_01**2).mean())
+    mean_rowwise_rmse_clipped_0001 += np.sqrt((diff_clipped_0001 ** 2).mean())
     mean_rowwise_mae += np.abs(diff).mean()
-    mean_rowwise_mae_clipped_05 += np.abs(diff_clipped_05).mean()
-    mean_rowwise_mae_clipped_01 += np.abs(diff_clipped_01).mean()
+    mean_rowwise_mae_clipped_0001 += np.abs(diff_clipped_0001).mean()
 
 mean_rowwise_rmse /= de_test.shape[0]
-mean_rowwise_rmse_clipped_05 /= de_test.shape[0]
-mean_rowwise_rmse_clipped_01 /= de_test.shape[0]
+mean_rowwise_rmse_clipped_0001 /= de_test.shape[0]
 mean_rowwise_mae /= de_test.shape[0]
-mean_rowwise_mae_clipped_05 /= de_test.shape[0]
-mean_rowwise_mae_clipped_01 /= de_test.shape[0]
+mean_rowwise_mae_clipped_0001 /= de_test.shape[0]
 
 print("Create output", flush=True)
 output = ad.AnnData(
@@ -3268,11 +3239,9 @@ output = ad.AnnData(
         "dataset_id": de_test.uns["dataset_id"],
         "method_id": par["method_id"],
         "metric_ids": ["mean_rowwise_rmse", "mean_rowwise_mae",
-                          "mean_rowwise_rmse_clipped_05", "mean_rowwise_mae_clipped_05",
-                          "mean_rowwise_rmse_clipped_01", "mean_rowwise_mae_clipped_01"],
+                          "mean_rowwise_rmse_clipped_0001", "mean_rowwise_mae_clipped_0001"],
         "metric_values": [mean_rowwise_rmse, mean_rowwise_mae,
-                          mean_rowwise_rmse_clipped_05, mean_rowwise_mae_clipped_05,
-                          mean_rowwise_rmse_clipped_01, mean_rowwise_mae_clipped_01]
+                          mean_rowwise_rmse_clipped_0001, mean_rowwise_mae_clipped_0001]
     }
 )
 
