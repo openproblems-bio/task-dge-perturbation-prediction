@@ -70,4 +70,4 @@ platforms:
   - type: native
   - type: nextflow
     directives:
-      label: [veryhightime,highmem,highcpu,highsharedmem,gpu]
+      label: [veryhightime, veryhighmem, highcpu, highsharedmem, gpu]

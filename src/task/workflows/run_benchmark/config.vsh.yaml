@@ -81,6 +81,7 @@ functionality:
     - name: methods/pyboost
     - name: metrics/mean_rowwise_error
     - name: metrics/mean_cosine_sim
+    - name: metrics/mean_correlation
   repositories:
     - name: openproblemsv2
       type: github

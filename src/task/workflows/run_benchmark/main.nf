@@ -34,7 +34,8 @@ workflow run_wf {
   // construct list of metrics
   metrics = [
     mean_rowwise_error,
-    mean_cosine_sim
+    mean_cosine_sim,
+    mean_correlation
   ]
 
   /* **************************

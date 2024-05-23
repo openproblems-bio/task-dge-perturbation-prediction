@@ -3044,25 +3044,25 @@ meta = [
           "name" : "mean_cosine_sim",
           "label" : "Mean Cosine Similarity",
           "summary" : "The mean of cosine similarities per row (perturbation).",
-          "description" : "We use the **Mean Cosine Similarity** to score submissions, computed as follows:\n\n$$\n\\\\textrm{Mean-Cosine} = \\\\frac{1}{R} \\\\sum_{i=1}^R \\\\frac{\\\\mathbf{y}_i \\\\cdot \\\\mathbf{\\\\hat{y}}_i}{\\\\|\\\\mathbf{y}_i\\\\| \\\\|\\\\mathbf{\\\\hat{y}}_i\\\\|}\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(\\\\mathbf{y}_i\\\\\\\\)$ and $\\\\\\\\(\\\\mathbf{\\\\hat{y}}_i\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$.\n",
+          "description" : "We use the **Mean Cosine Similarity** to score submissions, computed as follows:\n\n$$\n\\\\textrm{Mean-Cosine} = \\\\frac{1}{R} \\\\sum_{i=1}^R \\\\frac{\\\\mathbf{y}_i \\\\cdot \\\\mathbf{\\\\hat{y}}_i}{\\\\|\\\\mathbf{y}_i\\\\| \\\\|\\\\mathbf{\\\\hat{y}}_i\\\\|}\n$$\n\nwhere $(R)$ is the number of scored rows, and $(\\\\mathbf{y}_i)$ and $(\\\\mathbf{\\\\hat{y}}_i)$ are the actual and predicted values, respectively, for row $(i)$.\n",
           "min" : -1,
           "max" : 1,
           "maximize" : true
         },
         {
           "name" : "mean_cosine_sim_clipped_05",
-          "label" : "Mean Cosine Similarity clipped at 0.5",
-          "summary" : "The mean of cosine similarities per row (perturbation). Values are clipped to 0.5 adjusted p-values.",
-          "description" : "We use the **Mean Cosine Similarity** to score submissions, computed as follows:\n\n$$\n\\\\textrm{Mean-Cosine} = \\\\frac{1}{R} \\\\sum_{i=1}^R \\\\frac{\\\\mathbf{y}_i \\\\cdot \\\\mathbf{\\\\hat{y}}_i}{\\\\|\\\\mathbf{y}_i\\\\| \\\\|\\\\mathbf{\\\\hat{y}}_i\\\\|}\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(\\\\mathbf{y}_i\\\\\\\\)$ and $\\\\\\\\(\\\\mathbf{\\\\hat{y}}_i\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$.\n",
+          "label" : "Mean Cosine Similarity clipped at 0.05",
+          "summary" : "The mean of cosine similarities per row (perturbation). Values are clipped to 0.05 adjusted p-values.",
+          "description" : "This metric is the same as `mean_cosine_sim`, but with the values clipped to [-log10(0.05), log10(0.05)].",
           "min" : -1,
           "max" : 1,
           "maximize" : true
         },
         {
           "name" : "mean_cosine_sim_clipped_01",
-          "label" : "Mean Cosine Similarity clipped at 0.1",
-          "summary" : "The mean of cosine similarities per row (perturbation). Values are clipped to 0.1 adjusted p-values.",
-          "description" : "We use the **Mean Cosine Similarity** to score submissions, computed as follows:\n\n$$\n\\\\textrm{Mean-Cosine} = \\\\frac{1}{R} \\\\sum_{i=1}^R \\\\frac{\\\\mathbf{y}_i \\\\cdot \\\\mathbf{\\\\hat{y}}_i}{\\\\|\\\\mathbf{y}_i\\\\| \\\\|\\\\mathbf{\\\\hat{y}}_i\\\\|}\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(\\\\mathbf{y}_i\\\\\\\\)$ and $\\\\\\\\(\\\\mathbf{\\\\hat{y}}_i\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$.\n",
+          "label" : "Mean Cosine Similarity clipped at 0.01",
+          "summary" : "The mean of cosine similarities per row (perturbation). Values are clipped to 0.01 adjusted p-values.",
+          "description" : "This metric is the same as `mean_cosine_sim`, but with the values clipped to [-log10(0.01), log10(0.01)].",
           "min" : -1,
           "max" : 1,
           "maximize" : true
@@ -3144,7 +3144,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim",
     "viash_version" : "0.8.6",
-    "git_commit" : "022cf5405af2316217b0e0dbf2e8deb16940e474",
+    "git_commit" : "36504666e84c13ec8f84ad011579875b9386e5af",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

@@ -3044,25 +3044,25 @@ meta = [
           "name" : "mean_rowwise_rmse",
           "label" : "Mean Rowwise RMSE",
           "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix.",
-          "description" : "We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum\\\\_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum\\\\_{j=1}^{n} (y\\\\_{ij} - \\\\widehat{y}\\\\_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(y_{ij}\\\\\\\\)$ and $\\\\\\\\(\\\\widehat{y}_{ij}\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$ and column $\\\\\\\\(j\\\\\\\\)$, and $\\\\\\\\(n\\\\\\\\)$ bis the number of columns.\n",
+          "description" : "We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum\\\\_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum\\\\_{j=1}^{n} (y\\\\_{ij} - \\\\widehat{y}\\\\_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
         },
         {
           "name" : "mean_rowwise_rmse_clipped_05",
-          "label" : "Mean Rowwise RMSE clipped at 0.5",
+          "label" : "Mean Rowwise RMSE clipped at 0.05",
           "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.5 adjusted p-values",
-          "description" : "We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum\\\\_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum\\\\_{j=1}^{n} (y\\\\_{ij} - \\\\widehat{y}\\\\_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(y_{ij}\\\\\\\\)$ and $\\\\\\\\(\\\\widehat{y}_{ij}\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$ and column $\\\\\\\\(j\\\\\\\\)$, and $\\\\\\\\(n\\\\\\\\)$ bis the number of columns.\n",
+          "description" : "This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.05), log10(0.05)].",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
         },
         {
           "name" : "mean_rowwise_rmse_clipped_01",
-          "label" : "Mean Rowwise RMSE clipped at 0.1",
+          "label" : "Mean Rowwise RMSE clipped at 0.01",
           "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.1 adjusted p-values",
-          "description" : "We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum\\\\_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum\\\\_{j=1}^{n} (y\\\\_{ij} - \\\\widehat{y}\\\\_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(y_{ij}\\\\\\\\)$ and $\\\\\\\\(\\\\widehat{y}_{ij}\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$ and column $\\\\\\\\(j\\\\\\\\)$, and $\\\\\\\\(n\\\\\\\\)$ bis the number of columns.\n",
+          "description" : "This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.01), log10(0.01)].",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3071,25 +3071,25 @@ meta = [
           "name" : "mean_rowwise_mae",
           "label" : "Mean Rowwise MAE",
           "summary" : "The mean of the absolute error (MAE) of each row in the matrix.",
-          "description" : "We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(y_{ij}\\\\\\\\)$ and $\\\\\\\\(\\\\widehat{y}_{ij}\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$ and column $\\\\\\\\(j\\\\\\\\)$, and $\\\\\\\\(n\\\\\\\\)$ bis the number of columns.\n",
+          "description" : "We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
         },
         {
           "name" : "mean_rowwise_mae_clipped_05",
-          "label" : "Mean Rowwise MAE clipped at 0.5",
+          "label" : "Mean Rowwise MAE clipped at 0.05",
           "summary" : "The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.5 adjusted p-values.",
-          "description" : "We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(y_{ij}\\\\\\\\)$ and $\\\\\\\\(\\\\widehat{y}_{ij}\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$ and column $\\\\\\\\(j\\\\\\\\)$, and $\\\\\\\\(n\\\\\\\\)$ bis the number of columns.\n",
+          "description" : "This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.05), log10(0.05)].",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
         },
         {
           "name" : "mean_rowwise_mae_clipped_01",
-          "label" : "Mean Rowwise MAE clipped at 0.1",
+          "label" : "Mean Rowwise MAE clipped at 0.01",
           "summary" : "The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.1 adjusted p-values.",
-          "description" : "We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $\\\\\\\\(R\\\\\\\\)$ is the number of scored rows, and $\\\\\\\\(y_{ij}\\\\\\\\)$ and $\\\\\\\\(\\\\widehat{y}_{ij}\\\\\\\\)$ are the actual and predicted values, respectively, for row $\\\\\\\\(i\\\\\\\\)$ and column $\\\\\\\\(j\\\\\\\\)$, and $\\\\\\\\(n\\\\\\\\)$ bis the number of columns.\n",
+          "description" : "This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.01), log10(0.01)].",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3171,7 +3171,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error",
     "viash_version" : "0.8.6",
-    "git_commit" : "022cf5405af2316217b0e0dbf2e8deb16940e474",
+    "git_commit" : "36504666e84c13ec8f84ad011579875b9386e5af",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
