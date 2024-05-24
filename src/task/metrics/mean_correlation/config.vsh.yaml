@@ -7,13 +7,7 @@ functionality:
         label: Mean Pearson
         summary: The mean of Pearson correlations per row (perturbation).
         description: |
-          We use the **Mean Pearson Correlation** to score submissions, computed as follows:
-
-          $$
-          \textrm{Mean-Pearson} = \frac{1}{R} \sum_{i=1}^R \frac{\sum_{j=1}^n (y_{ij} - \bar{y}_i)(\hat{y}_{ij} - \bar{\hat{y}}_i)}{\sqrt{\sum_{j=1}^n (y_{ij} - \bar{y}_i)^2 \sum_{j=1}^n (\hat{y}_{ij} - \bar{\hat{y}}_i)^2}}
-          $$
-
-          where $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\hat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$.
+          We use the **Mean Pearson Correlation** to score submissions.
         repository_url: null
         documentation_url: null
         min: -1
@@ -23,13 +17,12 @@ functionality:
         label: Mean Spearman
         summary: The mean of Spearman correlations per row (perturbation).
         description: |
-          We use the **Mean Spearman Correlation** to score submissions, computed as follows:
-
-          $$
-          \textrm{Mean-Spearman} = \frac{1}{R} \sum_{i=1}^R \frac{\sum_{j=1}^n (\text{rank}(y_{ij}) - \bar{\text{rank}}_i)(\text{rank}(\hat{y}_{ij}) - \bar{\text{rank}}_i)}{\sqrt{\sum_{j=1}^n (\text{rank}(y_{ij}) - \bar{\text{rank}}_i)^2 \sum_{j=1}^n (\text{rank}(\hat{y}_{ij}) - \bar{\text{rank}}_i)^2}}
-          $$
-
-          where $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\hat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$.
+          We use the **Mean Spearman Correlation** to score submissions.
+        repository_url: null
+        documentation_url: null
+        min: -1
+        max: 1
+        maximize: true
   resources:
     - type: python_script
       path: script.py

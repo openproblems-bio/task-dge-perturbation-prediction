@@ -3254,6 +3254,21 @@ meta = [
           },
           {
             "type" : "file",
+            "name" : "--stability_scores",
+            "description" : "A yaml file containing the scores of each of the methods on bootstrapped datasets",
+            "default" : [
+              "stability_uns.yaml"
+            ],
+            "must_exist" : false,
+            "create_parent" : true,
+            "required" : false,
+            "direction" : "output",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "file",
             "name" : "--method_configs",
             "default" : [
               "method_configs.yaml"
@@ -3311,7 +3326,7 @@ meta = [
         ]
       },
       {
-        "name" : "Methods",
+        "name" : "Arguments",
         "arguments" : [
           {
             "type" : "string",
@@ -3320,6 +3335,58 @@ meta = [
             "required" : false,
             "direction" : "input",
             "multiple" : true,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "boolean",
+            "name" : "--stability",
+            "description" : "Whether to run a stability analysis on the methods.",
+            "default" : [
+              false
+            ],
+            "required" : false,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "integer",
+            "name" : "--stability_num_replicates",
+            "description" : "Number of bootstraps to generate.",
+            "default" : [
+              10
+            ],
+            "required" : true,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "double",
+            "name" : "--stability_obs_fraction",
+            "description" : "Fraction of the training dataset obs to include in each bootstrap.",
+            "default" : [
+              0.95
+            ],
+            "required" : true,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "double",
+            "name" : "--stability_var_fraction",
+            "description" : "Fraction of the training & test dataset var to include in each bootstrap.",
+            "default" : [
+              0.95
+            ],
+            "required" : true,
+            "direction" : "input",
+            "multiple" : false,
             "multiple_sep" : ":",
             "dest" : "par"
           }
@@ -3349,9 +3416,9 @@ meta = [
           "name" : "",
           "repo" : "openproblems-bio/openproblems-v2",
           "tag" : "main_build",
-          "localPath" : "/tmp/viash_hub_repo15992018343286014122"
+          "localPath" : "/tmp/viash_hub_repo14830978819972899312"
         },
-        "foundConfigPath" : "/tmp/viash_hub_repo15992018343286014122/target/nextflow/common/extract_metadata/.config.vsh.yaml",
+        "foundConfigPath" : "/tmp/viash_hub_repo14830978819972899312/target/nextflow/common/extract_metadata/.config.vsh.yaml",
         "configInfo" : {
           "functionalityName" : "extract_metadata",
           "git_remote" : "https://github.com/openproblems-bio/openproblems-v2",
@@ -3360,7 +3427,7 @@ meta = [
           "functionalityNamespace" : "common",
           "output" : "/home/runner/work/openproblems-v2/openproblems-v2/target/nextflow/common/extract_metadata",
           "platform" : "nextflow",
-          "git_commit" : "4fbd8f5e81e93a8faacaedb626c1604ed53a9732",
+          "git_commit" : "907447bc4c8073182f35850747298d05aad536d7",
           "executable" : "/home/runner/work/openproblems-v2/openproblems-v2/target/nextflow/common/extract_metadata/extract_metadata"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/dependencies/github/openproblems-bio/openproblems-v2/main_build/nextflow/common/extract_metadata"
@@ -3381,7 +3448,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/control_methods/zeros/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/zeros"
@@ -3402,7 +3469,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/control_methods/sample/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/sample"
@@ -3423,7 +3490,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/control_methods/ground_truth/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/ground_truth"
@@ -3444,7 +3511,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/control_methods/mean_outcome/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_outcome"
@@ -3465,7 +3532,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/control_methods/mean_across_celltypes/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_celltypes"
@@ -3486,7 +3553,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/control_methods/mean_across_compounds/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_compounds"
@@ -3507,7 +3574,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/methods/nn_retraining_with_pseudolabels/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/nn_retraining_with_pseudolabels"
@@ -3528,7 +3595,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/methods/scape/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape"
@@ -3549,7 +3616,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/methods/jn_ap_op2/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/jn_ap_op2"
@@ -3570,7 +3637,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/methods/lstm_gru_cnn_ensemble/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lstm_gru_cnn_ensemble"
@@ -3591,7 +3658,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/methods/transformer_ensemble/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/transformer_ensemble"
@@ -3612,7 +3679,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/methods/pyboost/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/pyboost"
@@ -3633,7 +3700,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/metrics/mean_rowwise_error/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error"
@@ -3654,7 +3721,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/metrics/mean_cosine_sim/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim"
@@ -3675,10 +3742,52 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
           "executable" : "/nextflow/metrics/mean_correlation/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_correlation"
+      },
+      {
+        "name" : "process_dataset/bootstrap",
+        "repository" : {
+          "type" : "local",
+          "localPath" : ""
+        },
+        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/config.vsh.yaml",
+        "configInfo" : {
+          "functionalityName" : "bootstrap",
+          "git_tag" : "",
+          "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
+          "viash_version" : "0.8.6",
+          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/config.vsh.yaml",
+          "functionalityNamespace" : "process_dataset",
+          "output" : "",
+          "platform" : "",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
+          "executable" : "/nextflow/process_dataset/bootstrap/main.nf"
+        },
+        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap"
+      },
+      {
+        "name" : "process_dataset/convert_h5ad_to_parquet",
+        "repository" : {
+          "type" : "local",
+          "localPath" : ""
+        },
+        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/convert_h5ad_to_parquet/config.vsh.yaml",
+        "configInfo" : {
+          "functionalityName" : "convert_h5ad_to_parquet",
+          "git_tag" : "",
+          "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
+          "viash_version" : "0.8.6",
+          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/convert_h5ad_to_parquet/config.vsh.yaml",
+          "functionalityNamespace" : "process_dataset",
+          "output" : "",
+          "platform" : "",
+          "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
+          "executable" : "/nextflow/process_dataset/convert_h5ad_to_parquet/main.nf"
+        },
+        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/convert_h5ad_to_parquet"
       }
     ],
     "repositories" : [
@@ -3731,7 +3840,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark",
     "viash_version" : "0.8.6",
-    "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+    "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3755,9 +3864,39 @@ include { pyboost } from "${meta.resources_dir}/../../../nextflow/methods/pyboos
 include { mean_rowwise_error } from "${meta.resources_dir}/../../../nextflow/metrics/mean_rowwise_error/main.nf"
 include { mean_cosine_sim } from "${meta.resources_dir}/../../../nextflow/metrics/mean_cosine_sim/main.nf"
 include { mean_correlation } from "${meta.resources_dir}/../../../nextflow/metrics/mean_correlation/main.nf"
+include { bootstrap } from "${meta.resources_dir}/../../../nextflow/process_dataset/bootstrap/main.nf"
+include { convert_h5ad_to_parquet } from "${meta.resources_dir}/../../../nextflow/process_dataset/convert_h5ad_to_parquet/main.nf"
 
 // inner workflow
 // user-provided Nextflow code
+// construct list of methods
+methods = [
+  ground_truth,
+  mean_outcome,
+  mean_across_celltypes,
+  mean_across_compounds,
+  sample,
+  zeros,
+  lstm_gru_cnn_ensemble,
+  nn_retraining_with_pseudolabels,
+  jn_ap_op2,
+  scape,
+  transformer_ensemble,
+  pyboost.run(
+    args: [
+      train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
+    ]
+  )
+]
+
+// construct list of metrics
+metrics = [
+  mean_rowwise_error,
+  mean_cosine_sim,
+  mean_correlation
+]
+
+// helper workflow for starting a workflow based on lists of yaml files
 workflow auto {
   findStates(params, meta.config)
     | meta.workflow.run(
@@ -3765,38 +3904,12 @@ workflow auto {
     )
 }
 
+// benchmarking workflow
 workflow run_wf {
   take:
   input_ch
 
   main:
-
-  // construct list of methods
-  methods = [
-    ground_truth,
-    mean_outcome,
-    mean_across_celltypes,
-    mean_across_compounds,
-    sample,
-    zeros,
-    lstm_gru_cnn_ensemble,
-    nn_retraining_with_pseudolabels,
-    jn_ap_op2,
-    scape,
-    transformer_ensemble,
-    pyboost.run(
-      args: [
-        train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
-      ]
-    )
-  ]
-
-  // construct list of metrics
-  metrics = [
-    mean_rowwise_error,
-    mean_cosine_sim,
-    mean_correlation
-  ]
 
   /* **************************
    * PREPARE DATASET AND TASK *
@@ -3823,7 +3936,63 @@ workflow run_wf {
    * RUN METHODS AND METRICS *
    ***************************/
   score_ch = dataset_ch
+    | benchmark_wf
 
+
+  /**************************
+   * RUN STABILITY ANALYSIS *
+   **************************/
+  // todo: rename bootstrap arguments to stability
+  stability_ch = dataset_ch
+    | filter{ id, state ->
+      state.stability
+    }
+    | stability_wf
+
+  /******************************
+   * GENERATE OUTPUT YAML FILES *
+   ******************************/
+
+  // extract and combine the dataset metadata
+  metadata_ch = dataset_ch
+    | metadata_wf
+
+  output_ch = score_ch
+
+    | joinStates { ids, states ->
+
+      // store the scores in a file
+      def score_uns = states.collect{it.score_uns}
+      def score_uns_yaml_blob = toYamlBlob(score_uns)
+      def score_uns_file = tempFile("score_uns.yaml")
+      score_uns_file.write(score_uns_yaml_blob)
+
+      def new_state = [
+        scores: score_uns_file,
+        _meta: states[0]._meta
+      ]
+      
+      ["output", new_state]
+    }
+
+    // merge all of the output data 
+    | mix(metadata_ch)
+    | mix(stability_ch)
+
+    | joinStates{ ids, states ->
+      def mergedStates = states.inject([:]) { acc, m -> acc + m }
+      [ids[0], mergedStates]
+    }
+
+  emit:
+  output_ch
+}
+
+workflow benchmark_wf {
+  take: input_ch
+
+  main:
+  output_ch = input_ch
     // run all methods
     | runEach(
       components: methods,
@@ -3887,24 +4056,6 @@ workflow run_wf {
       }
     )
 
-  /******************************
-   * GENERATE OUTPUT YAML FILES *
-   ******************************/
-
-  // extract and combine the dataset metadata
-  dataset_meta_ch = dataset_ch
-    | joinStates { ids, states ->
-      // combine the dataset info into one file
-      def dataset_uns = states.collect{it.dataset_info}
-      def dataset_uns_yaml_blob = toYamlBlob(dataset_uns)
-      def dataset_uns_file = tempFile("dataset_uns.yaml")
-      dataset_uns_file.write(dataset_uns_yaml_blob)
-
-      ["output", [dataset_uns: dataset_uns_file]]
-    }
-
-  output_ch = score_ch
-
     // extract the scores
     | extract_metadata.run(
       key: "score_uns",
@@ -3916,7 +4067,94 @@ workflow run_wf {
       }
     )
 
+  emit: output_ch
+}
+
+workflow stability_wf {
+  take: input_ch
+
+  main:
+  output_ch = input_ch
+    
+    | bootstrap.run(
+      fromState: [
+        train_h5ad: "de_train_h5ad",
+        test_h5ad: "de_test_h5ad",
+        num_replicates: "stability_num_replicates",
+        obs_fraction: "stability_obs_fraction",
+        var_fraction: "stability_var_fraction"
+      ],
+
+      toState: [
+        de_train_h5ad: "output_train_h5ad",
+        de_test_h5ad: "output_test_h5ad"
+      ]
+    )
+
+    // flatten bootstraps
+    | flatMap { id, state -> 
+      return [state.de_train_h5ad, state.de_test_h5ad]
+        .transpose()
+        .withIndex()
+        .collect{ el, idx ->
+          [
+            id + "_bootstrap" + idx,
+            state + [
+              replicate: idx,
+              de_train_h5ad: el[0],
+              de_test_h5ad: el[1]
+            ]
+          ]
+        }
+    }
+
+    | convert_h5ad_to_parquet.run(
+      fromState: [
+        input_train: "de_train_h5ad",
+        input_test: "de_test_h5ad"
+      ],
+      toState: [
+        de_train: "output_train",
+        de_test: "output_test",
+        id_map: "output_id_map"
+      ]
+    )
+
+    | benchmark_wf
+
     | joinStates { ids, states ->
+      def stability_uns = states.collect{it.stability_uns}
+      def stability_uns_yaml_blob = toYamlBlob(stability_uns)
+      def stability_uns_file = tempFile("stability_uns.yaml")
+      stability_uns_file.write(stability_uns_yaml_blob)
+
+      def new_state = [
+        method_configs: method_configs_file,
+        metric_configs: metric_configs_file,
+        task_info: task_info_file,
+        scores: score_uns_file,
+        _meta: states[0]._meta
+      ]
+      
+      ["output", [stability_scores: stability_uns_file]]
+    }
+
+  emit: output_ch
+}
+
+
+workflow metadata_wf {
+  take: input_ch
+
+  main:
+  output_ch = input_ch
+    | joinStates { ids, states ->
+      // combine the dataset info into one file
+      def dataset_uns = states.collect{it.dataset_info}
+      def dataset_uns_yaml_blob = toYamlBlob(dataset_uns)
+      def dataset_uns_file = tempFile("dataset_uns.yaml")
+      dataset_uns_file.write(dataset_uns_yaml_blob)
+
       // store the method configs in a file
       def method_configs = methods.collect{it.config}
       def method_configs_yaml_blob = toYamlBlob(method_configs)
@@ -3931,37 +4169,16 @@ workflow run_wf {
 
       def task_info_file = meta.resources_dir.resolve("task_info.yaml")
 
-      // store the scores in a file
-      def score_uns = states.collect{state ->
-        state.score_uns + [
-          dataset_id: state.dataset_info.dataset_id,
-          method_id: state.method_id
-        ]
-      }
-      def score_uns_yaml_blob = toYamlBlob(score_uns)
-      def score_uns_file = tempFile("score_uns.yaml")
-      score_uns_file.write(score_uns_yaml_blob)
-
       def new_state = [
+        dataset_uns: dataset_uns_file,
         method_configs: method_configs_file,
         metric_configs: metric_configs_file,
         task_info: task_info_file,
-        scores: score_uns_file,
         _meta: states[0]._meta
       ]
-      
       ["output", new_state]
     }
-
-    // merge all of the output data 
-    | mix(dataset_meta_ch)
-    | joinStates{ ids, states ->
-      def mergedStates = states.inject([:]) { acc, m -> acc + m }
-      [ids[0], mergedStates]
-    }
-
-  emit:
-  output_ch
+  emit: output_ch
 }
 
 // inner workflow hook

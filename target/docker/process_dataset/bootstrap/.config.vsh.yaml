@@ -1,0 +1,166 @@
+functionality:
+  name: "bootstrap"
+  namespace: "process_dataset"
+  version: "main_build"
+  argument_groups:
+  - name: "Inputs"
+    arguments:
+    - type: "file"
+      name: "--train_h5ad"
+      info: null
+      example:
+      - "resources/neurips-2023-kaggle/de_train.h5ad"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "file"
+      name: "--test_h5ad"
+      info: null
+      example:
+      - "resources/neurips-2023-kaggle/de_test.h5ad"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+  - name: "Outputs"
+    arguments:
+    - type: "file"
+      name: "--output_train_h5ad"
+      info: null
+      example:
+      - "de_train_bootstrap.h5ad"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "output"
+      multiple: true
+      multiple_sep: ":"
+      dest: "par"
+    - type: "file"
+      name: "--output_test_h5ad"
+      info: null
+      example:
+      - "de_test_bootstrap.h5ad"
+      must_exist: true
+      create_parent: true
+      required: true
+      direction: "output"
+      multiple: true
+      multiple_sep: ":"
+      dest: "par"
+  - name: "Arguments"
+    arguments:
+    - type: "integer"
+      name: "--num_replicates"
+      description: "Number of bootstraps to generate."
+      info: null
+      default:
+      - 10
+      required: true
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "double"
+      name: "--obs_fraction"
+      description: "Fraction of the training dataset obs to include in each bootstrap."
+      info: null
+      default:
+      - 0.95
+      required: true
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "double"
+      name: "--var_fraction"
+      description: "Fraction of the training & test dataset var to include in each\
+        \ bootstrap."
+      info: null
+      default:
+      - 0.95
+      required: true
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+  resources:
+  - type: "r_script"
+    path: "script.R"
+    is_executable: true
+  info:
+    type: "process_dataset"
+    type_info:
+      label: "Bootstrap"
+      summary: "A component to generate bootstraps of a dataset."
+      description: "This component generates bootstraps of a dataset. It takes as\
+        \ input a parquet file and an h5ad file and generates bootstraps of the dataset.\
+        \ The bootstraps are saved as parquet and h5ad files.\n"
+  status: "enabled"
+  set_wd_to_resources_dir: false
+platforms:
+- type: "docker"
+  id: "docker"
+  image: "ghcr.io/openproblems-bio/base_r:1.0.4"
+  target_organization: "openproblems-bio/task-dge-perturbation-prediction"
+  target_registry: "ghcr.io"
+  namespace_separator: "/"
+  resolve_volume: "Automatic"
+  chown: true
+  setup_strategy: "ifneedbepullelsecachedbuild"
+  target_image_source: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+  setup:
+  - type: "r"
+    cran:
+    - "dplyr"
+    - "tidyr"
+    - "purrr"
+    - "tibble"
+    - "arrow"
+    bioc_force_install: false
+  entrypoint: []
+  cmd: null
+- type: "nextflow"
+  id: "nextflow"
+  directives:
+    label:
+    - "midtime"
+    - "midmem"
+    - "lowcpu"
+    tag: "$id"
+  auto:
+    simplifyInput: true
+    simplifyOutput: false
+    transcript: false
+    publish: false
+  config:
+    labels:
+      lowmem: "memory = 20.Gb"
+      midmem: "memory = 50.Gb"
+      highmem: "memory = 100.Gb"
+      lowcpu: "cpus = 5"
+      midcpu: "cpus = 15"
+      highcpu: "cpus = 30"
+      lowtime: "time = 1.h"
+      midtime: "time = 4.h"
+      hightime: "time = 8.h"
+      veryhightime: "time = 24.h"
+    script:
+    - "process.errorStrategy = 'ignore'"
+  debug: false
+  container: "docker"
+info:
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/config.vsh.yaml"
+  platform: "docker"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/process_dataset/bootstrap"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/process_dataset/bootstrap/bootstrap"
+  viash_version: "0.8.6"
+  git_commit: "f022f27adfd92d6a1f624831bb93471dbc167216"
+  git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

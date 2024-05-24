@@ -1,3 +1,31 @@
+// construct list of methods
+methods = [
+  ground_truth,
+  mean_outcome,
+  mean_across_celltypes,
+  mean_across_compounds,
+  sample,
+  zeros,
+  lstm_gru_cnn_ensemble,
+  nn_retraining_with_pseudolabels,
+  jn_ap_op2,
+  scape,
+  transformer_ensemble,
+  pyboost.run(
+    args: [
+      train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
+    ]
+  )
+]
+
+// construct list of metrics
+metrics = [
+  mean_rowwise_error,
+  mean_cosine_sim,
+  mean_correlation
+]
+
+// helper workflow for starting a workflow based on lists of yaml files
 workflow auto {
   findStates(params, meta.config)
     | meta.workflow.run(
@@ -5,38 +33,12 @@ workflow auto {
     )
 }
 
+// benchmarking workflow
 workflow run_wf {
   take:
   input_ch
 
   main:
-
-  // construct list of methods
-  methods = [
-    ground_truth,
-    mean_outcome,
-    mean_across_celltypes,
-    mean_across_compounds,
-    sample,
-    zeros,
-    lstm_gru_cnn_ensemble,
-    nn_retraining_with_pseudolabels,
-    jn_ap_op2,
-    scape,
-    transformer_ensemble,
-    pyboost.run(
-      args: [
-        train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
-      ]
-    )
-  ]
-
-  // construct list of metrics
-  metrics = [
-    mean_rowwise_error,
-    mean_cosine_sim,
-    mean_correlation
-  ]
 
   /* **************************
    * PREPARE DATASET AND TASK *
@@ -63,7 +65,63 @@ workflow run_wf {
    * RUN METHODS AND METRICS *
    ***************************/
   score_ch = dataset_ch
+    | benchmark_wf
 
+
+  /**************************
+   * RUN STABILITY ANALYSIS *
+   **************************/
+  // todo: rename bootstrap arguments to stability
+  stability_ch = dataset_ch
+    | filter{ id, state ->
+      state.stability
+    }
+    | stability_wf
+
+  /******************************
+   * GENERATE OUTPUT YAML FILES *
+   ******************************/
+
+  // extract and combine the dataset metadata
+  metadata_ch = dataset_ch
+    | metadata_wf
+
+  output_ch = score_ch
+
+    | joinStates { ids, states ->
+
+      // store the scores in a file
+      def score_uns = states.collect{it.score_uns}
+      def score_uns_yaml_blob = toYamlBlob(score_uns)
+      def score_uns_file = tempFile("score_uns.yaml")
+      score_uns_file.write(score_uns_yaml_blob)
+
+      def new_state = [
+        scores: score_uns_file,
+        _meta: states[0]._meta
+      ]
+      
+      ["output", new_state]
+    }
+
+    // merge all of the output data 
+    | mix(metadata_ch)
+    | mix(stability_ch)
+
+    | joinStates{ ids, states ->
+      def mergedStates = states.inject([:]) { acc, m -> acc + m }
+      [ids[0], mergedStates]
+    }
+
+  emit:
+  output_ch
+}
+
+workflow benchmark_wf {
+  take: input_ch
+
+  main:
+  output_ch = input_ch
     // run all methods
     | runEach(
       components: methods,
@@ -127,24 +185,6 @@ workflow run_wf {
       }
     )
 
-  /******************************
-   * GENERATE OUTPUT YAML FILES *
-   ******************************/
-
-  // extract and combine the dataset metadata
-  dataset_meta_ch = dataset_ch
-    | joinStates { ids, states ->
-      // combine the dataset info into one file
-      def dataset_uns = states.collect{it.dataset_info}
-      def dataset_uns_yaml_blob = toYamlBlob(dataset_uns)
-      def dataset_uns_file = tempFile("dataset_uns.yaml")
-      dataset_uns_file.write(dataset_uns_yaml_blob)
-
-      ["output", [dataset_uns: dataset_uns_file]]
-    }
-
-  output_ch = score_ch
-
     // extract the scores
     | extract_metadata.run(
       key: "score_uns",
@@ -156,7 +196,94 @@ workflow run_wf {
       }
     )
 
+  emit: output_ch
+}
+
+workflow stability_wf {
+  take: input_ch
+
+  main:
+  output_ch = input_ch
+    
+    | bootstrap.run(
+      fromState: [
+        train_h5ad: "de_train_h5ad",
+        test_h5ad: "de_test_h5ad",
+        num_replicates: "stability_num_replicates",
+        obs_fraction: "stability_obs_fraction",
+        var_fraction: "stability_var_fraction"
+      ],
+
+      toState: [
+        de_train_h5ad: "output_train_h5ad",
+        de_test_h5ad: "output_test_h5ad"
+      ]
+    )
+
+    // flatten bootstraps
+    | flatMap { id, state -> 
+      return [state.de_train_h5ad, state.de_test_h5ad]
+        .transpose()
+        .withIndex()
+        .collect{ el, idx ->
+          [
+            id + "_bootstrap" + idx,
+            state + [
+              replicate: idx,
+              de_train_h5ad: el[0],
+              de_test_h5ad: el[1]
+            ]
+          ]
+        }
+    }
+
+    | convert_h5ad_to_parquet.run(
+      fromState: [
+        input_train: "de_train_h5ad",
+        input_test: "de_test_h5ad"
+      ],
+      toState: [
+        de_train: "output_train",
+        de_test: "output_test",
+        id_map: "output_id_map"
+      ]
+    )
+
+    | benchmark_wf
+
     | joinStates { ids, states ->
+      def stability_uns = states.collect{it.stability_uns}
+      def stability_uns_yaml_blob = toYamlBlob(stability_uns)
+      def stability_uns_file = tempFile("stability_uns.yaml")
+      stability_uns_file.write(stability_uns_yaml_blob)
+
+      def new_state = [
+        method_configs: method_configs_file,
+        metric_configs: metric_configs_file,
+        task_info: task_info_file,
+        scores: score_uns_file,
+        _meta: states[0]._meta
+      ]
+      
+      ["output", [stability_scores: stability_uns_file]]
+    }
+
+  emit: output_ch
+}
+
+
+workflow metadata_wf {
+  take: input_ch
+
+  main:
+  output_ch = input_ch
+    | joinStates { ids, states ->
+      // combine the dataset info into one file
+      def dataset_uns = states.collect{it.dataset_info}
+      def dataset_uns_yaml_blob = toYamlBlob(dataset_uns)
+      def dataset_uns_file = tempFile("dataset_uns.yaml")
+      dataset_uns_file.write(dataset_uns_yaml_blob)
+
       // store the method configs in a file
       def method_configs = methods.collect{it.config}
       def method_configs_yaml_blob = toYamlBlob(method_configs)
@@ -171,35 +298,14 @@ workflow run_wf {
 
       def task_info_file = meta.resources_dir.resolve("task_info.yaml")
 
-      // store the scores in a file
-      def score_uns = states.collect{state ->
-        state.score_uns + [
-          dataset_id: state.dataset_info.dataset_id,
-          method_id: state.method_id
-        ]
-      }
-      def score_uns_yaml_blob = toYamlBlob(score_uns)
-      def score_uns_file = tempFile("score_uns.yaml")
-      score_uns_file.write(score_uns_yaml_blob)
-
       def new_state = [
+        dataset_uns: dataset_uns_file,
         method_configs: method_configs_file,
         metric_configs: metric_configs_file,
         task_info: task_info_file,
-        scores: score_uns_file,
         _meta: states[0]._meta
       ]
-      
       ["output", new_state]
     }
-
-    // merge all of the output data 
-    | mix(dataset_meta_ch)
-    | joinStates{ ids, states ->
-      def mergedStates = states.inject([:]) { acc, m -> acc + m }
-      [ids[0], mergedStates]
-    }
-
-  emit:
-  output_ch
+  emit: output_ch
 }

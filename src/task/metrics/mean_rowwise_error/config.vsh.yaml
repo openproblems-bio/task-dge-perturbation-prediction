@@ -10,7 +10,7 @@ functionality:
           We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:
 
           $$
-          \textrm{MRRMSE} = \frac{1}{R}\sum\_{i=1}^R\left(\frac{1}{n} \sum\_{j=1}^{n} (y\_{ij} - \widehat{y}\_{ij})^2\right)^{1/2}
+          \textrm{MRRMSE} = \frac{1}{R}\sum_{i=1}^R\left(\frac{1}{n} \sum_{j=1}^{n} (y_{ij} - \widehat{y}_{ij})^2\right)^{1/2}
           $$
 
           where $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.

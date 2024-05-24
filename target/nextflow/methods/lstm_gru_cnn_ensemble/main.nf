@@ -3241,11 +3241,11 @@ meta = [
       "id" : "nextflow",
       "directives" : {
         "label" : [
-          "veryhightime",
+          "hightime",
           "veryhighmem",
           "highcpu",
           "highsharedmem",
-          "gpu"
+          "highgpu"
         ],
         "tag" : "$id"
       },
@@ -3281,7 +3281,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lstm_gru_cnn_ensemble",
     "viash_version" : "0.8.6",
-    "git_commit" : "a312058c8b5b7942f79c839408ab57498afa629d",
+    "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3716,11 +3716,11 @@ meta["defaults"] = [
     "tag" : "main_build"
   },
   "label" : [
-    "veryhightime",
+    "hightime",
     "veryhighmem",
     "highcpu",
     "highsharedmem",
-    "gpu"
+    "highgpu"
   ],
   "tag" : "$id"
 }'''),

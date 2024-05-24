@@ -32,6 +32,13 @@ functionality:
           direction: output
           description: A yaml file containing the scores of each of the methods
           default: score_uns.yaml
+        - name: "--stability_scores"
+          type: file
+          required: false
+          must_exist: false
+          direction: output
+          description: A yaml file containing the scores of each of the methods on bootstrapped datasets
+          default: stability_uns.yaml
         - name: "--method_configs"
           type: file
           required: true
@@ -52,12 +59,31 @@ functionality:
           required: true
           direction: output
           default: task_info.yaml
-    - name: Methods
+    - name: Arguments
       arguments:
         - name: "--method_ids"
           type: string
           multiple: true
           description: A list of method ids to run. If not specified, all methods will be run.
+        - name: --stability
+          type: boolean
+          description: Whether to run a stability analysis on the methods.
+          default: false
+        - name: --stability_num_replicates
+          type: integer
+          required: true
+          default: 10
+          description: Number of bootstraps to generate.
+        - name: --stability_obs_fraction
+          type: double
+          required: true
+          default: 0.95
+          description: Fraction of the training dataset obs to include in each bootstrap.
+        - name: --stability_var_fraction
+          type: double
+          required: true
+          default: 0.95
+          description: Fraction of the training & test dataset var to include in each bootstrap.
   resources:
     - type: nextflow_script
       path: main.nf
@@ -82,6 +108,8 @@ functionality:
     - name: metrics/mean_rowwise_error
     - name: metrics/mean_cosine_sim
     - name: metrics/mean_correlation
+    - name: process_dataset/bootstrap
+    - name: process_dataset/convert_h5ad_to_parquet
   repositories:
     - name: openproblemsv2
       type: github

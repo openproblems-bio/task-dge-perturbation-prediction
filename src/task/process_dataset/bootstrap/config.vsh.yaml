@@ -1,0 +1,66 @@
+functionality:
+  name: bootstrap
+  namespace: process_dataset
+  info:
+    type: process_dataset
+    type_info:
+      label: Bootstrap
+      summary: A component to generate bootstraps of a dataset.
+      description: |
+        This component generates bootstraps of a dataset. It takes as input a parquet file and an h5ad file and generates bootstraps of the dataset. The bootstraps are saved as parquet and h5ad files.
+  argument_groups:
+    - name: Inputs
+      arguments:
+      - name: --train_h5ad
+        type: file
+        required: true
+        direction: input
+        example: resources/neurips-2023-kaggle/de_train.h5ad
+      - name: --test_h5ad
+        type: file
+        required: true
+        direction: input
+        example: resources/neurips-2023-kaggle/de_test.h5ad
+    - name: Outputs
+      arguments:
+        - name: --output_train_h5ad
+          type: file
+          required: true
+          direction: output
+          multiple: true
+          example: [de_train_bootstrap.h5ad]
+        - name: --output_test_h5ad
+          type: file
+          required: true
+          direction: output
+          multiple: true
+          example: [de_test_bootstrap.h5ad]
+    - name: Arguments
+      arguments:
+        - name: --num_replicates
+          type: integer
+          required: true
+          default: 10
+          description: Number of bootstraps to generate.
+        - name: --obs_fraction
+          type: double
+          required: true
+          default: 0.95
+          description: Fraction of the training dataset obs to include in each bootstrap.
+        - name: --var_fraction
+          type: double
+          required: true
+          default: 0.95
+          description: Fraction of the training & test dataset var to include in each bootstrap.
+  resources:
+    - type: r_script
+      path: script.R
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_r:1.0.4
+    setup:
+      - type: r
+        cran: [ dplyr, tidyr, purrr, tibble, arrow ]
+  - type: nextflow
+    directives:
+      label: [ midtime, midmem, lowcpu ]
