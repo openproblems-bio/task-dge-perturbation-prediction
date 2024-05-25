@@ -2954,7 +2954,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/run_limma",
     "viash_version" : "0.8.6",
-    "git_commit" : "f022f27adfd92d6a1f624831bb93471dbc167216",
+    "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3097,10 +3097,9 @@ de_df2 <- de_df %>%
     # readjust p-values for multiple testing
     adj.P.Value = p.adjust(P.Value, method = "BH"),
     # compute sign log10 p-values
-    sign_log10_nonadj_pval = sign(logFC) * -log10(ifelse(P.Value == 0, .Machine\\$double.eps, P.Value)),
-    sign_log10_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine\\$double.eps, adj.P.Value)),
+    sign_log10_pval = sign(logFC) * -log10(ifelse(P.Value == 0, .Machine\\$double.eps, P.Value)),
+    sign_log10_adj_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine\\$double.eps, adj.P.Value)),
     is_de = P.Value < par\\$de_sig_cutoff,
-    is_de_adj = adj.P.Val < par\\$de_sig_cutoff
   ) %>%
   as_tibble()
 
@@ -3108,7 +3107,7 @@ rownames(new_obs) <- paste0(new_obs\\$cell_type, ", ", new_obs\\$sm_name)
 new_var <- data.frame(row.names = levels(de_df2\\$gene))
 
 # create layers from de_df
-layer_names <- c("is_de", "is_de_adj", "logFC", "P.Value", "adj.P.Value", "sign_log10_pval", "sign_log10_nonadj_pval")
+layer_names <- c("is_de", "is_de_adj", "logFC", "P.Value", "adj.P.Value", "sign_log10_adj_pval", "sign_log10_pval")
 layers <- map(setNames(layer_names, layer_names), function(layer_name) {
   de_df2 %>%
     select(gene, row_i, !!layer_name) %>%
