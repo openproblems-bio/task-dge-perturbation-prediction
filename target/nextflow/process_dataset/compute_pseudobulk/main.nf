@@ -2898,7 +2898,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/compute_pseudobulk",
     "viash_version" : "0.8.6",
-    "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+    "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3011,6 +3011,8 @@ bulk_adata.obs = bulk_adata.obs.drop(columns=['plate_well_celltype_reannotated']
 
 print(">> Remove samples with no counts", flush=True)
 bulk_adata = bulk_adata[bulk_adata.X.todense().sum(axis=1) > 0]
+
+bulk_adata.uns["single_cell_obs"] = sc_counts.obs
 
 print(">> Save dataset", flush=True)
 bulk_adata.write_h5ad(par["output"], compression="gzip")

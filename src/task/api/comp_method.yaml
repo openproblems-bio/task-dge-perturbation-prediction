@@ -1,35 +1,5 @@
+__merge__: comp_method_notest.yaml
 functionality:
-  namespace: "methods"
-  info:
-    type: method
-    type_info:
-      label: Method
-      summary: A regression method.
-      description: |
-        A regression method to predict the expression of one modality from another.
-  arguments:
-    - name: --de_train
-      __merge__: file_de_train_parquet.yaml
-      required: false
-      direction: input
-    - name: --de_train_h5ad
-      __merge__: file_de_train_h5ad.yaml
-      required: false
-      direction: input
-    - name: --id_map
-      __merge__: file_id_map.yaml
-      required: true
-      direction: input
-    - name: --output
-      __merge__: file_prediction.yaml
-      required: true
-      direction: output
-    - name: "--output_model"
-      type: "file"
-      description: "Optional model output. If no value is passed, the model will be removed at the end of the run."
-      direction: output
-      required: false
-      must_exist: false
   test_resources:
     - type: python_script
       path: /src/common/component_tests/run_and_check_output.py

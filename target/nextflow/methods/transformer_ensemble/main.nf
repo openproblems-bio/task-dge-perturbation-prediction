@@ -2786,63 +2786,6 @@ meta = [
     "arguments" : [
       {
         "type" : "file",
-        "name" : "--de_train",
-        "info" : {
-          "label" : "DE train",
-          "summary" : "Differential expression results for training.",
-          "file_type" : "parquet",
-          "columns" : [
-            {
-              "name" : "cell_type",
-              "type" : "string",
-              "description" : "The annotated cell type of each cell based on RNA expression.",
-              "required" : true
-            },
-            {
-              "name" : "sm_name",
-              "type" : "string",
-              "description" : "The primary name for the (parent) compound (in a standardized representation)\nas chosen by LINCS. This is provided to map the data in this experiment to \nthe LINCS Connectivity Map data.\n",
-              "required" : true
-            },
-            {
-              "name" : "sm_lincs_id",
-              "type" : "string",
-              "description" : "The global LINCS ID (parent) compound (in a standardized representation).\nThis is provided to map the data in this experiment to the LINCS Connectivity\nMap data.\n",
-              "required" : true
-            },
-            {
-              "name" : "SMILES",
-              "type" : "string",
-              "description" : "Simplified molecular-input line-entry system (SMILES) representations of the\ncompounds used in the experiment. This is a 1D representation of molecular\nstructure. These SMILES are provided by Cellarity based on the specific\ncompounds ordered for this experiment.\n",
-              "required" : true
-            },
-            {
-              "name" : "split",
-              "type" : "string",
-              "description" : "Split. Must be one of 'control', 'train', 'public_test', or 'private_test'",
-              "required" : true
-            },
-            {
-              "name" : "control",
-              "type" : "boolean",
-              "description" : "Boolean indicating whether this instance was used as a control.",
-              "required" : true
-            }
-          ]
-        },
-        "example" : [
-          "resources/neurips-2023-data/de_train.parquet"
-        ],
-        "must_exist" : true,
-        "create_parent" : true,
-        "required" : false,
-        "direction" : "input",
-        "multiple" : false,
-        "multiple_sep" : ":",
-        "dest" : "par"
-      },
-      {
-        "type" : "file",
         "name" : "--de_train_h5ad",
         "info" : {
           "label" : "DE train",
@@ -2889,6 +2832,24 @@ meta = [
             ],
             "layers" : [
               {
+                "name" : "logFC",
+                "type" : "double",
+                "description" : "Log fold change of the differential expression test",
+                "required" : true
+              },
+              {
+                "name" : "AveExpr",
+                "type" : "double",
+                "description" : "Average expression of the differential expression test",
+                "required" : false
+              },
+              {
+                "name" : "t",
+                "type" : "double",
+                "description" : "T-statistic of the differential expression test",
+                "required" : false
+              },
+              {
                 "name" : "P.Value",
                 "type" : "double",
                 "description" : "P-value of the differential expression test",
@@ -2901,6 +2862,12 @@ meta = [
                 "required" : true
               },
               {
+                "name" : "B",
+                "type" : "double",
+                "description" : "B-statistic of the differential expression test",
+                "required" : false
+              },
+              {
                 "name" : "is_de",
                 "type" : "boolean",
                 "description" : "Whether the gene is differentially expressed",
@@ -2910,12 +2877,6 @@ meta = [
                 "name" : "is_de_adj",
                 "type" : "boolean",
                 "description" : "Whether the gene is differentially expressed after adjustment",
-                "required" : true
-              },
-              {
-                "name" : "logFC",
-                "type" : "double",
-                "description" : "Log fold change of the differential expression test",
                 "required" : true
               },
               {
@@ -2969,6 +2930,12 @@ meta = [
                 "description" : "The organism of the sample in the dataset.",
                 "required" : false,
                 "multiple" : true
+              },
+              {
+                "name" : "single_cell_obs",
+                "type" : "dataframe",
+                "description" : "A dataframe with the cell-level metadata for the training set.\n",
+                "required" : true
               }
             ]
           }
@@ -3024,23 +2991,52 @@ meta = [
         "dest" : "par"
       },
       {
+        "type" : "string",
+        "name" : "--layer",
+        "description" : "Which layer to use for prediction.",
+        "default" : [
+          "sign_log10_pval"
+        ],
+        "required" : false,
+        "direction" : "input",
+        "multiple" : false,
+        "multiple_sep" : ":",
+        "dest" : "par"
+      },
+      {
         "type" : "file",
         "name" : "--output",
         "info" : {
           "label" : "Prediction",
           "summary" : "Differential Gene Expression prediction",
-          "file_type" : "parquet",
-          "columns" : [
-            {
-              "name" : "id",
-              "type" : "integer",
-              "description" : "Index of the test observation",
-              "required" : true
-            }
-          ]
+          "file_type" : "h5ad",
+          "slots" : {
+            "layers" : [
+              {
+                "name" : "prediction",
+                "type" : "double",
+                "description" : "Predicted differential gene expression",
+                "required" : true
+              }
+            ],
+            "uns" : [
+              {
+                "type" : "string",
+                "name" : "dataset_id",
+                "description" : "A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived.",
+                "required" : true
+              },
+              {
+                "type" : "string",
+                "name" : "method_id",
+                "description" : "A unique identifier for the method used to generate the prediction.",
+                "required" : true
+              }
+            ]
+          }
         },
         "example" : [
-          "resources/neurips-2023-data/prediction.parquet"
+          "resources/neurips-2023-data/prediction.h5ad"
         ],
         "must_exist" : true,
         "create_parent" : true,
@@ -3099,6 +3095,11 @@ meta = [
       {
         "type" : "file",
         "path" : "train.py",
+        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/transformer_ensemble/"
+      },
+      {
+        "type" : "file",
+        "path" : "../../utils/anndata_to_dataframe.py",
         "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/transformer_ensemble/"
       }
     ],
@@ -3208,7 +3209,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/transformer_ensemble",
     "viash_version" : "0.8.6",
-    "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+    "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3224,6 +3225,7 @@ def innerWorkflowFactory(args) {
 tempscript=".viash_script.sh"
 cat > "$tempscript" << VIASHMAIN
 import pandas as pd
+import anndata as ad
 import sys
 import torch
 import copy
@@ -3233,9 +3235,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ## VIASH START
 # The following code has been auto-generated by Viash.
 par = {
-  'de_train': $( if [ ! -z ${VIASH_PAR_DE_TRAIN+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'de_train_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'id_map': $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo "r'${VIASH_PAR_ID_MAP//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'layer': $( if [ ! -z ${VIASH_PAR_LAYER+x} ]; then echo "r'${VIASH_PAR_LAYER//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'output_model': $( if [ ! -z ${VIASH_PAR_OUTPUT_MODEL+x} ]; then echo "r'${VIASH_PAR_OUTPUT_MODEL//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'num_train_epochs': $( if [ ! -z ${VIASH_PAR_NUM_TRAIN_EPOCHS+x} ]; then echo "int(r'${VIASH_PAR_NUM_TRAIN_EPOCHS//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi )
@@ -3267,15 +3269,17 @@ d_model = 128
 batch_size = 32
 early_stopping = 5000
 
+from anndata_to_dataframe import anndata_to_dataframe
 from utils import prepare_augmented_data, prepare_augmented_data_mean_only
 from train import train_k_means_strategy, train_non_k_means_strategy
 
-# determine n_components_list
-
-de_train = pd.read_parquet(par["de_train"])
+# read data
+de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
 id_map = pd.read_csv(par["id_map"])
 
-gene_names = list(de_train.columns[6:])
+# determine other variables
+gene_names = list(de_train_h5ad.var_names)
 n_components = len(gene_names)
 
 # train and predict models
@@ -3387,11 +3391,19 @@ weighted_pred = sum(
     [argset["weight"] * pred for argset, pred in zip(argsets, predictions)]
 ) / sum([argset["weight"] for argset in argsets])
 
-df = pd.DataFrame(weighted_pred, columns=gene_names)
-df.reset_index(drop=True, inplace=True)
-df.reset_index(names="id", inplace=True)
 
-df.to_parquet(par["output"])
+print('Write output to file', flush=True)
+output = ad.AnnData(
+    layers={"prediction": weighted_pred},
+    obs=pd.DataFrame(index=id_map["id"]),
+    var=pd.DataFrame(index=gene_names),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
+
+output.write_h5ad(par["output"], compression="gzip")
 VIASHMAIN
 python -B "$tempscript"
 '''

@@ -1,13 +1,13 @@
 functionality:
-  name: clean_pseudobulk
+  name: filter_vars
   namespace: process_dataset
   info:
     type: process_dataset
     type_info:
-      label: Filter pseudobulked data
-      summary: Filter the genes and compounds
+      label: Filter variables
+      summary: Remove low-quality variables from the dataset
       description: |
-        Filter the pseudobulked single-cell dataset for the DGE regression task.
+        This task removes low-quality variables from the dataset.
   arguments:
     - name: --input
       type: file

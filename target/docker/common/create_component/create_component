@@ -437,9 +437,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "ruamel.yaml"
 
 LABEL org.opencontainers.image.description="Companion container for running component common create_component"
-LABEL org.opencontainers.image.created="2024-05-25T06:08:00Z"
+LABEL org.opencontainers.image.created="2024-05-29T20:44:57Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="5934a858024530455a7a3f9b55e032590c76ea54"
+LABEL org.opencontainers.image.revision="1f6afe284e9bb28b4d5e89bc2253db13180bce28"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

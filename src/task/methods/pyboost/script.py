@@ -1,10 +1,10 @@
 # This script is based on an IPython notebook:
 # https://github.com/Ambros-M/Single-Cell-Perturbations-2023/blob/main/notebooks/scp-26-py-boost-recommender-system-and-et.ipynb
 
+import anndata as ad
 import numpy as np
 import pandas as pd
 import warnings
-import zipfile
 import sys
 
 warnings.simplefilter('ignore', FutureWarning)
@@ -13,11 +13,11 @@ pd.set_option("min_rows", 6)
 
 ## VIASH START
 par = dict(
-    de_train = "resources/neurips-2023-data/de_train.parquet",
+    de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
+    layer = "sign_log10_pval",
     id_map = "resources/neurips-2023-data/id_map.csv",
-    train_obs_zip = "resources/neurips-2023-kaggle/train_obs.csv.zip",
     predictor_names = ["py_boost"],
-    output = "output.parquet",
+    output = "output.h5ad",
 )
 meta = dict(
     resources_dir = "src/task/methods/pyboost"
@@ -25,15 +25,19 @@ meta = dict(
 ## VIASH END
 
 sys.path.append(meta["resources_dir"])
+from anndata_to_dataframe import anndata_to_dataframe
 from helper import predictors
 
 print("Loading data\n", flush=True)
-de_train = pd.read_parquet(par['de_train'])
+de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
+adata_obs = de_train_h5ad.uns["single_cell_obs"]
+
 id_map = pd.read_csv(par['id_map'], index_col = 0)
 # display(id_map)
 
 # 18211 genes
-genes = de_train.columns[6:] 
+genes = de_train_h5ad.var_names
 de_train_indexed = de_train.set_index(['cell_type', 'sm_name'])[genes]
 
 # All 146 sm_names
@@ -46,16 +50,9 @@ test_sm_names = [sm for sm in sm_names if sm not in train_sm_names]
 controls3 = ['Dabrafenib', 'Belinostat', 'Dimethyl Sulfoxide']
 
 # All 6 cell types
-cell_types = ['NK cells', 'T cells CD4+', 'T cells CD8+', 'T regulatory cells', 'B cells', 'Myeloid cells']
-# Determine the 4 cell types with data for almost all compounds
-# ['NK cells', 'T cells CD4+', 'T cells CD8+', 'T regulatory cells']
-train_cell_types = de_train.query("sm_name == 'Vorinostat'").cell_type.sort_values().values
-# The other 2 cell types: ['B cells', 'Myeloid cells']
-test_cell_types = [ct for ct in cell_types if ct not in train_cell_types]
-
-with zipfile.ZipFile(par['train_obs_zip']) as z:
-    with z.open('train_obs.csv') as f:
-        adata_obs = pd.read_csv(f)
+cell_types = list(de_train_h5ad.obs.cell_type.cat.categories)
+test_cell_types = list(id_map.cell_type.unique())
+train_cell_types = [ct for ct in cell_types if not ct in test_cell_types]
 
 # Cell counts
 cell_count = adata_obs.groupby(['cell_type', 'sm_name']).size()
@@ -90,12 +87,16 @@ if de_pred.isna().any().any():
     print("Warning: This submission contains missing values. "
             "Don't submit it!")
 
-# Create the submission dataframe
-submission = pd.DataFrame(de_pred.values, columns=genes, index=id_map.index)
-
-print(f'Variance of submission: {submission.values.var():.2f},   min = {submission.values.min():.2f}, max = {submission.values.max():.2f}')
-
 # Write the files
-# submission.reset_index(drop=True, inplace=True)
-submission.reset_index(names="id", inplace=True)
-submission.to_parquet(par["output"])
+print('Write output to file', flush=True)
+output = ad.AnnData(
+    layers={"prediction": de_pred.values},
+    obs=pd.DataFrame(index=id_map.index),
+    var=pd.DataFrame(index=genes),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
+
+output.write_h5ad(par["output"], compression="gzip")

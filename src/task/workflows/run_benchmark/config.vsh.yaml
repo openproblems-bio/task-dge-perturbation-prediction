@@ -4,16 +4,8 @@ functionality:
   argument_groups:
     - name: Inputs
       arguments:
-        - name: "--de_train"
-          __merge__: ../../api/file_de_train_parquet.yaml
-          required: true
-          direction: input
         - name: "--de_train_h5ad"
           __merge__: ../../api/file_de_train_h5ad.yaml
-          required: true
-          direction: input
-        - name: "--de_test"
-          __merge__: ../../api/file_de_test_parquet.yaml
           required: true
           direction: input
         - name: "--de_test_h5ad"
@@ -24,6 +16,11 @@ functionality:
           __merge__: ../../api/file_id_map.yaml
           required: true
           direction: input
+        - name: --layer
+          type: string
+          direction: input
+          default: sign_log10_pval
+          description: Which layer to use for prediction and evaluation.
     - name: Outputs
       arguments:
         - name: "--scores"
@@ -102,7 +99,7 @@ functionality:
     - name: methods/nn_retraining_with_pseudolabels
     - name: methods/scape
     - name: methods/jn_ap_op2
-    - name: methods/lstm_gru_cnn_ensemble
+    - name: methods/lgc_ensemble
     - name: methods/transformer_ensemble
     - name: methods/pyboost
     - name: metrics/mean_rowwise_error

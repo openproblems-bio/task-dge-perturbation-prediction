@@ -29,7 +29,8 @@ functionality:
   resources:
     - type: python_script
       path: script.py
-
+    - path: helper.py
+    - path: ../../utils/anndata_to_dataframe.py
 platforms:
   - type: docker
     image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4

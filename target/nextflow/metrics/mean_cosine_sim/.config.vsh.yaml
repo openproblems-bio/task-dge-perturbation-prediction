@@ -44,6 +44,18 @@ functionality:
           description: "Boolean indicating whether this instance was used as a control."
           required: true
         layers:
+        - name: "logFC"
+          type: "double"
+          description: "Log fold change of the differential expression test"
+          required: true
+        - name: "AveExpr"
+          type: "double"
+          description: "Average expression of the differential expression test"
+          required: false
+        - name: "t"
+          type: "double"
+          description: "T-statistic of the differential expression test"
+          required: false
         - name: "P.Value"
           type: "double"
           description: "P-value of the differential expression test"
@@ -52,6 +64,10 @@ functionality:
           type: "double"
           description: "Adjusted P-value of the differential expression test"
           required: true
+        - name: "B"
+          type: "double"
+          description: "B-statistic of the differential expression test"
+          required: false
         - name: "is_de"
           type: "boolean"
           description: "Whether the gene is differentially expressed"
@@ -59,10 +75,6 @@ functionality:
         - name: "is_de_adj"
           type: "boolean"
           description: "Whether the gene is differentially expressed after adjustment"
-          required: true
-        - name: "logFC"
-          type: "double"
-          description: "Log fold change of the differential expression test"
           required: true
         - name: "sign_log10_pval"
           type: "double"
@@ -105,6 +117,10 @@ functionality:
           description: "The organism of the sample in the dataset."
           required: false
           multiple: true
+        - name: "single_cell_obs"
+          type: "dataframe"
+          description: "A dataframe with the cell-level metadata.\n"
+          required: true
     example:
     - "resources/neurips-2023-data/de_test.h5ad"
     must_exist: true
@@ -114,19 +130,42 @@ functionality:
     multiple: false
     multiple_sep: ":"
     dest: "par"
+  - type: "string"
+    name: "--de_test_layer"
+    description: "In which layer to find the DE data."
+    info: null
+    default:
+    - "sign_log10_pval"
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
   - type: "file"
     name: "--prediction"
     info:
       label: "Prediction"
       summary: "Differential Gene Expression prediction"
-      file_type: "parquet"
-      columns:
-      - name: "id"
-        type: "integer"
-        description: "Index of the test observation"
-        required: true
+      file_type: "h5ad"
+      slots:
+        layers:
+        - name: "prediction"
+          type: "double"
+          description: "Predicted differential gene expression"
+          required: true
+        uns:
+        - type: "string"
+          name: "dataset_id"
+          description: "A unique identifier for the dataset. This is different from\
+            \ the `obs.dataset_id` field, which is the identifier for the dataset\
+            \ from which the cell data is derived."
+          required: true
+        - type: "string"
+          name: "method_id"
+          description: "A unique identifier for the method used to generate the prediction."
+          required: true
     example:
-    - "resources/neurips-2023-data/prediction.parquet"
+    - "resources/neurips-2023-data/prediction.h5ad"
     must_exist: true
     create_parent: true
     required: true
@@ -135,10 +174,12 @@ functionality:
     multiple_sep: ":"
     dest: "par"
   - type: "string"
-    name: "--method_id"
-    info:
-      test_default: "test"
-    required: true
+    name: "--prediction_layer"
+    description: "In which layer to find the predicted DE data."
+    info: null
+    default:
+    - "prediction"
+    required: false
     direction: "input"
     multiple: false
     multiple_sep: ":"
@@ -176,6 +217,20 @@ functionality:
     create_parent: true
     required: true
     direction: "output"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "string"
+    name: "--resolve_genes"
+    description: "How to resolve difference in genes between the two datasets.\n"
+    info: null
+    default:
+    - "de_test"
+    required: false
+    choices:
+    - "de_test"
+    - "intersection"
+    direction: "input"
     multiple: false
     multiple_sep: ":"
     dest: "par"
@@ -278,5 +333,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim/mean_cosine_sim"
   viash_version: "0.8.6"
-  git_commit: "5934a858024530455a7a3f9b55e032590c76ea54"
+  git_commit: "1f6afe284e9bb28b4d5e89bc2253db13180bce28"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

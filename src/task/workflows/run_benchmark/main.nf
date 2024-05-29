@@ -6,16 +6,12 @@ methods = [
   mean_across_compounds,
   sample,
   zeros,
-  lstm_gru_cnn_ensemble,
+  lgc_ensemble,
   nn_retraining_with_pseudolabels,
   jn_ap_op2,
   scape,
   transformer_ensemble,
-  pyboost.run(
-    args: [
-      train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
-    ]
-  )
+  pyboost
 ]
 
 // construct list of metrics
@@ -139,14 +135,14 @@ workflow benchmark_wf {
       // use 'fromState' to fetch the arguments the component requires from the overall state
       fromState: { id, state, comp ->
         def new_args = [
-          de_train: state.de_train,
           de_train_h5ad: state.de_train_h5ad,
           id_map: state.id_map,
-          output: 'predictions/$id.$key.output.parquet',
+          layer: state.layer,
+          output: 'predictions/$id.$key.output.h5ad',
           output_model: null
         ]
         if (comp.config.functionality.info.type == "control_method") {
-          new_args.de_test = state.de_test
+          new_args.de_test_h5ad = state.de_test_h5ad
         }
         new_args
       },
@@ -173,7 +169,7 @@ workflow benchmark_wf {
       // use 'fromState' to fetch the arguments the component requires from the overall state
       fromState: [
         de_test_h5ad: "de_test_h5ad",
-        method_id: "method_id",
+        layer: "layer",
         prediction: "method_output",
       ],
       // use 'toState' to publish that component's outputs to the overall state
@@ -243,8 +239,6 @@ workflow stability_wf {
         input_test: "de_test_h5ad"
       ],
       toState: [
-        de_train: "output_train",
-        de_test: "output_test",
         id_map: "output_id_map"
       ]
     )
@@ -252,18 +246,10 @@ workflow stability_wf {
     | benchmark_wf
 
     | joinStates { ids, states ->
-      def stability_uns = states.collect{it.stability_uns}
+      def stability_uns = states.collect{it.score_uns}
       def stability_uns_yaml_blob = toYamlBlob(stability_uns)
       def stability_uns_file = tempFile("stability_uns.yaml")
       stability_uns_file.write(stability_uns_yaml_blob)
-
-      def new_state = [
-        method_configs: method_configs_file,
-        metric_configs: metric_configs_file,
-        task_info: task_info_file,
-        scores: score_uns_file,
-        _meta: states[0]._meta
-      ]
       
       ["output", [stability_scores: stability_uns_file]]
     }

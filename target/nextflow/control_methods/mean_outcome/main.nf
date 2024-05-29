@@ -2786,56 +2786,166 @@ meta = [
     "arguments" : [
       {
         "type" : "file",
-        "name" : "--de_train",
+        "name" : "--de_train_h5ad",
         "info" : {
           "label" : "DE train",
           "summary" : "Differential expression results for training.",
-          "file_type" : "parquet",
-          "columns" : [
-            {
-              "name" : "cell_type",
-              "type" : "string",
-              "description" : "The annotated cell type of each cell based on RNA expression.",
-              "required" : true
-            },
-            {
-              "name" : "sm_name",
-              "type" : "string",
-              "description" : "The primary name for the (parent) compound (in a standardized representation)\nas chosen by LINCS. This is provided to map the data in this experiment to \nthe LINCS Connectivity Map data.\n",
-              "required" : true
-            },
-            {
-              "name" : "sm_lincs_id",
-              "type" : "string",
-              "description" : "The global LINCS ID (parent) compound (in a standardized representation).\nThis is provided to map the data in this experiment to the LINCS Connectivity\nMap data.\n",
-              "required" : true
-            },
-            {
-              "name" : "SMILES",
-              "type" : "string",
-              "description" : "Simplified molecular-input line-entry system (SMILES) representations of the\ncompounds used in the experiment. This is a 1D representation of molecular\nstructure. These SMILES are provided by Cellarity based on the specific\ncompounds ordered for this experiment.\n",
-              "required" : true
-            },
-            {
-              "name" : "split",
-              "type" : "string",
-              "description" : "Split. Must be one of 'control', 'train', 'public_test', or 'private_test'",
-              "required" : true
-            },
-            {
-              "name" : "control",
-              "type" : "boolean",
-              "description" : "Boolean indicating whether this instance was used as a control.",
-              "required" : true
-            }
-          ]
+          "file_type" : "h5ad",
+          "slots" : {
+            "obs" : [
+              {
+                "name" : "cell_type",
+                "type" : "string",
+                "description" : "The annotated cell type of each cell based on RNA expression.",
+                "required" : true
+              },
+              {
+                "name" : "sm_name",
+                "type" : "string",
+                "description" : "The primary name for the (parent) compound (in a standardized representation)\nas chosen by LINCS. This is provided to map the data in this experiment to \nthe LINCS Connectivity Map data.\n",
+                "required" : true
+              },
+              {
+                "name" : "sm_lincs_id",
+                "type" : "string",
+                "description" : "The global LINCS ID (parent) compound (in a standardized representation).\nThis is provided to map the data in this experiment to the LINCS Connectivity\nMap data.\n",
+                "required" : true
+              },
+              {
+                "name" : "SMILES",
+                "type" : "string",
+                "description" : "Simplified molecular-input line-entry system (SMILES) representations of the\ncompounds used in the experiment. This is a 1D representation of molecular\nstructure. These SMILES are provided by Cellarity based on the specific\ncompounds ordered for this experiment.\n",
+                "required" : true
+              },
+              {
+                "name" : "split",
+                "type" : "string",
+                "description" : "Split. Must be one of 'control', 'train', 'public_test', or 'private_test'",
+                "required" : true
+              },
+              {
+                "name" : "control",
+                "type" : "boolean",
+                "description" : "Boolean indicating whether this instance was used as a control.",
+                "required" : true
+              }
+            ],
+            "layers" : [
+              {
+                "name" : "logFC",
+                "type" : "double",
+                "description" : "Log fold change of the differential expression test",
+                "required" : true
+              },
+              {
+                "name" : "AveExpr",
+                "type" : "double",
+                "description" : "Average expression of the differential expression test",
+                "required" : false
+              },
+              {
+                "name" : "t",
+                "type" : "double",
+                "description" : "T-statistic of the differential expression test",
+                "required" : false
+              },
+              {
+                "name" : "P.Value",
+                "type" : "double",
+                "description" : "P-value of the differential expression test",
+                "required" : true
+              },
+              {
+                "name" : "adj.P.Value",
+                "type" : "double",
+                "description" : "Adjusted P-value of the differential expression test",
+                "required" : true
+              },
+              {
+                "name" : "B",
+                "type" : "double",
+                "description" : "B-statistic of the differential expression test",
+                "required" : false
+              },
+              {
+                "name" : "is_de",
+                "type" : "boolean",
+                "description" : "Whether the gene is differentially expressed",
+                "required" : true
+              },
+              {
+                "name" : "is_de_adj",
+                "type" : "boolean",
+                "description" : "Whether the gene is differentially expressed after adjustment",
+                "required" : true
+              },
+              {
+                "name" : "sign_log10_pval",
+                "type" : "double",
+                "description" : "Differential expression value (-log10(p-value) * sign(LFC)) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "required" : true
+              }
+            ],
+            "uns" : [
+              {
+                "type" : "string",
+                "name" : "dataset_id",
+                "description" : "A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived.",
+                "required" : true
+              },
+              {
+                "name" : "dataset_name",
+                "type" : "string",
+                "description" : "A human-readable name for the dataset.",
+                "required" : true
+              },
+              {
+                "type" : "string",
+                "name" : "dataset_url",
+                "description" : "Link to the original source of the dataset.",
+                "required" : false
+              },
+              {
+                "name" : "dataset_reference",
+                "type" : "string",
+                "description" : "Bibtex reference of the paper in which the dataset was published.",
+                "required" : false,
+                "multiple" : true
+              },
+              {
+                "name" : "dataset_summary",
+                "type" : "string",
+                "description" : "Short description of the dataset.",
+                "required" : true
+              },
+              {
+                "name" : "dataset_description",
+                "type" : "string",
+                "description" : "Long description of the dataset.",
+                "required" : true
+              },
+              {
+                "name" : "dataset_organism",
+                "type" : "string",
+                "description" : "The organism of the sample in the dataset.",
+                "required" : false,
+                "multiple" : true
+              },
+              {
+                "name" : "single_cell_obs",
+                "type" : "dataframe",
+                "description" : "A dataframe with the cell-level metadata for the training set.\n",
+                "required" : true
+              }
+            ]
+          }
         },
         "example" : [
-          "resources/neurips-2023-data/de_train.parquet"
+          "resources/neurips-2023-data/de_train.h5ad"
         ],
         "must_exist" : true,
         "create_parent" : true,
-        "required" : true,
+        "required" : false,
         "direction" : "input",
         "multiple" : false,
         "multiple_sep" : ":",
@@ -2843,58 +2953,162 @@ meta = [
       },
       {
         "type" : "file",
-        "name" : "--de_test",
+        "name" : "--de_test_h5ad",
         "info" : {
           "label" : "DE test",
           "summary" : "Differential expression results for testing.",
-          "file_type" : "parquet",
-          "columns" : [
-            {
-              "name" : "id",
-              "type" : "integer",
-              "description" : "Index of the test observation",
-              "required" : true
-            },
-            {
-              "name" : "cell_type",
-              "type" : "string",
-              "description" : "The annotated cell type of each cell based on RNA expression.",
-              "required" : true
-            },
-            {
-              "name" : "sm_name",
-              "type" : "string",
-              "description" : "The primary name for the (parent) compound (in a standardized representation)\nas chosen by LINCS. This is provided to map the data in this experiment to \nthe LINCS Connectivity Map data.\n",
-              "required" : true
-            },
-            {
-              "name" : "sm_lincs_id",
-              "type" : "string",
-              "description" : "The global LINCS ID (parent) compound (in a standardized representation).\nThis is provided to map the data in this experiment to the LINCS Connectivity\nMap data.\n",
-              "required" : true
-            },
-            {
-              "name" : "SMILES",
-              "type" : "string",
-              "description" : "Simplified molecular-input line-entry system (SMILES) representations of the\ncompounds used in the experiment. This is a 1D representation of molecular\nstructure. These SMILES are provided by Cellarity based on the specific\ncompounds ordered for this experiment.\n",
-              "required" : true
-            },
-            {
-              "name" : "split",
-              "type" : "string",
-              "description" : "Split. Must be one of 'control', 'train', 'public_test', or 'private_test'",
-              "required" : true
-            },
-            {
-              "name" : "control",
-              "type" : "boolean",
-              "description" : "Boolean indicating whether this instance was used as a control.",
-              "required" : true
-            }
-          ]
+          "file_type" : "h5ad",
+          "slots" : {
+            "obs" : [
+              {
+                "name" : "cell_type",
+                "type" : "string",
+                "description" : "The annotated cell type of each cell based on RNA expression.",
+                "required" : true
+              },
+              {
+                "name" : "sm_name",
+                "type" : "string",
+                "description" : "The primary name for the (parent) compound (in a standardized representation)\nas chosen by LINCS. This is provided to map the data in this experiment to \nthe LINCS Connectivity Map data.\n",
+                "required" : true
+              },
+              {
+                "name" : "sm_lincs_id",
+                "type" : "string",
+                "description" : "The global LINCS ID (parent) compound (in a standardized representation).\nThis is provided to map the data in this experiment to the LINCS Connectivity\nMap data.\n",
+                "required" : true
+              },
+              {
+                "name" : "SMILES",
+                "type" : "string",
+                "description" : "Simplified molecular-input line-entry system (SMILES) representations of the\ncompounds used in the experiment. This is a 1D representation of molecular\nstructure. These SMILES are provided by Cellarity based on the specific\ncompounds ordered for this experiment.\n",
+                "required" : true
+              },
+              {
+                "name" : "split",
+                "type" : "string",
+                "description" : "Split. Must be one of 'control', 'train', 'public_test', or 'private_test'",
+                "required" : true
+              },
+              {
+                "name" : "control",
+                "type" : "boolean",
+                "description" : "Boolean indicating whether this instance was used as a control.",
+                "required" : true
+              }
+            ],
+            "layers" : [
+              {
+                "name" : "logFC",
+                "type" : "double",
+                "description" : "Log fold change of the differential expression test",
+                "required" : true
+              },
+              {
+                "name" : "AveExpr",
+                "type" : "double",
+                "description" : "Average expression of the differential expression test",
+                "required" : false
+              },
+              {
+                "name" : "t",
+                "type" : "double",
+                "description" : "T-statistic of the differential expression test",
+                "required" : false
+              },
+              {
+                "name" : "P.Value",
+                "type" : "double",
+                "description" : "P-value of the differential expression test",
+                "required" : true
+              },
+              {
+                "name" : "adj.P.Value",
+                "type" : "double",
+                "description" : "Adjusted P-value of the differential expression test",
+                "required" : true
+              },
+              {
+                "name" : "B",
+                "type" : "double",
+                "description" : "B-statistic of the differential expression test",
+                "required" : false
+              },
+              {
+                "name" : "is_de",
+                "type" : "boolean",
+                "description" : "Whether the gene is differentially expressed",
+                "required" : true
+              },
+              {
+                "name" : "is_de_adj",
+                "type" : "boolean",
+                "description" : "Whether the gene is differentially expressed after adjustment",
+                "required" : true
+              },
+              {
+                "name" : "sign_log10_pval",
+                "type" : "double",
+                "description" : "Differential expression value (-log10(p-value) * sign(LFC)) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "required" : true
+              }
+            ],
+            "uns" : [
+              {
+                "type" : "string",
+                "name" : "dataset_id",
+                "description" : "A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived.",
+                "required" : true
+              },
+              {
+                "name" : "dataset_name",
+                "type" : "string",
+                "description" : "A human-readable name for the dataset.",
+                "required" : true
+              },
+              {
+                "type" : "string",
+                "name" : "dataset_url",
+                "description" : "Link to the original source of the dataset.",
+                "required" : false
+              },
+              {
+                "name" : "dataset_reference",
+                "type" : "string",
+                "description" : "Bibtex reference of the paper in which the dataset was published.",
+                "required" : false,
+                "multiple" : true
+              },
+              {
+                "name" : "dataset_summary",
+                "type" : "string",
+                "description" : "Short description of the dataset.",
+                "required" : true
+              },
+              {
+                "name" : "dataset_description",
+                "type" : "string",
+                "description" : "Long description of the dataset.",
+                "required" : true
+              },
+              {
+                "name" : "dataset_organism",
+                "type" : "string",
+                "description" : "The organism of the sample in the dataset.",
+                "required" : false,
+                "multiple" : true
+              },
+              {
+                "name" : "single_cell_obs",
+                "type" : "dataframe",
+                "description" : "A dataframe with the cell-level metadata.\n",
+                "required" : true
+              }
+            ]
+          }
         },
         "example" : [
-          "resources/neurips-2023-data/de_test.parquet"
+          "resources/neurips-2023-data/de_test.h5ad"
         ],
         "must_exist" : true,
         "create_parent" : true,
@@ -2944,23 +3158,52 @@ meta = [
         "dest" : "par"
       },
       {
+        "type" : "string",
+        "name" : "--layer",
+        "description" : "Which layer to use for prediction.",
+        "default" : [
+          "sign_log10_pval"
+        ],
+        "required" : false,
+        "direction" : "input",
+        "multiple" : false,
+        "multiple_sep" : ":",
+        "dest" : "par"
+      },
+      {
         "type" : "file",
         "name" : "--output",
         "info" : {
           "label" : "Prediction",
           "summary" : "Differential Gene Expression prediction",
-          "file_type" : "parquet",
-          "columns" : [
-            {
-              "name" : "id",
-              "type" : "integer",
-              "description" : "Index of the test observation",
-              "required" : true
-            }
-          ]
+          "file_type" : "h5ad",
+          "slots" : {
+            "layers" : [
+              {
+                "name" : "prediction",
+                "type" : "double",
+                "description" : "Predicted differential gene expression",
+                "required" : true
+              }
+            ],
+            "uns" : [
+              {
+                "type" : "string",
+                "name" : "dataset_id",
+                "description" : "A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived.",
+                "required" : true
+              },
+              {
+                "type" : "string",
+                "name" : "method_id",
+                "description" : "A unique identifier for the method used to generate the prediction.",
+                "required" : true
+              }
+            ]
+          }
         },
         "example" : [
-          "resources/neurips-2023-data/prediction.parquet"
+          "resources/neurips-2023-data/prediction.h5ad"
         ],
         "must_exist" : true,
         "create_parent" : true,
@@ -2976,6 +3219,11 @@ meta = [
         "type" : "python_script",
         "path" : "script.py",
         "is_executable" : true,
+        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/mean_outcome/"
+      },
+      {
+        "type" : "file",
+        "path" : "../../utils/anndata_to_dataframe.py",
         "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/mean_outcome/"
       }
     ],
@@ -3073,7 +3321,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_outcome",
     "viash_version" : "0.8.6",
-    "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+    "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3089,14 +3337,17 @@ def innerWorkflowFactory(args) {
 tempscript=".viash_script.sh"
 cat > "$tempscript" << VIASHMAIN
 import pandas as pd
+import anndata as ad
 import numpy as np
+import sys
 
 ## VIASH START
 # The following code has been auto-generated by Viash.
 par = {
-  'de_train': $( if [ ! -z ${VIASH_PAR_DE_TRAIN+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'de_test': $( if [ ! -z ${VIASH_PAR_DE_TEST+x} ]; then echo "r'${VIASH_PAR_DE_TEST//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'de_train_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'de_test_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TEST_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'id_map': $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo "r'${VIASH_PAR_ID_MAP//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'layer': $( if [ ! -z ${VIASH_PAR_LAYER+x} ]; then echo "r'${VIASH_PAR_LAYER//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi )
 }
 meta = {
@@ -3119,12 +3370,29 @@ dep = {
 
 ## VIASH END
 
-de_train = pd.read_parquet(par["de_train"])
+sys.path.append(meta["resources_dir"])
+from anndata_to_dataframe import anndata_to_dataframe
+
+de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
 id_map = pd.read_csv(par["id_map"])
-gene_names = [col for col in de_train.columns if col not in {"cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control", "index"}]
+gene_names = list(de_train_h5ad.var_names)
+de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
+
 mean_pred = de_train[gene_names].mean(axis=0)
-output = pd.DataFrame(np.vstack([mean_pred.values] * id_map.shape[0]), index=id_map["id"], columns=gene_names).reset_index()
-output.to_parquet(par["output"])
+
+# write output
+output = ad.AnnData(
+    layers={
+        "prediction": np.vstack([mean_pred.values] * id_map.shape[0])
+    },
+    obs=pd.DataFrame(index=id_map["id"]),
+    var=pd.DataFrame(index=gene_names),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
+output.write_h5ad(par["output"], compression="gzip")
 VIASHMAIN
 python -B "$tempscript"
 '''

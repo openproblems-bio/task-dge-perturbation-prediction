@@ -2832,6 +2832,24 @@ meta = [
             ],
             "layers" : [
               {
+                "name" : "logFC",
+                "type" : "double",
+                "description" : "Log fold change of the differential expression test",
+                "required" : true
+              },
+              {
+                "name" : "AveExpr",
+                "type" : "double",
+                "description" : "Average expression of the differential expression test",
+                "required" : false
+              },
+              {
+                "name" : "t",
+                "type" : "double",
+                "description" : "T-statistic of the differential expression test",
+                "required" : false
+              },
+              {
                 "name" : "P.Value",
                 "type" : "double",
                 "description" : "P-value of the differential expression test",
@@ -2844,6 +2862,12 @@ meta = [
                 "required" : true
               },
               {
+                "name" : "B",
+                "type" : "double",
+                "description" : "B-statistic of the differential expression test",
+                "required" : false
+              },
+              {
                 "name" : "is_de",
                 "type" : "boolean",
                 "description" : "Whether the gene is differentially expressed",
@@ -2853,12 +2877,6 @@ meta = [
                 "name" : "is_de_adj",
                 "type" : "boolean",
                 "description" : "Whether the gene is differentially expressed after adjustment",
-                "required" : true
-              },
-              {
-                "name" : "logFC",
-                "type" : "double",
-                "description" : "Log fold change of the differential expression test",
                 "required" : true
               },
               {
@@ -2912,6 +2930,12 @@ meta = [
                 "description" : "The organism of the sample in the dataset.",
                 "required" : false,
                 "multiple" : true
+              },
+              {
+                "name" : "single_cell_obs",
+                "type" : "dataframe",
+                "description" : "A dataframe with the cell-level metadata.\n",
+                "required" : true
               }
             ]
           }
@@ -2928,23 +2952,52 @@ meta = [
         "dest" : "par"
       },
       {
+        "type" : "string",
+        "name" : "--de_test_layer",
+        "description" : "In which layer to find the DE data.",
+        "default" : [
+          "sign_log10_pval"
+        ],
+        "required" : false,
+        "direction" : "input",
+        "multiple" : false,
+        "multiple_sep" : ":",
+        "dest" : "par"
+      },
+      {
         "type" : "file",
         "name" : "--prediction",
         "info" : {
           "label" : "Prediction",
           "summary" : "Differential Gene Expression prediction",
-          "file_type" : "parquet",
-          "columns" : [
-            {
-              "name" : "id",
-              "type" : "integer",
-              "description" : "Index of the test observation",
-              "required" : true
-            }
-          ]
+          "file_type" : "h5ad",
+          "slots" : {
+            "layers" : [
+              {
+                "name" : "prediction",
+                "type" : "double",
+                "description" : "Predicted differential gene expression",
+                "required" : true
+              }
+            ],
+            "uns" : [
+              {
+                "type" : "string",
+                "name" : "dataset_id",
+                "description" : "A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived.",
+                "required" : true
+              },
+              {
+                "type" : "string",
+                "name" : "method_id",
+                "description" : "A unique identifier for the method used to generate the prediction.",
+                "required" : true
+              }
+            ]
+          }
         },
         "example" : [
-          "resources/neurips-2023-data/prediction.parquet"
+          "resources/neurips-2023-data/prediction.h5ad"
         ],
         "must_exist" : true,
         "create_parent" : true,
@@ -2956,11 +3009,12 @@ meta = [
       },
       {
         "type" : "string",
-        "name" : "--method_id",
-        "info" : {
-          "test_default" : "test"
-        },
-        "required" : true,
+        "name" : "--prediction_layer",
+        "description" : "In which layer to find the predicted DE data.",
+        "default" : [
+          "prediction"
+        ],
+        "required" : false,
         "direction" : "input",
         "multiple" : false,
         "multiple_sep" : ":",
@@ -3011,6 +3065,23 @@ meta = [
         "create_parent" : true,
         "required" : true,
         "direction" : "output",
+        "multiple" : false,
+        "multiple_sep" : ":",
+        "dest" : "par"
+      },
+      {
+        "type" : "string",
+        "name" : "--resolve_genes",
+        "description" : "How to resolve difference in genes between the two datasets.\n",
+        "default" : [
+          "de_test"
+        ],
+        "required" : false,
+        "choices" : [
+          "de_test",
+          "intersection"
+        ],
+        "direction" : "input",
         "multiple" : false,
         "multiple_sep" : ":",
         "dest" : "par"
@@ -3135,7 +3206,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_correlation",
     "viash_version" : "0.8.6",
-    "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+    "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3150,7 +3221,6 @@ def innerWorkflowFactory(args) {
   def rawScript = '''set -e
 tempscript=".viash_script.sh"
 cat > "$tempscript" << VIASHMAIN
-import pandas as pd
 import anndata as ad
 import numpy as np
 
@@ -3158,9 +3228,11 @@ import numpy as np
 # The following code has been auto-generated by Viash.
 par = {
   'de_test_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TEST_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'de_test_layer': $( if [ ! -z ${VIASH_PAR_DE_TEST_LAYER+x} ]; then echo "r'${VIASH_PAR_DE_TEST_LAYER//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'prediction': $( if [ ! -z ${VIASH_PAR_PREDICTION+x} ]; then echo "r'${VIASH_PAR_PREDICTION//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'method_id': $( if [ ! -z ${VIASH_PAR_METHOD_ID+x} ]; then echo "r'${VIASH_PAR_METHOD_ID//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi )
+  'prediction_layer': $( if [ ! -z ${VIASH_PAR_PREDICTION_LAYER+x} ]; then echo "r'${VIASH_PAR_PREDICTION_LAYER//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'resolve_genes': $( if [ ! -z ${VIASH_PAR_RESOLVE_GENES+x} ]; then echo "r'${VIASH_PAR_RESOLVE_GENES//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi )
 }
 meta = {
   'functionality_name': $( if [ ! -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then echo "r'${VIASH_META_FUNCTIONALITY_NAME//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
@@ -3184,38 +3256,39 @@ dep = {
 
 print("Load data", flush=True)
 de_test = ad.read_h5ad(par["de_test_h5ad"])
-prediction = pd.read_parquet(par["prediction"]).set_index('id')
+print(f"de_test: {de_test}")
+prediction = ad.read_h5ad(par["prediction"])
+print(f"prediction: {prediction}")
 
-print("Select genes", flush=True)
-genes = list(de_test.var_names)
-de_test_X = de_test.layers["sign_log10_pval"]
-prediction = prediction[genes]
+print("Resolve genes", flush=True)
+if par["resolve_genes"] == "de_test":
+    genes = list(de_test.var_names)
+elif par["resolve_genes"] == "intersection":
+    genes = list(set(de_test.var_names) & set(prediction.var_names))
+de_test = de_test[:, genes]
+prediction = prediction[:, genes]
 
-print("Calculate mean pearson", flush=True)
-mean_pearson = 0
-mean_spearman = 0
-for i in range(de_test_X.shape[0]):
-    y_i = de_test_X[i,]
-    y_hat_i = prediction.iloc[i]
+# get data
+de_test_X = de_test.layers[par["de_test_layer"]]
+prediction_X = prediction.layers[par["prediction_layer"]]
 
-    # compute ranks
-    r_i = y_i.argsort().argsort()
-    r_hat_i = y_hat_i.argsort().argsort()
+print("Calculate metrics", flush=True)
+mean_pearson = np.mean(
+    [np.corrcoef(de_test_X[i,], prediction_X[i,])[0, 1] for i in range(de_test_X.shape[0])]
+)
 
-    pearson = np.corrcoef(y_i, y_hat_i)[0, 1]
-    spearman = np.corrcoef(r_i, r_hat_i)[0, 1]
-
-    mean_pearson += pearson
-    mean_spearman += spearman
-
-mean_pearson /= de_test_X.shape[0]
-mean_spearman /= de_test_X.shape[0]
+# compute ranks
+de_test_r = np.argsort(de_test_X, axis=1).argsort(axis=1)
+prediction_r = np.argsort(prediction_X, axis=1).argsort(axis=1)
+mean_spearman = np.mean(
+    [np.corrcoef(de_test_r[i,], prediction_r[i,])[0, 1] for i in range(de_test_X.shape[0])]
+)
 
 print("Create output", flush=True)
 output = ad.AnnData(
     uns={
         "dataset_id": de_test.uns["dataset_id"],
-        "method_id": par["method_id"],
+        "method_id": prediction.uns["method_id"],
         "metric_ids": ["mean_pearson", "mean_spearman"],
         "metric_values": [mean_pearson, mean_spearman]
     }

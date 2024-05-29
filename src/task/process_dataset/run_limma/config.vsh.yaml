@@ -47,4 +47,4 @@ platforms:
         bioc: [ edgeR, limma, dplyr, tidyr, purrr, tibble, furrr, future ]
   - type: nextflow
     directives:
-      label: [ midtime, midmem, lowcpu ]
+      label: [ midtime, midmem, highcpu ]

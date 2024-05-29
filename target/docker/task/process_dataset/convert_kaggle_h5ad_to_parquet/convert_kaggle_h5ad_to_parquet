@@ -181,6 +181,10 @@ function ViashHelp {
   echo "        type: file, required parameter, file must exist"
   echo "        example: resources/neurips-2023-kaggle/12_de_by_cell_type_test.h5ad"
   echo ""
+  echo "    --input_single_cell_h5ad"
+  echo "        type: file, required parameter, file must exist"
+  echo "        example: resources/neurips-2023-raw/sc_counts.h5ad"
+  echo ""
   echo "Metadata:"
   echo "    --dataset_id"
   echo "        type: string, required parameter"
@@ -211,17 +215,9 @@ function ViashHelp {
   echo "        The organism of the dataset."
   echo ""
   echo "Outputs:"
-  echo "    --output_train"
-  echo "        type: file, required parameter, output, file must exist"
-  echo "        example: resources/neurips-2023-kaggle/de_train.parquet"
-  echo ""
   echo "    --output_train_h5ad"
   echo "        type: file, required parameter, output, file must exist"
   echo "        example: resources/neurips-2023-kaggle/de_train.h5ad"
-  echo ""
-  echo "    --output_test"
-  echo "        type: file, required parameter, output, file must exist"
-  echo "        example: resources/neurips-2023-kaggle/de_test.parquet"
   echo ""
   echo "    --output_test_h5ad"
   echo "        type: file, required parameter, output, file must exist"
@@ -456,9 +452,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet" "anndata" "pandas"
 
 LABEL org.opencontainers.image.description="Companion container for running component task/process_dataset convert_kaggle_h5ad_to_parquet"
-LABEL org.opencontainers.image.created="2024-05-25T06:08:01Z"
+LABEL org.opencontainers.image.created="2024-05-29T20:44:59Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="5934a858024530455a7a3f9b55e032590c76ea54"
+LABEL org.opencontainers.image.revision="1f6afe284e9bb28b4d5e89bc2253db13180bce28"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -639,6 +635,17 @@ while [[ $# -gt 0 ]]; do
             VIASH_PAR_INPUT_TEST=$(ViashRemoveFlags "$1")
             shift 1
             ;;
+        --input_single_cell_h5ad)
+            [ -n "$VIASH_PAR_INPUT_SINGLE_CELL_H5AD" ] && ViashError Bad arguments for option \'--input_single_cell_h5ad\': \'$VIASH_PAR_INPUT_SINGLE_CELL_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_INPUT_SINGLE_CELL_H5AD="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --input_single_cell_h5ad. Use "--help" to get more information on the parameters. && exit 1
+            shift 2
+            ;;
+        --input_single_cell_h5ad=*)
+            [ -n "$VIASH_PAR_INPUT_SINGLE_CELL_H5AD" ] && ViashError Bad arguments for option \'--input_single_cell_h5ad=*\': \'$VIASH_PAR_INPUT_SINGLE_CELL_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_INPUT_SINGLE_CELL_H5AD=$(ViashRemoveFlags "$1")
+            shift 1
+            ;;
         --dataset_id)
             [ -n "$VIASH_PAR_DATASET_ID" ] && ViashError Bad arguments for option \'--dataset_id\': \'$VIASH_PAR_DATASET_ID\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
             VIASH_PAR_DATASET_ID="$2"
@@ -716,17 +723,6 @@ while [[ $# -gt 0 ]]; do
             VIASH_PAR_DATASET_ORGANISM=$(ViashRemoveFlags "$1")
             shift 1
             ;;
-        --output_train)
-            [ -n "$VIASH_PAR_OUTPUT_TRAIN" ] && ViashError Bad arguments for option \'--output_train\': \'$VIASH_PAR_OUTPUT_TRAIN\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_OUTPUT_TRAIN="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --output_train. Use "--help" to get more information on the parameters. && exit 1
-            shift 2
-            ;;
-        --output_train=*)
-            [ -n "$VIASH_PAR_OUTPUT_TRAIN" ] && ViashError Bad arguments for option \'--output_train=*\': \'$VIASH_PAR_OUTPUT_TRAIN\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_OUTPUT_TRAIN=$(ViashRemoveFlags "$1")
-            shift 1
-            ;;
         --output_train_h5ad)
             [ -n "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--output_train_h5ad\': \'$VIASH_PAR_OUTPUT_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
             VIASH_PAR_OUTPUT_TRAIN_H5AD="$2"
@@ -736,17 +732,6 @@ while [[ $# -gt 0 ]]; do
         --output_train_h5ad=*)
             [ -n "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--output_train_h5ad=*\': \'$VIASH_PAR_OUTPUT_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
             VIASH_PAR_OUTPUT_TRAIN_H5AD=$(ViashRemoveFlags "$1")
-            shift 1
-            ;;
-        --output_test)
-            [ -n "$VIASH_PAR_OUTPUT_TEST" ] && ViashError Bad arguments for option \'--output_test\': \'$VIASH_PAR_OUTPUT_TEST\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_OUTPUT_TEST="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --output_test. Use "--help" to get more information on the parameters. && exit 1
-            shift 2
-            ;;
-        --output_test=*)
-            [ -n "$VIASH_PAR_OUTPUT_TEST" ] && ViashError Bad arguments for option \'--output_test=*\': \'$VIASH_PAR_OUTPUT_TEST\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_OUTPUT_TEST=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         --output_test_h5ad)
@@ -897,6 +882,10 @@ if [ -z ${VIASH_PAR_INPUT_TEST+x} ]; then
   ViashError '--input_test' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
+if [ -z ${VIASH_PAR_INPUT_SINGLE_CELL_H5AD+x} ]; then
+  ViashError '--input_single_cell_h5ad' is a required argument. Use "--help" to get more information on the parameters.
+  exit 1
+fi
 if [ -z ${VIASH_PAR_DATASET_ID+x} ]; then
   ViashError '--dataset_id' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
@@ -917,16 +906,8 @@ if [ -z ${VIASH_PAR_DATASET_ORGANISM+x} ]; then
   ViashError '--dataset_organism' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
-if [ -z ${VIASH_PAR_OUTPUT_TRAIN+x} ]; then
-  ViashError '--output_train' is a required argument. Use "--help" to get more information on the parameters.
-  exit 1
-fi
 if [ -z ${VIASH_PAR_OUTPUT_TRAIN_H5AD+x} ]; then
   ViashError '--output_train_h5ad' is a required argument. Use "--help" to get more information on the parameters.
-  exit 1
-fi
-if [ -z ${VIASH_PAR_OUTPUT_TEST+x} ]; then
-  ViashError '--output_test' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
 if [ -z ${VIASH_PAR_OUTPUT_TEST_H5AD+x} ]; then
@@ -965,6 +946,10 @@ if [ ! -z "$VIASH_PAR_INPUT_TRAIN" ] && [ ! -e "$VIASH_PAR_INPUT_TRAIN" ]; then
 fi
 if [ ! -z "$VIASH_PAR_INPUT_TEST" ] && [ ! -e "$VIASH_PAR_INPUT_TEST" ]; then
   ViashError "Input file '$VIASH_PAR_INPUT_TEST' does not exist."
+  exit 1
+fi
+if [ ! -z "$VIASH_PAR_INPUT_SINGLE_CELL_H5AD" ] && [ ! -e "$VIASH_PAR_INPUT_SINGLE_CELL_H5AD" ]; then
+  ViashError "Input file '$VIASH_PAR_INPUT_SINGLE_CELL_H5AD' does not exist."
   exit 1
 fi
 
@@ -1013,14 +998,8 @@ if [[ -n "$VIASH_META_MEMORY_PB" ]]; then
 fi
 
 # create parent directories of output files, if so desired
-if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN" ] && [ ! -d "$(dirname "$VIASH_PAR_OUTPUT_TRAIN")" ]; then
-  mkdir -p "$(dirname "$VIASH_PAR_OUTPUT_TRAIN")"
-fi
 if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ] && [ ! -d "$(dirname "$VIASH_PAR_OUTPUT_TRAIN_H5AD")" ]; then
   mkdir -p "$(dirname "$VIASH_PAR_OUTPUT_TRAIN_H5AD")"
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TEST" ] && [ ! -d "$(dirname "$VIASH_PAR_OUTPUT_TEST")" ]; then
-  mkdir -p "$(dirname "$VIASH_PAR_OUTPUT_TEST")"
 fi
 if [ ! -z "$VIASH_PAR_OUTPUT_TEST_H5AD" ] && [ ! -d "$(dirname "$VIASH_PAR_OUTPUT_TEST_H5AD")" ]; then
   mkdir -p "$(dirname "$VIASH_PAR_OUTPUT_TEST_H5AD")"
@@ -1039,20 +1018,14 @@ if [ ! -z "$VIASH_PAR_INPUT_TEST" ]; then
   VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_INPUT_TEST")" )
   VIASH_PAR_INPUT_TEST=$(ViashAutodetectMount "$VIASH_PAR_INPUT_TEST")
 fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN" ]; then
-  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_OUTPUT_TRAIN")" )
-  VIASH_PAR_OUTPUT_TRAIN=$(ViashAutodetectMount "$VIASH_PAR_OUTPUT_TRAIN")
-  VIASH_CHOWN_VARS+=( "$VIASH_PAR_OUTPUT_TRAIN" )
+if [ ! -z "$VIASH_PAR_INPUT_SINGLE_CELL_H5AD" ]; then
+  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_INPUT_SINGLE_CELL_H5AD")" )
+  VIASH_PAR_INPUT_SINGLE_CELL_H5AD=$(ViashAutodetectMount "$VIASH_PAR_INPUT_SINGLE_CELL_H5AD")
 fi
 if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ]; then
   VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_OUTPUT_TRAIN_H5AD")" )
   VIASH_PAR_OUTPUT_TRAIN_H5AD=$(ViashAutodetectMount "$VIASH_PAR_OUTPUT_TRAIN_H5AD")
   VIASH_CHOWN_VARS+=( "$VIASH_PAR_OUTPUT_TRAIN_H5AD" )
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TEST" ]; then
-  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_OUTPUT_TEST")" )
-  VIASH_PAR_OUTPUT_TEST=$(ViashAutodetectMount "$VIASH_PAR_OUTPUT_TEST")
-  VIASH_CHOWN_VARS+=( "$VIASH_PAR_OUTPUT_TEST" )
 fi
 if [ ! -z "$VIASH_PAR_OUTPUT_TEST_H5AD" ]; then
   VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_OUTPUT_TEST_H5AD")" )
@@ -1122,13 +1095,13 @@ trap clean_up EXIT
 trap interrupt INT SIGINT
 cat > "\$tempscript" << 'VIASHMAIN'
 import anndata as ad
-import pandas as pd
 
 ## VIASH START
 # The following code has been auto-generated by Viash.
 par = {
   'input_train': $( if [ ! -z ${VIASH_PAR_INPUT_TRAIN+x} ]; then echo "r'${VIASH_PAR_INPUT_TRAIN//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'input_test': $( if [ ! -z ${VIASH_PAR_INPUT_TEST+x} ]; then echo "r'${VIASH_PAR_INPUT_TEST//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'input_single_cell_h5ad': $( if [ ! -z ${VIASH_PAR_INPUT_SINGLE_CELL_H5AD+x} ]; then echo "r'${VIASH_PAR_INPUT_SINGLE_CELL_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'dataset_id': $( if [ ! -z ${VIASH_PAR_DATASET_ID+x} ]; then echo "r'${VIASH_PAR_DATASET_ID//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'dataset_name': $( if [ ! -z ${VIASH_PAR_DATASET_NAME+x} ]; then echo "r'${VIASH_PAR_DATASET_NAME//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'dataset_url': $( if [ ! -z ${VIASH_PAR_DATASET_URL+x} ]; then echo "r'${VIASH_PAR_DATASET_URL//\'/\'\"\'\"r\'}'"; else echo None; fi ),
@@ -1136,9 +1109,7 @@ par = {
   'dataset_summary': $( if [ ! -z ${VIASH_PAR_DATASET_SUMMARY+x} ]; then echo "r'${VIASH_PAR_DATASET_SUMMARY//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'dataset_description': $( if [ ! -z ${VIASH_PAR_DATASET_DESCRIPTION+x} ]; then echo "r'${VIASH_PAR_DATASET_DESCRIPTION//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'dataset_organism': $( if [ ! -z ${VIASH_PAR_DATASET_ORGANISM+x} ]; then echo "r'${VIASH_PAR_DATASET_ORGANISM//\'/\'\"\'\"r\'}'"; else echo None; fi ),
-  'output_train': $( if [ ! -z ${VIASH_PAR_OUTPUT_TRAIN+x} ]; then echo "r'${VIASH_PAR_OUTPUT_TRAIN//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'output_train_h5ad': $( if [ ! -z ${VIASH_PAR_OUTPUT_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_OUTPUT_TRAIN_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi ),
-  'output_test': $( if [ ! -z ${VIASH_PAR_OUTPUT_TEST+x} ]; then echo "r'${VIASH_PAR_OUTPUT_TEST//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'output_test_h5ad': $( if [ ! -z ${VIASH_PAR_OUTPUT_TEST_H5AD+x} ]; then echo "r'${VIASH_PAR_OUTPUT_TEST_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'output_id_map': $( if [ ! -z ${VIASH_PAR_OUTPUT_ID_MAP+x} ]; then echo "r'${VIASH_PAR_OUTPUT_ID_MAP//\'/\'\"\'\"r\'}'"; else echo None; fi )
 }
@@ -1162,25 +1133,10 @@ dep = {
 
 ## VIASH END
 
-
-def anndata_to_dataframe(adata, add_id=False):
-  obs_cols = ['cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'split', 'control']
-  if add_id:
-    obs_cols = ["id"] + obs_cols
-
-  metadata = adata.obs[obs_cols]
-
-  sign_logfc_pval = pd.DataFrame(
-    adata.layers["sign_log10_pval"],
-    columns=adata.var_names,
-    index=adata.obs.index
-  )
-
-  return pd.concat([metadata, sign_logfc_pval], axis=1).reset_index(drop=True)
-
 print(">> Load dataset", flush=True)
 input_train = ad.read_h5ad(par["input_train"])
 input_test = ad.read_h5ad(par["input_test"])
+input_sc = ad.read_h5ad(par["input_single_cell_h5ad"])
 
 print(">> Add 'control' column", flush=True)
 input_train.obs["control"] = input_train.obs["split"] == "control"
@@ -1202,18 +1158,16 @@ for key in ["dataset_id", "dataset_name", "dataset_url", "dataset_reference",\\
   input_train.uns[key] = par[key]
   input_test.uns[key] = par[key]
 
-print(">> Convert AnnData to DataFrame", flush=True)
-de_train = anndata_to_dataframe(input_train)
-de_test = anndata_to_dataframe(input_test, add_id=True)
+new_single_cell_obs = input_sc.obs[input_sc.obs.split.isin(input_train.obs.split.unique())]
+input_train.uns["single_cell_obs"] = new_single_cell_obs
+input_test.uns["single_cell_obs"] = input_sc.obs
 
 print(">> Create id_map data frame", flush=True)
-id_map = de_test[["id", "sm_name", "cell_type"]]
+id_map = input_test.obs[["id", "sm_name", "cell_type"]]
 
 print(">> Save data", flush=True)
 input_train.write(par["output_train_h5ad"], compression=9)
 input_test.write(par["output_test_h5ad"], compression=9)
-de_train.to_parquet(par["output_train"])
-de_test.to_parquet(par["output_test"])
 id_map.to_csv(par["output_id_map"], index=False)
 VIASHMAIN
 python -B "\$tempscript" &
@@ -1229,14 +1183,11 @@ fi
 if [ ! -z "$VIASH_PAR_INPUT_TEST" ]; then
   VIASH_PAR_INPUT_TEST=$(ViashStripAutomount "$VIASH_PAR_INPUT_TEST")
 fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN" ]; then
-  VIASH_PAR_OUTPUT_TRAIN=$(ViashStripAutomount "$VIASH_PAR_OUTPUT_TRAIN")
+if [ ! -z "$VIASH_PAR_INPUT_SINGLE_CELL_H5AD" ]; then
+  VIASH_PAR_INPUT_SINGLE_CELL_H5AD=$(ViashStripAutomount "$VIASH_PAR_INPUT_SINGLE_CELL_H5AD")
 fi
 if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ]; then
   VIASH_PAR_OUTPUT_TRAIN_H5AD=$(ViashStripAutomount "$VIASH_PAR_OUTPUT_TRAIN_H5AD")
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TEST" ]; then
-  VIASH_PAR_OUTPUT_TEST=$(ViashStripAutomount "$VIASH_PAR_OUTPUT_TEST")
 fi
 if [ ! -z "$VIASH_PAR_OUTPUT_TEST_H5AD" ]; then
   VIASH_PAR_OUTPUT_TEST_H5AD=$(ViashStripAutomount "$VIASH_PAR_OUTPUT_TEST_H5AD")
@@ -1259,16 +1210,8 @@ fi
 
 
 # check whether required files exist
-if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN" ] && [ ! -e "$VIASH_PAR_OUTPUT_TRAIN" ]; then
-  ViashError "Output file '$VIASH_PAR_OUTPUT_TRAIN' does not exist."
-  exit 1
-fi
 if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ] && [ ! -e "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ]; then
   ViashError "Output file '$VIASH_PAR_OUTPUT_TRAIN_H5AD' does not exist."
-  exit 1
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TEST" ] && [ ! -e "$VIASH_PAR_OUTPUT_TEST" ]; then
-  ViashError "Output file '$VIASH_PAR_OUTPUT_TEST' does not exist."
   exit 1
 fi
 if [ ! -z "$VIASH_PAR_OUTPUT_TEST_H5AD" ] && [ ! -e "$VIASH_PAR_OUTPUT_TEST_H5AD" ]; then

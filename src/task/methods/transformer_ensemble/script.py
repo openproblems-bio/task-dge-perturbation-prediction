@@ -1,4 +1,5 @@
 import pandas as pd
+import anndata as ad
 import sys
 import torch
 import copy
@@ -7,11 +8,12 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ## VIASH START
 par = {
-    "de_train": "resources/neurips-2023-data/de_train.parquet",
-    "de_test": "resources/neurips-2023-data/de_test.parquet",
+    "de_train_h5ad": "resources/neurips-2023-data/de_train.h5ad",
+    "de_train": "resources/neurips-2023-data/de_train.h5ad",
     "id_map": "resources/neurips-2023-data/id_map.csv",
-    "output": "output.parquet",
+    "output": "output.h5ad",
     "num_train_epochs": 10,
+    "layer": "sign_log10_pval"
 }
 meta = {
     "resources_dir": "src/task/methods/transformer_ensemble",
@@ -25,15 +27,17 @@ d_model = 128
 batch_size = 32
 early_stopping = 5000
 
+from anndata_to_dataframe import anndata_to_dataframe
 from utils import prepare_augmented_data, prepare_augmented_data_mean_only
 from train import train_k_means_strategy, train_non_k_means_strategy
 
-# determine n_components_list
-
-de_train = pd.read_parquet(par["de_train"])
+# read data
+de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
 id_map = pd.read_csv(par["id_map"])
 
-gene_names = list(de_train.columns[6:])
+# determine other variables
+gene_names = list(de_train_h5ad.var_names)
 n_components = len(gene_names)
 
 # train and predict models
@@ -145,8 +149,16 @@ weighted_pred = sum(
     [argset["weight"] * pred for argset, pred in zip(argsets, predictions)]
 ) / sum([argset["weight"] for argset in argsets])
 
-df = pd.DataFrame(weighted_pred, columns=gene_names)
-df.reset_index(drop=True, inplace=True)
-df.reset_index(names="id", inplace=True)
 
-df.to_parquet(par["output"])
+print('Write output to file', flush=True)
+output = ad.AnnData(
+    layers={"prediction": weighted_pred},
+    obs=pd.DataFrame(index=id_map["id"]),
+    var=pd.DataFrame(index=gene_names),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
+
+output.write_h5ad(par["output"], compression="gzip")

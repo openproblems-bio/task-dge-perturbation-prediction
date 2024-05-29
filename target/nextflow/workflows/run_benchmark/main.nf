@@ -2789,63 +2789,6 @@ meta = [
         "arguments" : [
           {
             "type" : "file",
-            "name" : "--de_train",
-            "info" : {
-              "label" : "DE train",
-              "summary" : "Differential expression results for training.",
-              "file_type" : "parquet",
-              "columns" : [
-                {
-                  "name" : "cell_type",
-                  "type" : "string",
-                  "description" : "The annotated cell type of each cell based on RNA expression.",
-                  "required" : true
-                },
-                {
-                  "name" : "sm_name",
-                  "type" : "string",
-                  "description" : "The primary name for the (parent) compound (in a standardized representation)\nas chosen by LINCS. This is provided to map the data in this experiment to \nthe LINCS Connectivity Map data.\n",
-                  "required" : true
-                },
-                {
-                  "name" : "sm_lincs_id",
-                  "type" : "string",
-                  "description" : "The global LINCS ID (parent) compound (in a standardized representation).\nThis is provided to map the data in this experiment to the LINCS Connectivity\nMap data.\n",
-                  "required" : true
-                },
-                {
-                  "name" : "SMILES",
-                  "type" : "string",
-                  "description" : "Simplified molecular-input line-entry system (SMILES) representations of the\ncompounds used in the experiment. This is a 1D representation of molecular\nstructure. These SMILES are provided by Cellarity based on the specific\ncompounds ordered for this experiment.\n",
-                  "required" : true
-                },
-                {
-                  "name" : "split",
-                  "type" : "string",
-                  "description" : "Split. Must be one of 'control', 'train', 'public_test', or 'private_test'",
-                  "required" : true
-                },
-                {
-                  "name" : "control",
-                  "type" : "boolean",
-                  "description" : "Boolean indicating whether this instance was used as a control.",
-                  "required" : true
-                }
-              ]
-            },
-            "example" : [
-              "resources/neurips-2023-data/de_train.parquet"
-            ],
-            "must_exist" : true,
-            "create_parent" : true,
-            "required" : true,
-            "direction" : "input",
-            "multiple" : false,
-            "multiple_sep" : ":",
-            "dest" : "par"
-          },
-          {
-            "type" : "file",
             "name" : "--de_train_h5ad",
             "info" : {
               "label" : "DE train",
@@ -2892,6 +2835,24 @@ meta = [
                 ],
                 "layers" : [
                   {
+                    "name" : "logFC",
+                    "type" : "double",
+                    "description" : "Log fold change of the differential expression test",
+                    "required" : true
+                  },
+                  {
+                    "name" : "AveExpr",
+                    "type" : "double",
+                    "description" : "Average expression of the differential expression test",
+                    "required" : false
+                  },
+                  {
+                    "name" : "t",
+                    "type" : "double",
+                    "description" : "T-statistic of the differential expression test",
+                    "required" : false
+                  },
+                  {
                     "name" : "P.Value",
                     "type" : "double",
                     "description" : "P-value of the differential expression test",
@@ -2904,6 +2865,12 @@ meta = [
                     "required" : true
                   },
                   {
+                    "name" : "B",
+                    "type" : "double",
+                    "description" : "B-statistic of the differential expression test",
+                    "required" : false
+                  },
+                  {
                     "name" : "is_de",
                     "type" : "boolean",
                     "description" : "Whether the gene is differentially expressed",
@@ -2913,12 +2880,6 @@ meta = [
                     "name" : "is_de_adj",
                     "type" : "boolean",
                     "description" : "Whether the gene is differentially expressed after adjustment",
-                    "required" : true
-                  },
-                  {
-                    "name" : "logFC",
-                    "type" : "double",
-                    "description" : "Log fold change of the differential expression test",
                     "required" : true
                   },
                   {
@@ -2972,75 +2933,18 @@ meta = [
                     "description" : "The organism of the sample in the dataset.",
                     "required" : false,
                     "multiple" : true
+                  },
+                  {
+                    "name" : "single_cell_obs",
+                    "type" : "dataframe",
+                    "description" : "A dataframe with the cell-level metadata for the training set.\n",
+                    "required" : true
                   }
                 ]
               }
             },
             "example" : [
               "resources/neurips-2023-data/de_train.h5ad"
-            ],
-            "must_exist" : true,
-            "create_parent" : true,
-            "required" : true,
-            "direction" : "input",
-            "multiple" : false,
-            "multiple_sep" : ":",
-            "dest" : "par"
-          },
-          {
-            "type" : "file",
-            "name" : "--de_test",
-            "info" : {
-              "label" : "DE test",
-              "summary" : "Differential expression results for testing.",
-              "file_type" : "parquet",
-              "columns" : [
-                {
-                  "name" : "id",
-                  "type" : "integer",
-                  "description" : "Index of the test observation",
-                  "required" : true
-                },
-                {
-                  "name" : "cell_type",
-                  "type" : "string",
-                  "description" : "The annotated cell type of each cell based on RNA expression.",
-                  "required" : true
-                },
-                {
-                  "name" : "sm_name",
-                  "type" : "string",
-                  "description" : "The primary name for the (parent) compound (in a standardized representation)\nas chosen by LINCS. This is provided to map the data in this experiment to \nthe LINCS Connectivity Map data.\n",
-                  "required" : true
-                },
-                {
-                  "name" : "sm_lincs_id",
-                  "type" : "string",
-                  "description" : "The global LINCS ID (parent) compound (in a standardized representation).\nThis is provided to map the data in this experiment to the LINCS Connectivity\nMap data.\n",
-                  "required" : true
-                },
-                {
-                  "name" : "SMILES",
-                  "type" : "string",
-                  "description" : "Simplified molecular-input line-entry system (SMILES) representations of the\ncompounds used in the experiment. This is a 1D representation of molecular\nstructure. These SMILES are provided by Cellarity based on the specific\ncompounds ordered for this experiment.\n",
-                  "required" : true
-                },
-                {
-                  "name" : "split",
-                  "type" : "string",
-                  "description" : "Split. Must be one of 'control', 'train', 'public_test', or 'private_test'",
-                  "required" : true
-                },
-                {
-                  "name" : "control",
-                  "type" : "boolean",
-                  "description" : "Boolean indicating whether this instance was used as a control.",
-                  "required" : true
-                }
-              ]
-            },
-            "example" : [
-              "resources/neurips-2023-data/de_test.parquet"
             ],
             "must_exist" : true,
             "create_parent" : true,
@@ -3098,6 +3002,24 @@ meta = [
                 ],
                 "layers" : [
                   {
+                    "name" : "logFC",
+                    "type" : "double",
+                    "description" : "Log fold change of the differential expression test",
+                    "required" : true
+                  },
+                  {
+                    "name" : "AveExpr",
+                    "type" : "double",
+                    "description" : "Average expression of the differential expression test",
+                    "required" : false
+                  },
+                  {
+                    "name" : "t",
+                    "type" : "double",
+                    "description" : "T-statistic of the differential expression test",
+                    "required" : false
+                  },
+                  {
                     "name" : "P.Value",
                     "type" : "double",
                     "description" : "P-value of the differential expression test",
@@ -3110,6 +3032,12 @@ meta = [
                     "required" : true
                   },
                   {
+                    "name" : "B",
+                    "type" : "double",
+                    "description" : "B-statistic of the differential expression test",
+                    "required" : false
+                  },
+                  {
                     "name" : "is_de",
                     "type" : "boolean",
                     "description" : "Whether the gene is differentially expressed",
@@ -3119,12 +3047,6 @@ meta = [
                     "name" : "is_de_adj",
                     "type" : "boolean",
                     "description" : "Whether the gene is differentially expressed after adjustment",
-                    "required" : true
-                  },
-                  {
-                    "name" : "logFC",
-                    "type" : "double",
-                    "description" : "Log fold change of the differential expression test",
                     "required" : true
                   },
                   {
@@ -3178,6 +3100,12 @@ meta = [
                     "description" : "The organism of the sample in the dataset.",
                     "required" : false,
                     "multiple" : true
+                  },
+                  {
+                    "name" : "single_cell_obs",
+                    "type" : "dataframe",
+                    "description" : "A dataframe with the cell-level metadata.\n",
+                    "required" : true
                   }
                 ]
               }
@@ -3227,6 +3155,19 @@ meta = [
             "must_exist" : true,
             "create_parent" : true,
             "required" : true,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "string",
+            "name" : "--layer",
+            "description" : "Which layer to use for prediction and evaluation.",
+            "default" : [
+              "sign_log10_pval"
+            ],
+            "required" : false,
             "direction" : "input",
             "multiple" : false,
             "multiple_sep" : ":",
@@ -3416,9 +3357,9 @@ meta = [
           "name" : "",
           "repo" : "openproblems-bio/openproblems-v2",
           "tag" : "main_build",
-          "localPath" : "/tmp/viash_hub_repo11126276424043499276"
+          "localPath" : "/tmp/viash_hub_repo11371439369123924544"
         },
-        "foundConfigPath" : "/tmp/viash_hub_repo11126276424043499276/target/nextflow/common/extract_metadata/.config.vsh.yaml",
+        "foundConfigPath" : "/tmp/viash_hub_repo11371439369123924544/target/nextflow/common/extract_metadata/.config.vsh.yaml",
         "configInfo" : {
           "functionalityName" : "extract_metadata",
           "git_remote" : "https://github.com/openproblems-bio/openproblems-v2",
@@ -3448,7 +3389,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/control_methods/zeros/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/zeros"
@@ -3469,7 +3410,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/control_methods/sample/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/sample"
@@ -3490,7 +3431,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/control_methods/ground_truth/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/ground_truth"
@@ -3511,7 +3452,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/control_methods/mean_outcome/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_outcome"
@@ -3532,7 +3473,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/control_methods/mean_across_celltypes/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_celltypes"
@@ -3553,7 +3494,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/control_methods/mean_across_compounds/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_compounds"
@@ -3574,7 +3515,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/methods/nn_retraining_with_pseudolabels/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/nn_retraining_with_pseudolabels"
@@ -3595,7 +3536,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/methods/scape/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape"
@@ -3616,31 +3557,31 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/methods/jn_ap_op2/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/jn_ap_op2"
       },
       {
-        "name" : "methods/lstm_gru_cnn_ensemble",
+        "name" : "methods/lgc_ensemble",
         "repository" : {
           "type" : "local",
           "localPath" : ""
         },
-        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/lstm_gru_cnn_ensemble/config.vsh.yaml",
+        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/lgc_ensemble/config.vsh.yaml",
         "configInfo" : {
-          "functionalityName" : "lstm_gru_cnn_ensemble",
+          "functionalityName" : "lgc_ensemble",
           "git_tag" : "",
           "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
           "viash_version" : "0.8.6",
-          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/lstm_gru_cnn_ensemble/config.vsh.yaml",
+          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/lgc_ensemble/config.vsh.yaml",
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
-          "executable" : "/nextflow/methods/lstm_gru_cnn_ensemble/main.nf"
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
+          "executable" : "/nextflow/methods/lgc_ensemble/main.nf"
         },
-        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lstm_gru_cnn_ensemble"
+        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lgc_ensemble"
       },
       {
         "name" : "methods/transformer_ensemble",
@@ -3658,7 +3599,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/methods/transformer_ensemble/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/transformer_ensemble"
@@ -3679,7 +3620,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/methods/pyboost/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/pyboost"
@@ -3700,7 +3641,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/metrics/mean_rowwise_error/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error"
@@ -3721,7 +3662,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/metrics/mean_cosine_sim/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim"
@@ -3742,7 +3683,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/metrics/mean_correlation/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_correlation"
@@ -3763,7 +3704,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/process_dataset/bootstrap/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap"
@@ -3784,7 +3725,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+          "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
           "executable" : "/nextflow/process_dataset/convert_h5ad_to_parquet/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/convert_h5ad_to_parquet"
@@ -3840,7 +3781,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark",
     "viash_version" : "0.8.6",
-    "git_commit" : "5934a858024530455a7a3f9b55e032590c76ea54",
+    "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3858,7 +3799,7 @@ include { mean_across_compounds } from "${meta.resources_dir}/../../../nextflow/
 include { nn_retraining_with_pseudolabels } from "${meta.resources_dir}/../../../nextflow/methods/nn_retraining_with_pseudolabels/main.nf"
 include { scape } from "${meta.resources_dir}/../../../nextflow/methods/scape/main.nf"
 include { jn_ap_op2 } from "${meta.resources_dir}/../../../nextflow/methods/jn_ap_op2/main.nf"
-include { lstm_gru_cnn_ensemble } from "${meta.resources_dir}/../../../nextflow/methods/lstm_gru_cnn_ensemble/main.nf"
+include { lgc_ensemble } from "${meta.resources_dir}/../../../nextflow/methods/lgc_ensemble/main.nf"
 include { transformer_ensemble } from "${meta.resources_dir}/../../../nextflow/methods/transformer_ensemble/main.nf"
 include { pyboost } from "${meta.resources_dir}/../../../nextflow/methods/pyboost/main.nf"
 include { mean_rowwise_error } from "${meta.resources_dir}/../../../nextflow/metrics/mean_rowwise_error/main.nf"
@@ -3877,16 +3818,12 @@ methods = [
   mean_across_compounds,
   sample,
   zeros,
-  lstm_gru_cnn_ensemble,
+  lgc_ensemble,
   nn_retraining_with_pseudolabels,
   jn_ap_op2,
   scape,
   transformer_ensemble,
-  pyboost.run(
-    args: [
-      train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
-    ]
-  )
+  pyboost
 ]
 
 // construct list of metrics
@@ -4010,14 +3947,14 @@ workflow benchmark_wf {
       // use 'fromState' to fetch the arguments the component requires from the overall state
       fromState: { id, state, comp ->
         def new_args = [
-          de_train: state.de_train,
           de_train_h5ad: state.de_train_h5ad,
           id_map: state.id_map,
-          output: 'predictions/$id.$key.output.parquet',
+          layer: state.layer,
+          output: 'predictions/$id.$key.output.h5ad',
           output_model: null
         ]
         if (comp.config.functionality.info.type == "control_method") {
-          new_args.de_test = state.de_test
+          new_args.de_test_h5ad = state.de_test_h5ad
         }
         new_args
       },
@@ -4044,7 +3981,7 @@ workflow benchmark_wf {
       // use 'fromState' to fetch the arguments the component requires from the overall state
       fromState: [
         de_test_h5ad: "de_test_h5ad",
-        method_id: "method_id",
+        layer: "layer",
         prediction: "method_output",
       ],
       // use 'toState' to publish that component's outputs to the overall state
@@ -4114,8 +4051,6 @@ workflow stability_wf {
         input_test: "de_test_h5ad"
       ],
       toState: [
-        de_train: "output_train",
-        de_test: "output_test",
         id_map: "output_id_map"
       ]
     )
@@ -4123,18 +4058,10 @@ workflow stability_wf {
     | benchmark_wf
 
     | joinStates { ids, states ->
-      def stability_uns = states.collect{it.stability_uns}
+      def stability_uns = states.collect{it.score_uns}
       def stability_uns_yaml_blob = toYamlBlob(stability_uns)
       def stability_uns_file = tempFile("stability_uns.yaml")
       stability_uns_file.write(stability_uns_yaml_blob)
-
-      def new_state = [
-        method_configs: method_configs_file,
-        metric_configs: metric_configs_file,
-        task_info: task_info_file,
-        scores: score_uns_file,
-        _meta: states[0]._meta
-      ]
       
       ["output", [stability_scores: stability_uns_file]]
     }

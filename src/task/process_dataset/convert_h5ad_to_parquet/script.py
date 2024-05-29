@@ -1,5 +1,5 @@
 import anndata as ad
-import pandas as pd
+import sys
 
 ## VIASH START
 par = {
@@ -11,17 +11,9 @@ par = {
 }
 ## VIASH END
 
+sys.path.append(meta["resources_dir"])
 
-def anndata_to_dataframe(adata):
-  metadata = adata.obs[['cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'split', 'control']]
-
-  sign_logfc_pval = pd.DataFrame(
-    adata.layers["sign_log10_pval"],
-    columns=adata.var_names,
-    index=adata.obs.index
-  )
-
-  return pd.concat([metadata, sign_logfc_pval], axis=1).reset_index(drop=True)
+from anndata_to_dataframe import anndata_to_dataframe
 
 print(">> Load dataset", flush=True)
 input_train = ad.read_h5ad(par["input_train"])

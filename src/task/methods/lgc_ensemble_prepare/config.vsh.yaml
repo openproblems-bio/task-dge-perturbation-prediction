@@ -1,0 +1,82 @@
+functionality:
+  name: lgc_ensemble_prepare
+  namespace: methods
+  arguments:
+    - name: --de_train_h5ad
+      type: file
+      required: false
+      direction: input
+    - name: --id_map
+      type: file
+      required: true
+      direction: input
+    - name: --layer
+      type: string
+      direction: input
+      default: sign_log10_pval
+      description: Which layer to use for prediction.
+    - name: --train_data_aug_dir
+      type: file
+      required: true
+      direction: output
+    - name: --epochs
+      type: integer
+      default: 250
+      description: "Number of epochs to train."
+      info:
+        test_default: 1
+    - name: --kf_n_splits
+      type: integer
+      default: 5
+      description: "Number of splits for KFold."
+      info:
+        test_default: 2
+    - name: --schemes
+      type: string
+      default: [initial, light, heavy]
+      multiple: true
+      info:
+        test_default: [initial, light]
+    - name: --models
+      type: string
+      default: [LSTM, GRU, Conv]
+      multiple: true
+      info:
+        test_default: [LSTM, GRU]
+  resources:
+    - type: python_script
+      path: script.py
+    - path: ../lgc_ensemble_helpers/helper_classes.py
+    - path: ../lgc_ensemble_helpers/helper_functions.py
+    - path: ../lgc_ensemble_helpers/models.py
+    - path: ../lgc_ensemble_helpers/predict.py
+    - path: ../lgc_ensemble_helpers/prepare_data.py
+    - path: ../lgc_ensemble_helpers/train.py
+    - path: ../lgc_ensemble_helpers/divisor_finder.py
+    - path: ../../utils/anndata_to_dataframe.py
+    
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
+    run_args: ["--shm-size=2g"]
+    setup:
+      - type: python
+        packages:
+          - torch==2.1.1
+          - --index-url
+          - https://download.pytorch.org/whl/cu121
+      - type: python
+        packages:
+          - fastparquet
+          - pandas==2.1.3
+          - pyarrow==14.0.1
+          - tqdm==4.66.1
+          - scikit-learn==1.3.2
+          - transformers==4.35.2
+          - matplotlib==3.8.2
+          - torch-summary
+
+  - type: native
+  - type: nextflow
+    directives:
+      label: [hightime, veryhighmem, highcpu, highsharedmem, gpu]

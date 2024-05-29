@@ -16,7 +16,7 @@ fi
 
 echo ">> Running 'process_dataset' workflow"
 nextflow run \
-  target/nextflow/process_dataset/workflow/main.nf \
+  target/nextflow/workflows/process_dataset/main.nf \
   -profile docker \
   -resume \
   --id neurips-2023-data \
@@ -33,15 +33,14 @@ nextflow run \
 
 echo ">> Run method"
 viash run src/task/control_methods/sample/config.vsh.yaml -- \
-  --de_train "$OUT/de_train.parquet" \
-  --de_test "$OUT/de_test.parquet" \
+  --de_train_h5ad "$OUT/de_train.h5ad" \
+  --de_test_h5ad "$OUT/de_test.h5ad" \
   --id_map "$OUT/id_map.csv" \
-  --output "$OUT/prediction.parquet"
+  --output "$OUT/prediction.h5ad"
 
 echo ">> Run metric"
 viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
-  --prediction "$OUT/prediction.parquet" \
-  --method_id "sample" \
+  --prediction "$OUT/prediction.h5ad" \
   --de_test_h5ad "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"
 

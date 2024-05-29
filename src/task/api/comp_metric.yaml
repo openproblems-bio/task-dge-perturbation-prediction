@@ -12,20 +12,31 @@ functionality:
       __merge__: file_de_test_h5ad.yaml
       required: true
       direction: input
+    - name: --de_test_layer
+      type: string
+      direction: input
+      default: sign_log10_pval
+      description: In which layer to find the DE data.
     - name: --prediction
       __merge__: file_prediction.yaml
       required: true
       direction: input
-    - name: --method_id
+    - name: --prediction_layer
       type: string
-      required: true
       direction: input
-      info:
-        test_default: test
+      default: prediction
+      description: In which layer to find the predicted DE data.
     - name: --output
       __merge__: file_score.yaml
       direction: output
       required: true
+    - name: --resolve_genes
+      type: string
+      direction: input
+      default: de_test
+      choices: [de_test, intersection]
+      description: |
+        How to resolve difference in genes between the two datasets.
   test_resources:
     - type: python_script
       path: /src/common/component_tests/run_and_check_output.py

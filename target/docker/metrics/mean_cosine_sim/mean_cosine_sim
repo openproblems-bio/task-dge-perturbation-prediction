@@ -177,16 +177,29 @@ function ViashHelp {
   echo "        type: file, required parameter, file must exist"
   echo "        example: resources/neurips-2023-data/de_test.h5ad"
   echo ""
+  echo "    --de_test_layer"
+  echo "        type: string"
+  echo "        default: sign_log10_pval"
+  echo "        In which layer to find the DE data."
+  echo ""
   echo "    --prediction"
   echo "        type: file, required parameter, file must exist"
-  echo "        example: resources/neurips-2023-data/prediction.parquet"
+  echo "        example: resources/neurips-2023-data/prediction.h5ad"
   echo ""
-  echo "    --method_id"
-  echo "        type: string, required parameter"
+  echo "    --prediction_layer"
+  echo "        type: string"
+  echo "        default: prediction"
+  echo "        In which layer to find the predicted DE data."
   echo ""
   echo "    --output"
   echo "        type: file, required parameter, output, file must exist"
   echo "        example: resources/neurips-2023-data/score.h5ad"
+  echo ""
+  echo "    --resolve_genes"
+  echo "        type: string"
+  echo "        default: de_test"
+  echo "        choices: [ de_test, intersection ]"
+  echo "        How to resolve difference in genes between the two datasets."
 }
 
 ######## Helper functions for setting up Docker images for viash ########
@@ -413,9 +426,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet"
 
 LABEL org.opencontainers.image.description="Companion container for running component metrics mean_cosine_sim"
-LABEL org.opencontainers.image.created="2024-05-25T06:08:01Z"
+LABEL org.opencontainers.image.created="2024-05-29T20:44:59Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="5934a858024530455a7a3f9b55e032590c76ea54"
+LABEL org.opencontainers.image.revision="1f6afe284e9bb28b4d5e89bc2253db13180bce28"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -585,6 +598,17 @@ while [[ $# -gt 0 ]]; do
             VIASH_PAR_DE_TEST_H5AD=$(ViashRemoveFlags "$1")
             shift 1
             ;;
+        --de_test_layer)
+            [ -n "$VIASH_PAR_DE_TEST_LAYER" ] && ViashError Bad arguments for option \'--de_test_layer\': \'$VIASH_PAR_DE_TEST_LAYER\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TEST_LAYER="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_test_layer. Use "--help" to get more information on the parameters. && exit 1
+            shift 2
+            ;;
+        --de_test_layer=*)
+            [ -n "$VIASH_PAR_DE_TEST_LAYER" ] && ViashError Bad arguments for option \'--de_test_layer=*\': \'$VIASH_PAR_DE_TEST_LAYER\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TEST_LAYER=$(ViashRemoveFlags "$1")
+            shift 1
+            ;;
         --prediction)
             [ -n "$VIASH_PAR_PREDICTION" ] && ViashError Bad arguments for option \'--prediction\': \'$VIASH_PAR_PREDICTION\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
             VIASH_PAR_PREDICTION="$2"
@@ -596,15 +620,15 @@ while [[ $# -gt 0 ]]; do
             VIASH_PAR_PREDICTION=$(ViashRemoveFlags "$1")
             shift 1
             ;;
-        --method_id)
-            [ -n "$VIASH_PAR_METHOD_ID" ] && ViashError Bad arguments for option \'--method_id\': \'$VIASH_PAR_METHOD_ID\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_METHOD_ID="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --method_id. Use "--help" to get more information on the parameters. && exit 1
+        --prediction_layer)
+            [ -n "$VIASH_PAR_PREDICTION_LAYER" ] && ViashError Bad arguments for option \'--prediction_layer\': \'$VIASH_PAR_PREDICTION_LAYER\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_PREDICTION_LAYER="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --prediction_layer. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --method_id=*)
-            [ -n "$VIASH_PAR_METHOD_ID" ] && ViashError Bad arguments for option \'--method_id=*\': \'$VIASH_PAR_METHOD_ID\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_METHOD_ID=$(ViashRemoveFlags "$1")
+        --prediction_layer=*)
+            [ -n "$VIASH_PAR_PREDICTION_LAYER" ] && ViashError Bad arguments for option \'--prediction_layer=*\': \'$VIASH_PAR_PREDICTION_LAYER\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_PREDICTION_LAYER=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         --output)
@@ -616,6 +640,17 @@ while [[ $# -gt 0 ]]; do
         --output=*)
             [ -n "$VIASH_PAR_OUTPUT" ] && ViashError Bad arguments for option \'--output=*\': \'$VIASH_PAR_OUTPUT\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
             VIASH_PAR_OUTPUT=$(ViashRemoveFlags "$1")
+            shift 1
+            ;;
+        --resolve_genes)
+            [ -n "$VIASH_PAR_RESOLVE_GENES" ] && ViashError Bad arguments for option \'--resolve_genes\': \'$VIASH_PAR_RESOLVE_GENES\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_RESOLVE_GENES="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --resolve_genes. Use "--help" to get more information on the parameters. && exit 1
+            shift 2
+            ;;
+        --resolve_genes=*)
+            [ -n "$VIASH_PAR_RESOLVE_GENES" ] && ViashError Bad arguments for option \'--resolve_genes=*\': \'$VIASH_PAR_RESOLVE_GENES\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_RESOLVE_GENES=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         ---setup)
@@ -744,10 +779,6 @@ if [ -z ${VIASH_PAR_PREDICTION+x} ]; then
   ViashError '--prediction' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
-if [ -z ${VIASH_PAR_METHOD_ID+x} ]; then
-  ViashError '--method_id' is a required argument. Use "--help" to get more information on the parameters.
-  exit 1
-fi
 if [ -z ${VIASH_PAR_OUTPUT+x} ]; then
   ViashError '--output' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
@@ -771,6 +802,17 @@ fi
 if [ -z ${VIASH_META_TEMP_DIR+x} ]; then
   ViashError 'temp_dir' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
+fi
+
+# filling in defaults
+if [ -z ${VIASH_PAR_DE_TEST_LAYER+x} ]; then
+  VIASH_PAR_DE_TEST_LAYER="sign_log10_pval"
+fi
+if [ -z ${VIASH_PAR_PREDICTION_LAYER+x} ]; then
+  VIASH_PAR_PREDICTION_LAYER="prediction"
+fi
+if [ -z ${VIASH_PAR_RESOLVE_GENES+x} ]; then
+  VIASH_PAR_RESOLVE_GENES="de_test"
 fi
 
 # check whether required files exist
@@ -825,6 +867,19 @@ if [[ -n "$VIASH_META_MEMORY_PB" ]]; then
     ViashError 'memory_pb' has to be a long. Use "--help" to get more information on the parameters.
     exit 1
   fi
+fi
+
+# check whether value is belongs to a set of choices
+if [ ! -z "$VIASH_PAR_RESOLVE_GENES" ]; then
+  VIASH_PAR_RESOLVE_GENES_CHOICES=("de_test:intersection")
+  IFS=':'
+  set -f
+  if ! [[ ":${VIASH_PAR_RESOLVE_GENES_CHOICES[*]}:" =~ ":$VIASH_PAR_RESOLVE_GENES:" ]]; then
+    ViashError '--resolve_genes' specified value of \'$VIASH_PAR_RESOLVE_GENES\' is not in the list of allowed values. Use "--help" to get more information on the parameters.
+    exit 1
+  fi
+  set +f
+  unset IFS
 fi
 
 # create parent directories of output files, if so desired
@@ -904,7 +959,6 @@ function interrupt {
 trap clean_up EXIT
 trap interrupt INT SIGINT
 cat > "\$tempscript" << 'VIASHMAIN'
-import pandas as pd
 import anndata as ad
 import numpy as np
 
@@ -912,9 +966,11 @@ import numpy as np
 # The following code has been auto-generated by Viash.
 par = {
   'de_test_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TEST_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'de_test_layer': $( if [ ! -z ${VIASH_PAR_DE_TEST_LAYER+x} ]; then echo "r'${VIASH_PAR_DE_TEST_LAYER//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'prediction': $( if [ ! -z ${VIASH_PAR_PREDICTION+x} ]; then echo "r'${VIASH_PAR_PREDICTION//\'/\'\"\'\"r\'}'"; else echo None; fi ),
-  'method_id': $( if [ ! -z ${VIASH_PAR_METHOD_ID+x} ]; then echo "r'${VIASH_PAR_METHOD_ID//\'/\'\"\'\"r\'}'"; else echo None; fi ),
-  'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\'/\'\"\'\"r\'}'"; else echo None; fi )
+  'prediction_layer': $( if [ ! -z ${VIASH_PAR_PREDICTION_LAYER+x} ]; then echo "r'${VIASH_PAR_PREDICTION_LAYER//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'resolve_genes': $( if [ ! -z ${VIASH_PAR_RESOLVE_GENES+x} ]; then echo "r'${VIASH_PAR_RESOLVE_GENES//\'/\'\"\'\"r\'}'"; else echo None; fi )
 }
 meta = {
   'functionality_name': $( if [ ! -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then echo "r'${VIASH_META_FUNCTIONALITY_NAME//\'/\'\"\'\"r\'}'"; else echo None; fi ),
@@ -938,49 +994,40 @@ dep = {
 
 print("Load data", flush=True)
 de_test = ad.read_h5ad(par["de_test_h5ad"])
-prediction = pd.read_parquet(par["prediction"]).set_index('id')
+print(f"de_test: {de_test}")
+prediction = ad.read_h5ad(par["prediction"])
+print(f"prediction: {prediction}")
 
-print("Select genes", flush=True)
-genes = list(de_test.var_names)
-de_test_X = de_test.layers["sign_log10_pval"]
-prediction = prediction[genes]
+print("Resolve genes", flush=True)
+if par["resolve_genes"] == "de_test":
+    genes = list(de_test.var_names)
+elif par["resolve_genes"] == "intersection":
+    genes = list(set(de_test.var_names) & set(prediction.var_names))
+de_test = de_test[:, genes]
+prediction = prediction[:, genes]
+
+# get data
+de_test_X = de_test.layers[par["de_test_layer"]]
+prediction_X = prediction.layers[par["prediction_layer"]]
 
 print("Clipping values", flush=True)
 threshold_0001 = -np.log10(0.0001)
 de_test_X_clipped_0001 = np.clip(de_test_X, -threshold_0001, threshold_0001)
-prediction_clipped_0001 = np.clip(prediction.values, -threshold_0001, threshold_0001)
+prediction_clipped_0001 = np.clip(prediction_X, -threshold_0001, threshold_0001)
 
 print("Calculate mean cosine similarity", flush=True)
-mean_cosine_similarity = 0
-mean_cosine_similarity_clipped_0001 = 0
-for i in range(de_test_X.shape[0]):
-    y_i = de_test_X[i,]
-    y_hat_i = prediction.iloc[i]
-    y_i_clipped_0001 = de_test_X_clipped_0001[i,]
-    y_hat_i_clipped_0001 = prediction_clipped_0001[i]
-
-    dot_product = np.dot(y_i, y_hat_i)
-    dot_product_clipped_0001 = np.dot(y_i_clipped_0001, y_hat_i_clipped_0001)
-
-    norm_y_i = np.linalg.norm(y_i)
-    norm_y_i_clipped_0001 = np.linalg.norm(y_i_clipped_0001)
-    norm_y_hat_i = np.linalg.norm(y_hat_i)
-    norm_y_hat_i_clipped_0001 = np.linalg.norm(y_hat_i_clipped_0001)
-
-    cosine_similarity = dot_product / (norm_y_i * norm_y_hat_i)
-    cosine_similarity_clipped_0001 = dot_product_clipped_0001 / (norm_y_i_clipped_0001 * norm_y_hat_i_clipped_0001)
-
-    mean_cosine_similarity += cosine_similarity
-    mean_cosine_similarity_clipped_0001 += cosine_similarity_clipped_0001
-
-mean_cosine_similarity /= de_test_X.shape[0]
-mean_cosine_similarity_clipped_0001 /= de_test_X.shape[0]
+mean_cosine_similarity = np.mean(
+    np.sum(de_test_X * prediction_X, axis=1) / (np.linalg.norm(de_test_X, axis=1) * np.linalg.norm(prediction_X, axis=1))
+)
+mean_cosine_similarity_clipped_0001 = np.mean(
+    np.sum(de_test_X_clipped_0001 * prediction_clipped_0001, axis=1) / (np.linalg.norm(de_test_X_clipped_0001, axis=1) * np.linalg.norm(prediction_clipped_0001, axis=1))
+)
 
 print("Create output", flush=True)
 output = ad.AnnData(
     uns={
         "dataset_id": de_test.uns["dataset_id"],
-        "method_id": par["method_id"],
+        "method_id": prediction.uns["method_id"],
         "metric_ids": ["mean_cosine_sim", "mean_cosine_sim_clipped_0001"],
         "metric_values": [mean_cosine_similarity, mean_cosine_similarity_clipped_0001]
     }

@@ -1,5 +1,4 @@
 functionality:
-  namespace: "process_dataset"
   info:
     type: process_dataset
     type_info:
@@ -12,16 +11,6 @@ functionality:
       __merge__: file_sc_counts.yaml
       required: true
       direction: input
-    - name: --de_train
-      __merge__: file_de_train_parquet.yaml
-      required: true
-      direction: output
-      default: de_train.parquet
-    - name: --de_test
-      __merge__: file_de_test_parquet.yaml
-      required: true
-      direction: output
-      default: de_test.parquet
     - name: --de_train_h5ad
       __merge__: file_de_train_h5ad.yaml
       required: true
