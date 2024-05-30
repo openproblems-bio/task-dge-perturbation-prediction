@@ -39,6 +39,13 @@ for (i in seq_len(par$num_replicates)) {
   output_train_h5ad <- train_h5ad[obs_ix, var_ix]
   output_test_h5ad <- test_h5ad[, var_ix]
 
+  original_dataset_id <- output_train_h5ad$uns[["dataset_id"]]
+  dataset_id <- paste0(original_dataset_id, "_bootstrap", i)
+  output_train_h5ad$uns[["dataset_id"]] <- dataset_id
+  output_test_h5ad$uns[["dataset_id"]] <- dataset_id
+  output_train_h5ad$uns[["original_dataset_id"]] <- original_dataset_id
+  output_test_h5ad$uns[["original_dataset_id"]] <- original_dataset_id
+
   # write output
   output_train_h5ad_path <- gsub("\\*", i, par$output_train_h5ad)
   output_test_h5ad_path <- gsub("\\*", i, par$output_test_h5ad)

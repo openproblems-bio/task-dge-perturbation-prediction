@@ -210,8 +210,8 @@ def train_function(model, model_name, x_train, y_train, x_val, y_val, info_data,
         if val_mrrmse < best_loss:
             best_loss = val_mrrmse
             best_weights = model.state_dict()
-            # print('BEST ----> ')
-        # print(f"{model.name} Epoch {e}, train_loss {round(loss,3)}, val_loss {round(val_loss, 3)}, val_mrrmse {val_mrrmse}")
+            print('BEST ----> ')
+        print(f"{model.name} Epoch {e}, train_loss {round(loss,3)}, val_loss {round(val_loss, 3)}, val_mrrmse {val_mrrmse}")
     t1 = time.time()
     results['runtime'] = float(t1-t0)
     model.load_state_dict(best_weights)
@@ -230,19 +230,12 @@ def cross_validate_models(X, y, kf_cv, cell_types_sm_names, paths, config=None, 
                     'val_sm_name': cell_types_sm_names.iloc[val_idx]['sm_name'].tolist()}
         for Model in [LSTM, Conv, GRU]:
             model = Model(scheme, X.shape, y.shape)
-            
-            if torch.cuda.device_count() > 1:
-                model = nn.DataParallel(model)
-                model_name = model.module.name
-            else:
-                model_name = model.name
-
-            model, results = train_function(model, model_name, x_train, y_train, x_val, y_val, info_data, config=config, clip_norm=clip_norm)
+            model, results = train_function(model, model.name, x_train, y_train, x_val, y_val, info_data, config=config, clip_norm=clip_norm)
             model.to('cpu')
             trained_models.append(model)
-            print(f'PATH OF THE MODEL EQUALS: {paths["model_dir"]}/pytorch_{model_name}_{scheme}_fold{i}.pt')
-            torch.save(model.state_dict(), f'{paths["model_dir"]}/pytorch_{model_name}_{scheme}_fold{i}.pt')
-            with open(f'{paths["logs_dir"]}/{model_name}_{scheme}_fold{i}.json', 'w') as file:
+            print(f'PATH OF THE MODEL EQUALS: {paths["model_dir"]}/pytorch_{model.name}_{scheme}_fold{i}.pt')
+            torch.save(model.state_dict(), f'{paths["model_dir"]}/pytorch_{model.name}_{scheme}_fold{i}.pt')
+            with open(f'{paths["logs_dir"]}/{model.name}_{scheme}_fold{i}.json', 'w') as file:
                 json.dump(results, file)
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()

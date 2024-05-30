@@ -3008,9 +3008,7 @@ meta = [
         "label" : [
           "hightime",
           "veryhighmem",
-          "highcpu",
-          "highsharedmem",
-          "gpu"
+          "highcpu"
         ],
         "tag" : "$id"
       },
@@ -3046,7 +3044,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lgc_ensemble_prepare",
     "viash_version" : "0.8.6",
-    "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
+    "git_commit" : "22fc3604ff364dc63b12c3758e8897e3aaf4e815",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3139,6 +3137,7 @@ mean_cell_type = de_cell_type.groupby('cell_type').mean().reset_index()
 mean_sm_name = de_sm_name.groupby('sm_name').mean().reset_index()
 std_cell_type = de_cell_type.groupby('cell_type').std().reset_index()
 std_sm_name = de_sm_name.groupby('sm_name').std().reset_index()
+std_sm_name_filled = std_sm_name.fillna(0)
 cell_types = de_cell_type.groupby('cell_type').quantile(0.1).reset_index()['cell_type'] # This is just to get cell types in the right order for the next line
 quantiles_cell_type = pd.concat(
     [pd.DataFrame(cell_types)] +
@@ -3153,7 +3152,7 @@ print("Save data augmentation features", flush=True)
 mean_cell_type.to_csv(f'{par["train_data_aug_dir"]}/mean_cell_type.csv', index=False)
 std_cell_type.to_csv(f'{par["train_data_aug_dir"]}/std_cell_type.csv', index=False)
 mean_sm_name.to_csv(f'{par["train_data_aug_dir"]}/mean_sm_name.csv', index=False)
-std_sm_name.to_csv(f'{par["train_data_aug_dir"]}/std_sm_name.csv', index=False)
+std_sm_name_filled.to_csv(f'{par["train_data_aug_dir"]}/std_sm_name.csv', index=False)
 quantiles_cell_type.to_csv(f'{par["train_data_aug_dir"]}/quantiles_cell_type.csv', index=False)
 with open(f'{par["train_data_aug_dir"]}/gene_names.json', 'w') as f:
     json.dump(gene_names, f)
@@ -3605,9 +3604,7 @@ meta["defaults"] = [
   "label" : [
     "hightime",
     "veryhighmem",
-    "highcpu",
-    "highsharedmem",
-    "gpu"
+    "highcpu"
   ],
   "tag" : "$id"
 }'''),

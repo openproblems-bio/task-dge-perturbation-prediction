@@ -47,10 +47,10 @@ def prepare_augmented_data(
     de_sm_name = de_train.iloc[:, [1] + list(range(5, de_train.shape[1]))]
 
     mean_cell_type = de_cell_type.groupby('cell_type').mean().reset_index()
-    std_cell_type = de_cell_type.groupby('cell_type').std().reset_index()
+    std_cell_type = de_cell_type.groupby('cell_type').std().reset_index().fillna(0)
 
     mean_sm_name = de_sm_name.groupby('sm_name').mean().reset_index()
-    std_sm_name = de_sm_name.groupby('sm_name').std().reset_index()
+    std_sm_name = de_sm_name.groupby('sm_name').std().reset_index().fillna(0)
 
     # Append mean and std for 'cell_type'
     rows = []

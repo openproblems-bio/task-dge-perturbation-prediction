@@ -434,9 +434,9 @@ RUN Rscript -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packag
   Rscript -e 'remotes::install_cran(c("dplyr", "tidyr", "purrr", "tibble", "arrow"), repos = "https://cran.rstudio.com")'
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset bootstrap"
-LABEL org.opencontainers.image.created="2024-05-29T20:44:59Z"
+LABEL org.opencontainers.image.created="2024-05-30T13:51:46Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="1f6afe284e9bb28b4d5e89bc2253db13180bce28"
+LABEL org.opencontainers.image.revision="22fc3604ff364dc63b12c3758e8897e3aaf4e815"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -1075,6 +1075,13 @@ for (i in seq_len(par\$num_replicates)) {
   # subset h5ad
   output_train_h5ad <- train_h5ad[obs_ix, var_ix]
   output_test_h5ad <- test_h5ad[, var_ix]
+
+  original_dataset_id <- output_train_h5ad\$uns[["dataset_id"]]
+  dataset_id <- paste0(original_dataset_id, "_bootstrap", i)
+  output_train_h5ad\$uns[["dataset_id"]] <- dataset_id
+  output_test_h5ad\$uns[["dataset_id"]] <- dataset_id
+  output_train_h5ad\$uns[["original_dataset_id"]] <- original_dataset_id
+  output_test_h5ad\$uns[["original_dataset_id"]] <- original_dataset_id
 
   # write output
   output_train_h5ad_path <- gsub("\\\\*", i, par\$output_train_h5ad)

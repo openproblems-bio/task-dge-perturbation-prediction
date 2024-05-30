@@ -422,13 +422,11 @@ FROM ghcr.io/openproblems-bio/base_python:1.0.4
 ENTRYPOINT []
 
  
-RUN pip install --upgrade pip && \
-  pip install --upgrade --no-cache-dir "fastparquet"
-
+RUN :
 LABEL org.opencontainers.image.description="Companion container for running component metrics mean_rowwise_error"
-LABEL org.opencontainers.image.created="2024-05-29T20:44:59Z"
+LABEL org.opencontainers.image.created="2024-05-30T13:51:45Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="1f6afe284e9bb28b4d5e89bc2253db13180bce28"
+LABEL org.opencontainers.image.revision="22fc3604ff364dc63b12c3758e8897e3aaf4e815"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -1016,10 +1014,17 @@ de_test_X_clipped_0001 = np.clip(de_test_X, -threshold_0001, threshold_0001)
 prediction_clipped_0001 = np.clip(prediction_X, -threshold_0001, threshold_0001)
 
 print("Calculate mean rowwise RMSE", flush=True)
-mean_rowwise_rmse = np.mean(np.sqrt(np.mean(np.square(de_test_X - prediction_X), axis=0)))
-mean_rowwise_rmse_clipped_0001 = np.mean(np.sqrt(np.mean(np.square(de_test_X_clipped_0001 - prediction_clipped_0001), axis=0)))
-mean_rowwise_mae = np.mean(np.mean(np.abs(de_test_X - prediction_X), axis=0))
-mean_rowwise_mae_clipped_0001 = np.mean(np.mean(np.abs(de_test_X_clipped_0001 - prediction_clipped_0001), axis=0))
+rowwise_rmse = np.sqrt(np.mean(np.square(de_test_X - prediction_X), axis=1))
+mean_rowwise_rmse = np.mean(rowwise_rmse)
+
+rowwise_rmse_clipped_0001 = np.sqrt(np.mean(np.square(de_test_X_clipped_0001 - prediction_clipped_0001), axis=1))
+mean_rowwise_rmse_clipped_0001 = np.mean(rowwise_rmse_clipped_0001)
+
+rowwise_mae = np.mean(np.abs(de_test_X - prediction_X), axis=1)
+mean_rowwise_mae = np.mean(rowwise_mae)
+
+rowwise_mae_clipped_0001 = np.mean(np.abs(de_test_X_clipped_0001 - prediction_clipped_0001), axis=1)
+mean_rowwise_mae_clipped_0001 = np.mean(rowwise_mae_clipped_0001)
 
 print("Create output", flush=True)
 output = ad.AnnData(

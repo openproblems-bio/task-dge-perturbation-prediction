@@ -105,6 +105,9 @@ functionality:
     - name: metrics/mean_rowwise_error
     - name: metrics/mean_cosine_sim
     - name: metrics/mean_correlation
+    - name: metrics/mean_rowwise_error_r
+    - name: metrics/mean_cosine_sim_r
+    - name: metrics/mean_correlation_r
     - name: process_dataset/bootstrap
     - name: process_dataset/convert_h5ad_to_parquet
   repositories:

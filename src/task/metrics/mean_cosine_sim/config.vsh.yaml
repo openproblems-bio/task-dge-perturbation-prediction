@@ -7,10 +7,10 @@ functionality:
         label: Mean Cosine Similarity
         summary: The mean of cosine similarities per row (perturbation).
         description: |
-          We use the **Mean Cosine Similarity** to score submissions, computed as follows:
+          The **Mean Cosine Similarity** is computed as follows:
 
           $$
-          \textrm{Mean-Cosine} = \frac{1}{R} \sum_{i=1}^R \frac{\mathbf{y}_i \cdot \mathbf{\hat{y}}_i}{\|\mathbf{y}_i\| \|\mathbf{\hat{y}}_i\|}
+          \textrm{Mean-Cosine} = \frac{1}{R}\sum_{i=1}^R\frac{\mathbf{y}_i\cdot \mathbf{\hat{y}}_i}{\|\mathbf{y}_i\| \|\mathbf{\hat{y}}_i\|}
           $$
 
           where $(R)$ is the number of scored rows, and $(\mathbf{y}_i)$ and $(\mathbf{\hat{y}}_i)$ are the actual and predicted values, respectively, for row $(i)$.
@@ -34,9 +34,6 @@ functionality:
 platforms:
   - type: docker
     image: ghcr.io/openproblems-bio/base_python:1.0.4
-    setup:
-      - type: python
-        packages: [ fastparquet ]
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]

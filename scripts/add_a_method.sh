@@ -26,12 +26,6 @@ viash test src/task/methods/$method_id/config.vsh.yaml
 viash run src/task/methods/$method_id/config.vsh.yaml -- \
   ---setup cachedbuild ---verbose
 
-# run the method (using parquet as input)
-viash run src/task/methods/$method_id/config.vsh.yaml -- \
-  --de_train "resources/neurips-2023-kaggle/de_train.parquet" \
-  --id_map "resources/neurips-2023-kaggle/id_map.csv" \
-  --output "output/prediction.h5ad"
-
 # run the method (using h5ad as input)
 viash run src/task/methods/$method_id/config.vsh.yaml -- \
   --de_train_h5ad "resources/neurips-2023-kaggle/2023-09-12_de_by_cell_type_train.h5ad" \
@@ -40,7 +34,7 @@ viash run src/task/methods/$method_id/config.vsh.yaml -- \
 
 # run evaluation metric
 viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
-  --de_test "resources/neurips-2023-kaggle/de_test.parquet" \
+  --de_test_h5ad "resources/neurips-2023-kaggle/de_test.h5ad" \
   --prediction "output/prediction.h5ad" \
   --output "output/score.h5ad"
 

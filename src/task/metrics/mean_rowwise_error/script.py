@@ -36,10 +36,17 @@ de_test_X_clipped_0001 = np.clip(de_test_X, -threshold_0001, threshold_0001)
 prediction_clipped_0001 = np.clip(prediction_X, -threshold_0001, threshold_0001)
 
 print("Calculate mean rowwise RMSE", flush=True)
-mean_rowwise_rmse = np.mean(np.sqrt(np.mean(np.square(de_test_X - prediction_X), axis=0)))
-mean_rowwise_rmse_clipped_0001 = np.mean(np.sqrt(np.mean(np.square(de_test_X_clipped_0001 - prediction_clipped_0001), axis=0)))
-mean_rowwise_mae = np.mean(np.mean(np.abs(de_test_X - prediction_X), axis=0))
-mean_rowwise_mae_clipped_0001 = np.mean(np.mean(np.abs(de_test_X_clipped_0001 - prediction_clipped_0001), axis=0))
+rowwise_rmse = np.sqrt(np.mean(np.square(de_test_X - prediction_X), axis=1))
+mean_rowwise_rmse = np.mean(rowwise_rmse)
+
+rowwise_rmse_clipped_0001 = np.sqrt(np.mean(np.square(de_test_X_clipped_0001 - prediction_clipped_0001), axis=1))
+mean_rowwise_rmse_clipped_0001 = np.mean(rowwise_rmse_clipped_0001)
+
+rowwise_mae = np.mean(np.abs(de_test_X - prediction_X), axis=1)
+mean_rowwise_mae = np.mean(rowwise_mae)
+
+rowwise_mae_clipped_0001 = np.mean(np.abs(de_test_X_clipped_0001 - prediction_clipped_0001), axis=1)
+mean_rowwise_mae_clipped_0001 = np.mean(rowwise_mae_clipped_0001)
 
 print("Create output", flush=True)
 output = ad.AnnData(

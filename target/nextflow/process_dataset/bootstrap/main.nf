@@ -2983,7 +2983,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap",
     "viash_version" : "0.8.6",
-    "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
+    "git_commit" : "22fc3604ff364dc63b12c3758e8897e3aaf4e815",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3065,6 +3065,13 @@ for (i in seq_len(par\\$num_replicates)) {
   # subset h5ad
   output_train_h5ad <- train_h5ad[obs_ix, var_ix]
   output_test_h5ad <- test_h5ad[, var_ix]
+
+  original_dataset_id <- output_train_h5ad\\$uns[["dataset_id"]]
+  dataset_id <- paste0(original_dataset_id, "_bootstrap", i)
+  output_train_h5ad\\$uns[["dataset_id"]] <- dataset_id
+  output_test_h5ad\\$uns[["dataset_id"]] <- dataset_id
+  output_train_h5ad\\$uns[["original_dataset_id"]] <- original_dataset_id
+  output_test_h5ad\\$uns[["original_dataset_id"]] <- original_dataset_id
 
   # write output
   output_train_h5ad_path <- gsub("\\\\\\\\*", i, par\\$output_train_h5ad)

@@ -406,9 +406,9 @@ RUN Rscript -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packag
   Rscript -e 'remotes::install_cran(c("dplyr", "tidyr", "purrr", "tibble"), repos = "https://cran.rstudio.com")'
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset filter_obs"
-LABEL org.opencontainers.image.created="2024-05-29T20:44:59Z"
+LABEL org.opencontainers.image.created="2024-05-30T13:51:46Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="1f6afe284e9bb28b4d5e89bc2253db13180bce28"
+LABEL org.opencontainers.image.revision="22fc3604ff364dc63b12c3758e8897e3aaf4e815"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

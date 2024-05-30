@@ -3115,7 +3115,7 @@ meta = [
           "name" : "mean_pearson",
           "label" : "Mean Pearson",
           "summary" : "The mean of Pearson correlations per row (perturbation).",
-          "description" : "We use the **Mean Pearson Correlation** to score submissions.\n",
+          "description" : "The **Mean Pearson Correlation** is computed as follows:\n\n$$\n\\\\textrm{Mean-Pearson} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\frac{\\\\textrm{Cov}(\\\\mathbf{y}_i, \\\\mathbf{\\\\hat{y}}_i)}{\\\\textrm{Var}(\\\\mathbf{y}_i) \\\\cdot \\\\textrm{Var}(\\\\mathbf{\\\\hat{y}}_i)}\n$$\n\nwhere $(R)$ is the number of scored rows, and $(\\\\mathbf{y}_i)$ and $(\\\\mathbf{\\\\hat{y}}_i)$ are the actual and predicted values, respectively, for row $(i)$.\n",
           "min" : -1,
           "max" : 1,
           "maximize" : true
@@ -3124,7 +3124,7 @@ meta = [
           "name" : "mean_spearman",
           "label" : "Mean Spearman",
           "summary" : "The mean of Spearman correlations per row (perturbation).",
-          "description" : "We use the **Mean Spearman Correlation** to score submissions.\n",
+          "description" : "The **Mean Spearman Correlation** is computed as follows:\n\n$$\n\\\\textrm{Mean-Pearson} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\frac{\\\\textrm{Cov}(\\\\mathbf{r}_i, \\\\mathbf{\\\\hat{r}}_i)}{\\\\textrm{Var}(\\\\mathbf{r}_i) \\\\cdot \\\\textrm{Var}(\\\\mathbf{\\\\hat{r}}_i)}\n$$\n\nwhere $(R)$ is the number of scored rows, and $(\\\\mathbf{r}_i)$ and $(\\\\mathbf{\\\\hat{r}}_i)$ are the ranks of the actual and predicted values, respectively, for row $(i)$.\n",
           "min" : -1,
           "max" : 1,
           "maximize" : true
@@ -3151,17 +3151,7 @@ meta = [
       "resolve_volume" : "Automatic",
       "chown" : true,
       "setup_strategy" : "ifneedbepullelsecachedbuild",
-      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
-      "setup" : [
-        {
-          "type" : "python",
-          "user" : false,
-          "packages" : [
-            "fastparquet"
-          ],
-          "upgrade" : true
-        }
-      ]
+      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
     },
     {
       "type" : "nextflow",
@@ -3206,7 +3196,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_correlation",
     "viash_version" : "0.8.6",
-    "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
+    "git_commit" : "22fc3604ff364dc63b12c3758e8897e3aaf4e815",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

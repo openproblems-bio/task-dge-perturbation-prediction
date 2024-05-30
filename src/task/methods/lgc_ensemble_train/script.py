@@ -3,6 +3,10 @@ import torch
 import json
 import numpy as np
 import pandas as pd
+if torch.cuda.is_available():
+    print("using device: cuda", flush=True)
+else:
+    print('using device: cpu', flush=True)
 
 ## VIASH START
 par = {

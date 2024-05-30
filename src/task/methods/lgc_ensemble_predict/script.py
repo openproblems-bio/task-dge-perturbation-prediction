@@ -145,13 +145,14 @@ df_sub = 0.34*df1 + 0.33*df2 + 0.33*df3 # Final ensembling
 df_sub.reset_index(drop=True, inplace=True)
 
 # write output
+method_id = meta["functionality_name"].replace("_predict", "")
 output = ad.AnnData(
     layers={"prediction": df_sub.to_numpy()},
     obs=pd.DataFrame(index=id_map["id"]),
     var=pd.DataFrame(index=gene_names),
     uns={
         "dataset_id": train_config["DATASET_ID"],
-        "method_id": meta["functionality_name"]
+        "method_id": method_id
     }
 )
 print(output)

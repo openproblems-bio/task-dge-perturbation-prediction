@@ -251,12 +251,12 @@ functionality:
       label: "Mean Rowwise RMSE"
       summary: "The mean of the root mean squared error (RMSE) of each row in the\
         \ matrix."
-      description: "We use the **Mean Rowwise Root Mean Squared Error** to score submissions,\
-        \ computed as follows:\n\n$$\n\\textrm{MRRMSE} = \\frac{1}{R}\\sum_{i=1}^R\\\
-        left(\\frac{1}{n} \\sum_{j=1}^{n} (y_{ij} - \\widehat{y}_{ij})^2\\right)^{1/2}\n\
-        $$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\widehat{y}_{ij})$\
-        \ are the actual and predicted values, respectively, for row $(i)$ and column\
-        \ $(j)$, and $(n)$ bis the number of columns.\n"
+      description: "The **Mean Rowwise Root Mean Squared Error** is computed as follows:\n\
+        \n$$\n\\textrm{MRRMSE} = \\frac{1}{R}\\sum_{i=1}^R\\left(\\frac{1}{n} \\sum_{j=1}^{n}\
+        \ (y_{ij} - \\widehat{y}_{ij})^2\\right)^{1/2}\n$$\n\nwhere $(R)$ is the number\
+        \ of scored rows, and $(y_{ij})$ and $(\\widehat{y}_{ij})$ are the actual\
+        \ and predicted values, respectively, for row $(i)$ and column $(j)$, and\
+        \ $(n)$ bis the number of columns.\n"
       repository_url: null
       documentation_url: null
       min: 0
@@ -276,12 +276,12 @@ functionality:
     - name: "mean_rowwise_mae"
       label: "Mean Rowwise MAE"
       summary: "The mean of the absolute error (MAE) of each row in the matrix."
-      description: "We use the **Mean Rowwise Absolute Error** to score submissions,\
-        \ computed as follows:\n\n$$\n\\textrm{MRMAE} = \\frac{1}{R}\\sum_{i=1}^R\\\
-        left(\\frac{1}{n} \\sum_{j=1}^{n} |y_{ij} - \\widehat{y}_{ij}|\\right)\n$$\n\
-        \nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\widehat{y}_{ij})$\
-        \ are the actual and predicted values, respectively, for row $(i)$ and column\
-        \ $(j)$, and $(n)$ bis the number of columns.\n"
+      description: "The **Mean Rowwise Absolute Error** is computed as follows:\n\n\
+        $$\n\\textrm{MRMAE} = \\frac{1}{R}\\sum_{i=1}^R\\left(\\frac{1}{n} \\sum_{j=1}^{n}\
+        \ |y_{ij} - \\widehat{y}_{ij}|\\right)\n$$\n\nwhere $(R)$ is the number of\
+        \ scored rows, and $(y_{ij})$ and $(\\widehat{y}_{ij})$ are the actual and\
+        \ predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$\
+        \ bis the number of columns.\n"
       repository_url: null
       documentation_url: null
       min: 0
@@ -316,12 +316,6 @@ platforms:
   chown: true
   setup_strategy: "ifneedbepullelsecachedbuild"
   target_image_source: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-  setup:
-  - type: "python"
-    user: false
-    packages:
-    - "fastparquet"
-    upgrade: true
   entrypoint: []
   cmd: null
 - type: "nextflow"
@@ -359,5 +353,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error/mean_rowwise_error"
   viash_version: "0.8.6"
-  git_commit: "1f6afe284e9bb28b4d5e89bc2253db13180bce28"
+  git_commit: "22fc3604ff364dc63b12c3758e8897e3aaf4e815"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

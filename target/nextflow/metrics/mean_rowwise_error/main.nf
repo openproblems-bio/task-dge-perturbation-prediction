@@ -3115,7 +3115,7 @@ meta = [
           "name" : "mean_rowwise_rmse",
           "label" : "Mean Rowwise RMSE",
           "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix.",
-          "description" : "We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} (y_{ij} - \\\\widehat{y}_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
+          "description" : "The **Mean Rowwise Root Mean Squared Error** is computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} (y_{ij} - \\\\widehat{y}_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3133,7 +3133,7 @@ meta = [
           "name" : "mean_rowwise_mae",
           "label" : "Mean Rowwise MAE",
           "summary" : "The mean of the absolute error (MAE) of each row in the matrix.",
-          "description" : "We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
+          "description" : "The **Mean Rowwise Absolute Error** is computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3169,17 +3169,7 @@ meta = [
       "resolve_volume" : "Automatic",
       "chown" : true,
       "setup_strategy" : "ifneedbepullelsecachedbuild",
-      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
-      "setup" : [
-        {
-          "type" : "python",
-          "user" : false,
-          "packages" : [
-            "fastparquet"
-          ],
-          "upgrade" : true
-        }
-      ]
+      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
     },
     {
       "type" : "nextflow",
@@ -3224,7 +3214,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error",
     "viash_version" : "0.8.6",
-    "git_commit" : "1f6afe284e9bb28b4d5e89bc2253db13180bce28",
+    "git_commit" : "22fc3604ff364dc63b12c3758e8897e3aaf4e815",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3296,10 +3286,17 @@ de_test_X_clipped_0001 = np.clip(de_test_X, -threshold_0001, threshold_0001)
 prediction_clipped_0001 = np.clip(prediction_X, -threshold_0001, threshold_0001)
 
 print("Calculate mean rowwise RMSE", flush=True)
-mean_rowwise_rmse = np.mean(np.sqrt(np.mean(np.square(de_test_X - prediction_X), axis=0)))
-mean_rowwise_rmse_clipped_0001 = np.mean(np.sqrt(np.mean(np.square(de_test_X_clipped_0001 - prediction_clipped_0001), axis=0)))
-mean_rowwise_mae = np.mean(np.mean(np.abs(de_test_X - prediction_X), axis=0))
-mean_rowwise_mae_clipped_0001 = np.mean(np.mean(np.abs(de_test_X_clipped_0001 - prediction_clipped_0001), axis=0))
+rowwise_rmse = np.sqrt(np.mean(np.square(de_test_X - prediction_X), axis=1))
+mean_rowwise_rmse = np.mean(rowwise_rmse)
+
+rowwise_rmse_clipped_0001 = np.sqrt(np.mean(np.square(de_test_X_clipped_0001 - prediction_clipped_0001), axis=1))
+mean_rowwise_rmse_clipped_0001 = np.mean(rowwise_rmse_clipped_0001)
+
+rowwise_mae = np.mean(np.abs(de_test_X - prediction_X), axis=1)
+mean_rowwise_mae = np.mean(rowwise_mae)
+
+rowwise_mae_clipped_0001 = np.mean(np.abs(de_test_X_clipped_0001 - prediction_clipped_0001), axis=1)
+mean_rowwise_mae_clipped_0001 = np.mean(rowwise_mae_clipped_0001)
 
 print("Create output", flush=True)
 output = ad.AnnData(

@@ -7,7 +7,13 @@ functionality:
         label: Mean Pearson
         summary: The mean of Pearson correlations per row (perturbation).
         description: |
-          We use the **Mean Pearson Correlation** to score submissions.
+          The **Mean Pearson Correlation** is computed as follows:
+
+          $$
+          \textrm{Mean-Pearson} = \frac{1}{R}\sum_{i=1}^R\frac{\textrm{Cov}(\mathbf{y}_i, \mathbf{\hat{y}}_i)}{\textrm{Var}(\mathbf{y}_i) \cdot \textrm{Var}(\mathbf{\hat{y}}_i)}
+          $$
+
+          where $(R)$ is the number of scored rows, and $(\mathbf{y}_i)$ and $(\mathbf{\hat{y}}_i)$ are the actual and predicted values, respectively, for row $(i)$.
         repository_url: null
         documentation_url: null
         min: -1
@@ -17,7 +23,13 @@ functionality:
         label: Mean Spearman
         summary: The mean of Spearman correlations per row (perturbation).
         description: |
-          We use the **Mean Spearman Correlation** to score submissions.
+          The **Mean Spearman Correlation** is computed as follows:
+
+          $$
+          \textrm{Mean-Pearson} = \frac{1}{R}\sum_{i=1}^R\frac{\textrm{Cov}(\mathbf{r}_i, \mathbf{\hat{r}}_i)}{\textrm{Var}(\mathbf{r}_i) \cdot \textrm{Var}(\mathbf{\hat{r}}_i)}
+          $$
+
+          where $(R)$ is the number of scored rows, and $(\mathbf{r}_i)$ and $(\mathbf{\hat{r}}_i)$ are the ranks of the actual and predicted values, respectively, for row $(i)$.
         repository_url: null
         documentation_url: null
         min: -1
@@ -29,9 +41,6 @@ functionality:
 platforms:
   - type: docker
     image: ghcr.io/openproblems-bio/base_python:1.0.4
-    setup:
-      - type: python
-        packages: [ fastparquet ]
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]
