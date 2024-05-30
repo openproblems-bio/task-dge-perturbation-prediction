@@ -462,9 +462,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "tensorflow-io-gcs-filesystem>=0.31.0" "scikit-learn~=1.2.2" "fastparquet~=2023.10.1" "git+https://github.com/scapeML/scape.git"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods scape"
-LABEL org.opencontainers.image.created="2024-05-30T21:08:56Z"
+LABEL org.opencontainers.image.created="2024-05-30T21:12:57Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="7404b19e9af91ea5a3d48c662cb795c4a590322c"
+LABEL org.opencontainers.image.revision="a90f63108935c7f0815329d1ebd47427387fed5c"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

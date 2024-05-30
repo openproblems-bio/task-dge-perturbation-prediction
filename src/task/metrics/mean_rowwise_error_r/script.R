@@ -34,7 +34,8 @@ if (any(is.na(de_test_X))) {
   stop("NA values in de_test_X")
 }
 if (any(is.na(prediction_X))) {
-  stop("NA values in prediction_X")
+  warning("NA values in prediction_X")
+  prediction_X[is.na(prediction_X)] <- 0
 }
 
 cat("Clipping values\n")

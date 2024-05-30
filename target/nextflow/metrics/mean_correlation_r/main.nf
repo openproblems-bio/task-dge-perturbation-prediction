@@ -3196,7 +3196,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_correlation_r",
     "viash_version" : "0.8.6",
-    "git_commit" : "7404b19e9af91ea5a3d48c662cb795c4a590322c",
+    "git_commit" : "a90f63108935c7f0815329d1ebd47427387fed5c",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3269,6 +3269,14 @@ prediction <- prediction[, genes]
 
 de_test_X <- de_test\\$layers[[par\\$de_test_layer]]
 prediction_X <- prediction\\$layers[[par\\$prediction_layer]]
+
+if (any(is.na(de_test_X))) {
+  stop("NA values in de_test_X")
+}
+if (any(is.na(prediction_X))) {
+  warning("NA values in prediction_X")
+  prediction_X[is.na(prediction_X)] <- 0
+}
 
 cat("Calculate metrics\\\\n")
 out <- cor(t(de_test_X), t(prediction_X), method = "pearson")

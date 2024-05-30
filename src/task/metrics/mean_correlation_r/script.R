@@ -30,6 +30,14 @@ prediction <- prediction[, genes]
 de_test_X <- de_test$layers[[par$de_test_layer]]
 prediction_X <- prediction$layers[[par$prediction_layer]]
 
+if (any(is.na(de_test_X))) {
+  stop("NA values in de_test_X")
+}
+if (any(is.na(prediction_X))) {
+  warning("NA values in prediction_X")
+  prediction_X[is.na(prediction_X)] <- 0
+}
+
 cat("Calculate metrics\n")
 out <- cor(t(de_test_X), t(prediction_X), method = "pearson")
 pearson <- diag(out)
