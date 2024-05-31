@@ -2851,6 +2851,19 @@ meta = [
         "dest" : "par"
       },
       {
+        "type" : "double",
+        "name" : "--clipping_cutoff",
+        "description" : "Clip the log p-values between log10(clip) and -log10(clip)",
+        "default" : [
+          1.0E-4
+        ],
+        "required" : false,
+        "direction" : "input",
+        "multiple" : false,
+        "multiple_sep" : ":",
+        "dest" : "par"
+      },
+      {
         "type" : "string",
         "name" : "--control_compound",
         "default" : [
@@ -2954,7 +2967,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/run_limma",
     "viash_version" : "0.8.6",
-    "git_commit" : "3addfbafdbeb84a0a683e2bb88f3e945ae04f2b8",
+    "git_commit" : "e8451aa55b7e9840d06c4c71374da34873541546",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -2988,6 +3001,7 @@ par <- list(
   "output" = $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_OUTPUT" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "output_splits" = $( if [ ! -z ${VIASH_PAR_OUTPUT_SPLITS+x} ]; then echo -n "strsplit('"; echo -n "$VIASH_PAR_OUTPUT_SPLITS" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "', split = ';')[[1]]"; else echo NULL; fi ),
   "de_sig_cutoff" = $( if [ ! -z ${VIASH_PAR_DE_SIG_CUTOFF+x} ]; then echo -n "as.numeric('"; echo -n "$VIASH_PAR_DE_SIG_CUTOFF" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
+  "clipping_cutoff" = $( if [ ! -z ${VIASH_PAR_CLIPPING_CUTOFF+x} ]; then echo -n "as.numeric('"; echo -n "$VIASH_PAR_CLIPPING_CUTOFF" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
   "control_compound" = $( if [ ! -z ${VIASH_PAR_CONTROL_COMPOUND+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_CONTROL_COMPOUND" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi )
 )
 meta <- list(
@@ -3105,7 +3119,9 @@ de_df2 <- de_df %>%
     sign_log10_adj_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine\\$double.eps, adj.P.Value)),
     # determine if gene is DE
     is_de = P.Value < par\\$de_sig_cutoff,
-    is_de_adj = adj.P.Value < par\\$de_sig_cutoff
+    is_de_adj = adj.P.Value < par\\$de_sig_cutoff,
+    # compute clipped sign fc × log10 p-values
+    clipped_sign_log10_pval = sign(logFC) * -log10(pmax(par\\$clipping_cutoff, P.Value)),
   ) %>%
   as_tibble()
 
@@ -3117,7 +3133,7 @@ rownames(new_obs) <- paste0(new_obs\\$cell_type, ", ", new_obs\\$sm_name)
 new_var <- data.frame(row.names = levels(de_df2\\$gene))
 
 # create layers from de_df
-layer_names <- c("is_de", "is_de_adj", "logFC", "AveExpr", "t", "P.Value", "adj.P.Value", "B", "sign_log10_adj_pval", "sign_log10_pval")
+layer_names <- c("is_de", "is_de_adj", "logFC", "AveExpr", "t", "P.Value", "adj.P.Value", "B", "sign_log10_adj_pval", "sign_log10_pval", "clipped_sign_log10_pval")
 layers <- map(setNames(layer_names, layer_names), function(layer_name) {
   de_df2 %>%
     select(gene, row_i, !!layer_name) %>%

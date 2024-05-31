@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUN_ID="tval_$(date +%Y-%m-%d_%H-%M-%S)"
+RUN_ID="layerclip_$(date +%Y-%m-%d_%H-%M-%S)"
 publish_dir="s3://openproblems-data/resources/dge_perturbation_prediction/results/${RUN_ID}"
 
 cat > /tmp/params.yaml << HERE
@@ -9,11 +9,11 @@ input_states: s3://openproblems-bio/public/neurips-2023-competition/workflow-res
 output_state: "state.yaml"
 publish_dir: "$publish_dir"
 rename_keys: "de_train_h5ad:de_train_h5ad,de_test_h5ad:de_test_h5ad,id_map:id_map"
-settings: '{"layer": "t"}'
+settings: '{"layer": "clipped_sign_log10_pval"}'
 HERE
 
 tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
-  --revision add_cell_obs_to_uns_build \
+  --revision main_build \
   --pull-latest \
   --main-script target/nextflow/workflows/run_benchmark/main.nf \
   --workspace 53907369739130 \

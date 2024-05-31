@@ -32,6 +32,11 @@ functionality:
       type: double
       required: false
       default: 0.05
+    - name: --clipping_cutoff
+      type: double
+      required: false
+      default: 0.0001
+      description: Clip the log p-values between log10(clip) and -log10(clip)
     - name: --control_compound
       type: string
       required: false

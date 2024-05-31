@@ -110,7 +110,9 @@ de_df2 <- de_df %>%
     sign_log10_adj_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine$double.eps, adj.P.Value)),
     # determine if gene is DE
     is_de = P.Value < par$de_sig_cutoff,
-    is_de_adj = adj.P.Value < par$de_sig_cutoff
+    is_de_adj = adj.P.Value < par$de_sig_cutoff,
+    # compute clipped sign fc × log10 p-values
+    clipped_sign_log10_pval = sign(logFC) * -log10(pmax(par$clipping_cutoff, P.Value)),
   ) %>%
   as_tibble()
 
@@ -122,7 +124,7 @@ rownames(new_obs) <- paste0(new_obs$cell_type, ", ", new_obs$sm_name)
 new_var <- data.frame(row.names = levels(de_df2$gene))
 
 # create layers from de_df
-layer_names <- c("is_de", "is_de_adj", "logFC", "AveExpr", "t", "P.Value", "adj.P.Value", "B", "sign_log10_adj_pval", "sign_log10_pval")
+layer_names <- c("is_de", "is_de_adj", "logFC", "AveExpr", "t", "P.Value", "adj.P.Value", "B", "sign_log10_adj_pval", "sign_log10_pval", "clipped_sign_log10_pval")
 layers <- map(setNames(layer_names, layer_names), function(layer_name) {
   de_df2 %>%
     select(gene, row_i, !!layer_name) %>%
