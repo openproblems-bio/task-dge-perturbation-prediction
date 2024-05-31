@@ -1,0 +1,97 @@
+functionality:
+  name: "generate_id_map"
+  namespace: "process_dataset"
+  version: "main_build"
+  arguments:
+  - type: "file"
+    name: "--de_test_h5ad"
+    info: null
+    example:
+    - "resources/neurips-2023-data/de_test.h5ad"
+    must_exist: true
+    create_parent: true
+    required: true
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "file"
+    name: "--id_map"
+    info: null
+    example:
+    - "resources/neurips-2023-data/id_map.csv"
+    must_exist: true
+    create_parent: true
+    required: true
+    direction: "output"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  resources:
+  - type: "python_script"
+    path: "script.py"
+    is_executable: true
+  info:
+    type: "process_dataset"
+    type_info:
+      label: "Generate ID map"
+      summary: "Generate the ID map file for competitors"
+      description: "This task generates the ID map file for competitors.\n"
+  status: "enabled"
+  set_wd_to_resources_dir: false
+platforms:
+- type: "docker"
+  id: "docker"
+  image: "ghcr.io/openproblems-bio/base_python:1.0.4"
+  target_organization: "openproblems-bio/task-dge-perturbation-prediction"
+  target_registry: "ghcr.io"
+  namespace_separator: "/"
+  resolve_volume: "Automatic"
+  chown: true
+  setup_strategy: "ifneedbepullelsecachedbuild"
+  target_image_source: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+  setup:
+  - type: "python"
+    user: false
+    packages:
+    - "anndata"
+    upgrade: true
+  entrypoint: []
+  cmd: null
+- type: "nextflow"
+  id: "nextflow"
+  directives:
+    label:
+    - "midtime"
+    - "midmem"
+    - "lowcpu"
+    tag: "$id"
+  auto:
+    simplifyInput: true
+    simplifyOutput: false
+    transcript: false
+    publish: false
+  config:
+    labels:
+      lowmem: "memory = 20.Gb"
+      midmem: "memory = 50.Gb"
+      highmem: "memory = 100.Gb"
+      lowcpu: "cpus = 5"
+      midcpu: "cpus = 15"
+      highcpu: "cpus = 30"
+      lowtime: "time = 1.h"
+      midtime: "time = 4.h"
+      hightime: "time = 8.h"
+      veryhightime: "time = 24.h"
+    script:
+    - "process.errorStrategy = 'ignore'"
+  debug: false
+  container: "docker"
+info:
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/generate_id_map/config.vsh.yaml"
+  platform: "docker"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/process_dataset/generate_id_map"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/process_dataset/generate_id_map/generate_id_map"
+  viash_version: "0.8.6"
+  git_commit: "1dcfdba417195f5ac27781071c098fe957060b95"
+  git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

@@ -1,0 +1,33 @@
+functionality:
+  name: generate_id_map
+  namespace: process_dataset
+  info:
+    type: process_dataset
+    type_info:
+      label: Generate ID map
+      summary: Generate the ID map file for competitors
+      description: |
+        This task generates the ID map file for competitors.
+  arguments:
+    - name: --de_test_h5ad
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-data/de_test.h5ad
+    - name: --id_map
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-data/id_map.csv
+  resources:
+    - type: python_script
+      path: script.py
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    setup:
+      - type: python
+        packages: [ anndata ]
+  - type: nextflow
+    directives:
+      label: [ midtime, midmem, lowcpu ]

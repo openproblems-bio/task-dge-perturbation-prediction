@@ -426,9 +426,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet" "pandas==2.1.3" "pyarrow==14.0.1" "tqdm==4.66.1" "scikit-learn==1.3.2" "transformers==4.35.2" "matplotlib==3.8.2" "torch-summary"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods lgc_ensemble_train"
-LABEL org.opencontainers.image.created="2024-05-30T21:12:57Z"
+LABEL org.opencontainers.image.created="2024-05-31T09:05:03Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="a90f63108935c7f0815329d1ebd47427387fed5c"
+LABEL org.opencontainers.image.revision="1dcfdba417195f5ac27781071c098fe957060b95"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

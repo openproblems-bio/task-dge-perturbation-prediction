@@ -41,7 +41,7 @@ functionality:
     - name: process_dataset/filter_vars
     - name: process_dataset/add_uns_metadata
     - name: process_dataset/run_limma
-    - name: process_dataset/convert_h5ad_to_parquet
+    - name: process_dataset/generate_id_map
 platforms:
   - type: nextflow
     directives:

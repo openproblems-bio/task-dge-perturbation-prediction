@@ -58,22 +58,13 @@ workflow run_wf {
       toState: [de_test_h5ad: "output"]
     )
 
-    | convert_h5ad_to_parquet.run(
-      fromState: [
-        input_train: "de_train_h5ad",
-        input_test: "de_test_h5ad"
-      ],
-      toState: [
-        de_train: "output_train",
-        de_test: "output_test",
-        id_map: "output_id_map"
-      ]
+    | generate_id_map.run(
+      fromState: [de_test_h5ad: "de_test_h5ad"],
+      toState: [id_map: "id_map"]
     )
 
     | setState([
-      // "de_train",
       "de_train_h5ad",
-      // "de_test",
       "de_test_h5ad",
       "id_map"
     ])

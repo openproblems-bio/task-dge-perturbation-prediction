@@ -3196,7 +3196,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim",
     "viash_version" : "0.8.6",
-    "git_commit" : "a90f63108935c7f0815329d1ebd47427387fed5c",
+    "git_commit" : "1dcfdba417195f5ac27781071c098fe957060b95",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3261,6 +3261,14 @@ prediction = prediction[:, genes]
 # get data
 de_test_X = de_test.layers[par["de_test_layer"]]
 prediction_X = prediction.layers[par["prediction_layer"]]
+
+# check nans
+if np.isnan(de_test_X).any():
+    raise ValueError("NaNs in de_test_X")
+if np.isnan(prediction_X).any():
+    # warn and fill with 0s
+    print("NaNs in prediction_X, filling with zeros", flush=True)
+    prediction_X = np.nan_to_num(prediction_X)
 
 print("Clipping values", flush=True)
 threshold_0001 = -np.log10(0.0001)

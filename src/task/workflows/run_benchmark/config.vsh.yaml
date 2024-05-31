@@ -62,6 +62,13 @@ functionality:
           type: string
           multiple: true
           description: A list of method ids to run. If not specified, all methods will be run.
+        - name: "--metric_ids"
+          type: string
+          multiple: true
+          description: A list of metric ids to run. If not specified, all metric will be run.
+    - name: Stability Analysis.
+      description: Run a stability analysis on the methods.
+      arguments:
         - name: --stability
           type: boolean
           description: Whether to run a stability analysis on the methods.
@@ -109,7 +116,7 @@ functionality:
     - name: metrics/mean_cosine_sim_r
     - name: metrics/mean_correlation_r
     - name: process_dataset/bootstrap
-    - name: process_dataset/convert_h5ad_to_parquet
+    - name: process_dataset/generate_id_map
   repositories:
     - name: openproblemsv2
       type: github

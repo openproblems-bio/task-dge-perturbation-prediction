@@ -40,7 +40,7 @@ for (i in seq_len(par$num_replicates)) {
   output_test_h5ad <- test_h5ad[, var_ix]
 
   original_dataset_id <- output_train_h5ad$uns[["dataset_id"]]
-  dataset_id <- paste0(original_dataset_id, "_bootstrap", i)
+  dataset_id <- paste0(original_dataset_id, "-bootstrap", i)
   output_train_h5ad$uns[["dataset_id"]] <- dataset_id
   output_test_h5ad$uns[["dataset_id"]] <- dataset_id
   output_train_h5ad$uns[["original_dataset_id"]] <- original_dataset_id

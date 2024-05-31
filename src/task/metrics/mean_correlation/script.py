@@ -30,6 +30,15 @@ prediction = prediction[:, genes]
 de_test_X = de_test.layers[par["de_test_layer"]]
 prediction_X = prediction.layers[par["prediction_layer"]]
 
+# check nans
+if np.isnan(de_test_X).any():
+    raise ValueError("NaNs in de_test_X")
+if np.isnan(prediction_X).any():
+    # warn and fill with 0s
+    print("NaNs in prediction_X, filling with zeros", flush=True)
+    prediction_X = np.nan_to_num(prediction_X)
+
+
 print("Calculate metrics", flush=True)
 mean_pearson = np.mean(
     [np.corrcoef(de_test_X[i,], prediction_X[i,])[0, 1] for i in range(de_test_X.shape[0])]

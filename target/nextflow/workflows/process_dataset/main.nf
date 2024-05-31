@@ -3413,7 +3413,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a90f63108935c7f0815329d1ebd47427387fed5c",
+          "git_commit" : "1dcfdba417195f5ac27781071c098fe957060b95",
           "executable" : "/nextflow/process_dataset/compute_pseudobulk/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/compute_pseudobulk"
@@ -3434,7 +3434,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a90f63108935c7f0815329d1ebd47427387fed5c",
+          "git_commit" : "1dcfdba417195f5ac27781071c098fe957060b95",
           "executable" : "/nextflow/process_dataset/filter_obs/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/filter_obs"
@@ -3455,7 +3455,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a90f63108935c7f0815329d1ebd47427387fed5c",
+          "git_commit" : "1dcfdba417195f5ac27781071c098fe957060b95",
           "executable" : "/nextflow/process_dataset/filter_vars/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/filter_vars"
@@ -3476,7 +3476,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a90f63108935c7f0815329d1ebd47427387fed5c",
+          "git_commit" : "1dcfdba417195f5ac27781071c098fe957060b95",
           "executable" : "/nextflow/process_dataset/add_uns_metadata/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/add_uns_metadata"
@@ -3497,31 +3497,31 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a90f63108935c7f0815329d1ebd47427387fed5c",
+          "git_commit" : "1dcfdba417195f5ac27781071c098fe957060b95",
           "executable" : "/nextflow/process_dataset/run_limma/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/run_limma"
       },
       {
-        "name" : "process_dataset/convert_h5ad_to_parquet",
+        "name" : "process_dataset/generate_id_map",
         "repository" : {
           "type" : "local",
           "localPath" : ""
         },
-        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/convert_h5ad_to_parquet/config.vsh.yaml",
+        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/generate_id_map/config.vsh.yaml",
         "configInfo" : {
-          "functionalityName" : "convert_h5ad_to_parquet",
+          "functionalityName" : "generate_id_map",
           "git_tag" : "",
           "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
           "viash_version" : "0.8.6",
-          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/convert_h5ad_to_parquet/config.vsh.yaml",
+          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/generate_id_map/config.vsh.yaml",
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "a90f63108935c7f0815329d1ebd47427387fed5c",
-          "executable" : "/nextflow/process_dataset/convert_h5ad_to_parquet/main.nf"
+          "git_commit" : "1dcfdba417195f5ac27781071c098fe957060b95",
+          "executable" : "/nextflow/process_dataset/generate_id_map/main.nf"
         },
-        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/convert_h5ad_to_parquet"
+        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/generate_id_map"
       }
     ],
     "set_wd_to_resources_dir" : false
@@ -3570,7 +3570,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/process_dataset",
     "viash_version" : "0.8.6",
-    "git_commit" : "a90f63108935c7f0815329d1ebd47427387fed5c",
+    "git_commit" : "1dcfdba417195f5ac27781071c098fe957060b95",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3583,7 +3583,7 @@ include { filter_obs } from "${meta.resources_dir}/../../../nextflow/process_dat
 include { filter_vars } from "${meta.resources_dir}/../../../nextflow/process_dataset/filter_vars/main.nf"
 include { add_uns_metadata } from "${meta.resources_dir}/../../../nextflow/process_dataset/add_uns_metadata/main.nf"
 include { run_limma } from "${meta.resources_dir}/../../../nextflow/process_dataset/run_limma/main.nf"
-include { convert_h5ad_to_parquet } from "${meta.resources_dir}/../../../nextflow/process_dataset/convert_h5ad_to_parquet/main.nf"
+include { generate_id_map } from "${meta.resources_dir}/../../../nextflow/process_dataset/generate_id_map/main.nf"
 
 // inner workflow
 // user-provided Nextflow code
@@ -3647,22 +3647,13 @@ workflow run_wf {
       toState: [de_test_h5ad: "output"]
     )
 
-    | convert_h5ad_to_parquet.run(
-      fromState: [
-        input_train: "de_train_h5ad",
-        input_test: "de_test_h5ad"
-      ],
-      toState: [
-        de_train: "output_train",
-        de_test: "output_test",
-        id_map: "output_id_map"
-      ]
+    | generate_id_map.run(
+      fromState: [de_test_h5ad: "de_test_h5ad"],
+      toState: [id_map: "id_map"]
     )
 
     | setState([
-      // "de_train",
       "de_train_h5ad",
-      // "de_test",
       "de_test_h5ad",
       "id_map"
     ])
