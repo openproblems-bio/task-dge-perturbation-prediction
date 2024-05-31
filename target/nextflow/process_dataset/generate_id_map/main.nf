@@ -2898,7 +2898,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/generate_id_map",
     "viash_version" : "0.8.6",
-    "git_commit" : "1dcfdba417195f5ac27781071c098fe957060b95",
+    "git_commit" : "3addfbafdbeb84a0a683e2bb88f3e945ae04f2b8",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -2942,15 +2942,15 @@ dep = {
 ## VIASH END
 
 print(">> Load dataset", flush=True)
-input_test = ad.read_h5ad(par["input_test"])
+de_test_h5ad = ad.read_h5ad(par["de_test_h5ad"])
 
 print(">> Generate id_map file", flush=True)
-id_map = input_test.obs[["sm_name", "cell_type"]]
+id_map = de_test_h5ad.obs[["sm_name", "cell_type"]]
 id_map.reset_index(drop=True, inplace=True)
 id_map.reset_index(names="id", inplace=True)
 
 print(">> Save data", flush=True)
-id_map.to_csv(par["output_id_map"], index=False)
+id_map.to_csv(par["id_map"], index=False)
 VIASHMAIN
 python -B "$tempscript"
 '''

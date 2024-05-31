@@ -8,12 +8,12 @@ par = {
 ## VIASH END
 
 print(">> Load dataset", flush=True)
-input_test = ad.read_h5ad(par["input_test"])
+de_test_h5ad = ad.read_h5ad(par["de_test_h5ad"])
 
 print(">> Generate id_map file", flush=True)
-id_map = input_test.obs[["sm_name", "cell_type"]]
+id_map = de_test_h5ad.obs[["sm_name", "cell_type"]]
 id_map.reset_index(drop=True, inplace=True)
 id_map.reset_index(names="id", inplace=True)
 
 print(">> Save data", flush=True)
-id_map.to_csv(par["output_id_map"], index=False)
+id_map.to_csv(par["id_map"], index=False)
