@@ -3076,7 +3076,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "408e292208aa68abee225a5c0b6a25fb86fa46e2",
+          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
           "executable" : "/nextflow/process_dataset/bootstrap_sc_counts/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap_sc_counts"
@@ -3097,7 +3097,7 @@ meta = [
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "408e292208aa68abee225a5c0b6a25fb86fa46e2",
+          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
           "executable" : "/nextflow/workflows/process_dataset/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/process_dataset"
@@ -3118,7 +3118,7 @@ meta = [
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "408e292208aa68abee225a5c0b6a25fb86fa46e2",
+          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
           "executable" : "/nextflow/workflows/run_benchmark/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark"
@@ -3174,7 +3174,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_stability_analysis",
     "viash_version" : "0.8.6",
-    "git_commit" : "408e292208aa68abee225a5c0b6a25fb86fa46e2",
+    "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3210,7 +3210,10 @@ workflow run_wf {
       return (1..state.bootstrap_num_replicates).collect{ idx ->
         [
           "${id}-bootstrap${idx}",
-          state + [replicate: idx]
+          state + [
+            replicate: idx,
+            _meta: [join_id: id]
+          ]
         ]
       }
     }
@@ -3260,7 +3263,7 @@ workflow run_wf {
       ]
     )
 
-    | setState(["scores"])
+    | setState(["scores", "_meta"])
 
   emit:
   output_ch

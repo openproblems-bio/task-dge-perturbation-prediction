@@ -20,7 +20,10 @@ workflow run_wf {
       return (1..state.bootstrap_num_replicates).collect{ idx ->
         [
           "${id}-bootstrap${idx}",
-          state + [replicate: idx]
+          state + [
+            replicate: idx,
+            _meta: [join_id: id]
+          ]
         ]
       }
     }
@@ -70,7 +73,7 @@ workflow run_wf {
       ]
     )
 
-    | setState(["scores"])
+    | setState(["scores", "_meta"])
 
   emit:
   output_ch
