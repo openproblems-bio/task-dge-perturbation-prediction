@@ -24,34 +24,6 @@ metrics = [
   mean_correlation_r
 ]
 
-// which arguments to pass to the methods
-methodFromState = { id, state, comp ->
-  def new_args = [
-    de_train_h5ad: state.de_train_h5ad,
-    id_map: state.id_map,
-    layer: state.layer,
-    output: 'predictions/$id.$key.output.h5ad',
-    output_model: null
-  ]
-  if (comp.config.functionality.info.type == "control_method") {
-    new_args.de_test_h5ad = state.de_test_h5ad
-  }
-  new_args
-}
-
-// where to store the method output
-methodToState = ["prediction": "output"]
-
-// which arguments to pass to the metrics
-metricFromState = [
-  de_test_h5ad: "de_test_h5ad",
-  layer: "layer",
-  prediction: "prediction"
-]
-
-// where to store the metric output
-metricToState = ["metric_output": "output"]
-
 // helper workflow for starting a workflow based on lists of yaml files
 workflow auto {
   findStates(params, meta.config)
@@ -75,10 +47,26 @@ workflow run_wf {
     | run_benchmark_fun(
       methods: methods,
       metrics: metrics,
-      methodFromState: methodFromState,
-      methodToState: methodToState,
-      metricFromState: metricFromState,
-      metricToState: metricToState,
+      methodFromState: { id, state, comp ->
+        def new_args = [
+          de_train_h5ad: state.de_train_h5ad,
+          id_map: state.id_map,
+          layer: state.layer,
+          output: 'predictions/$id.$key.output.h5ad',
+          output_model: null
+        ]
+        if (comp.config.functionality.info.type == "control_method") {
+          new_args.de_test_h5ad = state.de_test_h5ad
+        }
+        new_args
+      },
+      methodToState: ["prediction": "output"],
+      metricFromState: [
+        de_test_h5ad: "de_test_h5ad",
+        layer: "layer",
+        prediction: "prediction"
+      ],
+      metricToState: ["metric_output": "output"],
       methodAuto: [publish: "state"]
     )
     | joinStates { ids, states ->
@@ -89,15 +77,6 @@ workflow run_wf {
       
       ["output", [scores: score_uns_file]]
     }
-
-  /**************************
-   * RUN STABILITY ANALYSIS *
-   **************************/
-  stability_ch = input_ch
-    | filter{ id, state ->
-      state.stability
-    }
-    | stability_wf
 
   /******************************
    * GENERATE OUTPUT YAML FILES *
@@ -114,7 +93,6 @@ workflow run_wf {
   // merge all of the output data 
   output_ch = score_ch
     | mix(metadata_ch)
-    | mix(stability_ch)
     | joinStates{ ids, states ->
       def mergedStates = states.inject([:]) { acc, m -> acc + m }
       [ids[0], mergedStates]
@@ -125,70 +103,6 @@ workflow run_wf {
 }
 
 
-workflow stability_wf {
-  take: input_ch
-
-  main:
-  output_ch = input_ch
-    
-    | bootstrap.run(
-      fromState: [
-        train_h5ad: "de_train_h5ad",
-        test_h5ad: "de_test_h5ad",
-        num_replicates: "stability_num_replicates",
-        obs_fraction: "stability_obs_fraction",
-        var_fraction: "stability_var_fraction"
-      ],
-
-      toState: [
-        de_train_h5ad: "output_train_h5ad",
-        de_test_h5ad: "output_test_h5ad"
-      ]
-    )
-
-    // flatten bootstraps
-    | flatMap { id, state -> 
-      return [state.de_train_h5ad, state.de_test_h5ad]
-        .transpose()
-        .withIndex()
-        .collect{ el, idx ->
-          [
-            id + "-bootstrap" + idx,
-            state + [
-              replicate: idx,
-              de_train_h5ad: el[0],
-              de_test_h5ad: el[1]
-            ]
-          ]
-        }
-    }
-
-    | generate_id_map.run(
-      fromState: [de_test_h5ad: "de_test_h5ad"],
-      toState: [id_map: "id_map"]
-    )
-
-    | run_benchmark_fun(
-      keyPrefix: "stability_",
-      methods: methods,
-      metrics: metrics,
-      methodFromState: methodFromState,
-      methodToState: methodToState,
-      metricFromState: metricFromState,
-      metricToState: metricToState
-    )
-
-    | joinStates { ids, states ->
-      def stability_uns = states.collect{it.score_uns}
-      def stability_uns_yaml_blob = toYamlBlob(stability_uns)
-      def stability_uns_file = tempFile("stability_uns.yaml")
-      stability_uns_file.write(stability_uns_yaml_blob)
-      
-      ["output", [stability_scores: stability_uns_file]]
-    }
-
-  emit: output_ch
-}
 
 
 
