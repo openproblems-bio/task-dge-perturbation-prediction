@@ -3215,7 +3215,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/transformer_ensemble",
     "viash_version" : "0.8.6",
-    "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
+    "git_commit" : "a161cfd989c11df9949386a103110fac45734cad",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3290,34 +3290,38 @@ n_components = len(gene_names)
 
 # train and predict models
 argsets = [
+    # Note by author - weight_df1: 0.5 (utilizing std, mean, and clustering sampling, yielding 0.551)
     {
-        "name": "trained_models_kmeans_mean_std",
+        "name": "weight_df1",
         "mean_std": "mean_std",
-        "uncommon": False,
-        "sampling_strategy": "k-means",
-        "weight": 0.4,
-    },
-    {
-        "name": "trained_models_kmeans_mean_std_trueuncommon",
-        "mean_std": "mean_std",
-        "uncommon": True,
-        "sampling_strategy": "k-means",
-        "weight": 0.1,
-    },
-    {
-        "name": "trained_models_kmeans_mean",
-        "mean_std": "mean",
-        "uncommon": False,
-        "sampling_strategy": "k-means",
-        "weight": 0.2,
-    },
-    {
-        "name": "trained_models_nonkmeans_mean",
-        "mean_std": "mean",
         "uncommon": False,
         "sampling_strategy": "random",
-        "weight": 0.3,
+        "weight": 0.5,
     },
+    # Note by author - weight_df2: 0.25 (excluding uncommon elements, resulting in 0.559)
+    {
+        "name": "weight_df2",
+        "mean_std": "mean_std",
+        "uncommon": True,
+        "sampling_strategy": "random",
+        "weight": 0.25,
+    },
+    # Note by author - weight_df3: 0.25 (leveraging clustering sampling, achieving 0.575)
+    {
+        "name": "weight_df3",
+        "mean_std": "mean_std",
+        "uncommon": False, # should this be set to False or True?
+        "sampling_strategy": "k-means",
+        "weight": 0.25,
+    },
+    # Note by author - weight_df4: 0.3 (incorporating mean, random sampling, and excluding std, attaining 0.554)
+    {
+        "name": "weight_df4",
+        "mean_std": "mean",
+        "uncommon": False, # should this be set to False or True?
+        "sampling_strategy": "random",
+        "weight": 0.3,
+    }
 ]
 
 
@@ -3338,6 +3342,8 @@ for argset in argsets:
         one_hot_encode_features, targets, one_hot_test = (
             prepare_augmented_data_mean_only(de_train=de_train, id_map=id_map)
         )
+    else:
+        raise ValueError("Invalid mean_std argument")
 
     print(f"> Train model", flush=True)
     if argset["sampling_strategy"] == "k-means":
@@ -3352,7 +3358,7 @@ for argset in argsets:
             device=device,
             mean_std=argset["mean_std"],
         )
-    else:
+    elif argset["sampling_strategy"] == "random":
         label_reducer, scaler, transformer_model = train_non_k_means_strategy(
             n_components=n_components,
             d_model=d_model,
@@ -3364,6 +3370,8 @@ for argset in argsets:
             device=device,
             mean_std=argset["mean_std"],
         )
+    else:
+        raise ValueError("Invalid sampling_strategy argument")
 
     print(f"> Predict model", flush=True)
     unseen_data = torch.tensor(one_hot_test, dtype=torch.float32).to(device)
@@ -3393,9 +3401,12 @@ for argset in argsets:
     predictions.append(pred)
 
 print(f"Combine predictions", flush=True)
-weighted_pred = sum(
-    [argset["weight"] * pred for argset, pred in zip(argsets, predictions)]
-) / sum([argset["weight"] for argset in argsets])
+# compute weighted sum
+sum_weights = sum([argset["weight"] for argset in argsets])
+weighted_pred = sum([
+    pred * argset["weight"] / sum_weights
+    for argset, pred in zip(argsets, predictions)
+])
 
 
 print('Write output to file', flush=True)

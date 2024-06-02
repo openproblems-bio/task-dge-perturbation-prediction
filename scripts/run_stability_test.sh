@@ -7,6 +7,7 @@ id: neurips-2023-data
 sc_counts: resources/neurips-2023-raw/sc_counts_reannotated_with_counts.h5ad
 method_ids: ['ground_truth', 'sample', 'mean_across_celltypes', 'mean_across_compounds']
 layer: t # test a different layer
+bootstrap_num_replicates: 2
 publish_dir: "output/test_stability_analysis"
 output_state: "state.yaml"
 HERE
