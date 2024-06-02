@@ -20,21 +20,30 @@ functionality:
     - name: Bootstrapping arguments
       description: Define the sampling strategy for the stability analysis.
       arguments:
-        - name: --bootstrap_num_replicates
-          type: integer
-          required: true
-          default: 10
-          description: Number of bootstraps to generate.
+        - name: --bootstrap_obs
+          type: boolean
+          default: true
+          description: Whether to sample observations.
         - name: --bootstrap_obs_fraction
           type: double
-          required: true
-          default: 0.95
+          default: 1
           description: Fraction of the obs of the sc_counts to include in each bootstrap.
+        - name: --bootstrap_obs_replace
+          type: boolean
+          default: true
+          description: Whether to sample with replacement.
+        - name: --bootstrap_var
+          type: boolean
+          default: false
+          description: Whether to sample variables.
         - name: --bootstrap_var_fraction
           type: double
-          required: true
           default: 1
           description: Fraction of the var of the sc_counts to include in each bootstrap.
+        - name: --bootstrap_var_replace
+          type: boolean
+          default: true
+          description: Whether to sample with replacement.
     - name: Outputs
       arguments:
         - name: "--scores"
@@ -60,7 +69,7 @@ functionality:
     - type: file
       path: "../../api/task_info.yaml"
   dependencies:
-    - name: process_dataset/bootstrap_sc_counts
+    - name: process_dataset/bootstrap
     - name: workflows/process_dataset
     - name: workflows/run_benchmark
   repositories:

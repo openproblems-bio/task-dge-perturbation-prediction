@@ -173,41 +173,48 @@ function ViashHelp {
   echo "bootstrap main_build"
   echo ""
   echo "Inputs:"
-  echo "    --train_h5ad"
+  echo "    --input"
   echo "        type: file, required parameter, file must exist"
-  echo "        example: resources/neurips-2023-kaggle/de_train.h5ad"
-  echo ""
-  echo "    --test_h5ad"
-  echo "        type: file, required parameter, file must exist"
-  echo "        example: resources/neurips-2023-kaggle/de_test.h5ad"
+  echo "        example:"
+  echo "resources/neurips-2023-raw/sc_counts_reannotated_with_counts.h5ad"
   echo ""
   echo "Outputs:"
-  echo "    --output_train_h5ad"
-  echo "        type: file, required parameter, multiple values allowed, output, file"
-  echo "must exist"
-  echo "        example: de_train_bootstrap.h5ad"
+  echo "    --output"
+  echo "        type: file, required parameter, output, file must exist"
+  echo "        example: sc_counts_bootstrap.h5ad"
   echo ""
-  echo "    --output_test_h5ad"
-  echo "        type: file, required parameter, multiple values allowed, output, file"
-  echo "must exist"
-  echo "        example: de_test_bootstrap.h5ad"
+  echo "Sampling parameters:"
+  echo "    Parameters for sampling the bootstraps."
   echo ""
-  echo "Arguments:"
-  echo "    --num_replicates"
-  echo "        type: integer, required parameter"
-  echo "        default: 10"
-  echo "        Number of bootstraps to generate."
+  echo "    --bootstrap_obs"
+  echo "        type: boolean"
+  echo "        default: true"
+  echo "        Whether to sample observations."
   echo ""
   echo "    --obs_fraction"
-  echo "        type: double, required parameter"
-  echo "        default: 0.95"
-  echo "        Fraction of the training dataset obs to include in each bootstrap."
+  echo "        type: double"
+  echo "        default: 1.0"
+  echo "        Fraction of the obs of the sc_counts to include in each bootstrap."
+  echo ""
+  echo "    --obs_replace"
+  echo "        type: boolean"
+  echo "        default: true"
+  echo "        Whether to sample with replacement."
+  echo ""
+  echo "    --bootstrap_var"
+  echo "        type: boolean"
+  echo "        default: false"
+  echo "        Whether to sample variables."
   echo ""
   echo "    --var_fraction"
-  echo "        type: double, required parameter"
-  echo "        default: 0.95"
-  echo "        Fraction of the training & test dataset var to include in each"
-  echo "        bootstrap."
+  echo "        type: double"
+  echo "        default: 1.0"
+  echo "        Fraction of the var of the sc_counts to include in each bootstrap."
+  echo ""
+  echo "    --var_replace"
+  echo "        type: boolean"
+  echo "        default: true"
+  echo "        Whether to sample with replacement."
 }
 
 ######## Helper functions for setting up Docker images for viash ########
@@ -425,18 +432,16 @@ function ViashDockerCheckCommands {
 #   ViashDockerFile
 function ViashDockerfile {
   cat << 'VIASHDOCKER'
-FROM ghcr.io/openproblems-bio/base_r:1.0.4
+FROM ghcr.io/openproblems-bio/base_python:1.0.4
 
 ENTRYPOINT []
 
  
-RUN Rscript -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")' && \
-  Rscript -e 'remotes::install_cran(c("dplyr", "tidyr", "purrr", "tibble", "arrow"), repos = "https://cran.rstudio.com")'
-
+RUN :
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset bootstrap"
-LABEL org.opencontainers.image.created="2024-06-01T14:04:36Z"
+LABEL org.opencontainers.image.created="2024-06-02T16:38:05Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="1dca6d5d8c2bec800243520ade9a996698cba2ae"
+LABEL org.opencontainers.image.revision="02d3dff2a7157ffcc0a321d0ea417a1239f54954"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -595,59 +600,37 @@ while [[ $# -gt 0 ]]; do
             echo "bootstrap main_build"
             exit
             ;;
-        --train_h5ad)
-            [ -n "$VIASH_PAR_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--train_h5ad\': \'$VIASH_PAR_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_TRAIN_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --train_h5ad. Use "--help" to get more information on the parameters. && exit 1
+        --input)
+            [ -n "$VIASH_PAR_INPUT" ] && ViashError Bad arguments for option \'--input\': \'$VIASH_PAR_INPUT\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_INPUT="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --input. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --train_h5ad=*)
-            [ -n "$VIASH_PAR_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--train_h5ad=*\': \'$VIASH_PAR_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_TRAIN_H5AD=$(ViashRemoveFlags "$1")
+        --input=*)
+            [ -n "$VIASH_PAR_INPUT" ] && ViashError Bad arguments for option \'--input=*\': \'$VIASH_PAR_INPUT\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_INPUT=$(ViashRemoveFlags "$1")
             shift 1
             ;;
-        --test_h5ad)
-            [ -n "$VIASH_PAR_TEST_H5AD" ] && ViashError Bad arguments for option \'--test_h5ad\': \'$VIASH_PAR_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_TEST_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --test_h5ad. Use "--help" to get more information on the parameters. && exit 1
+        --output)
+            [ -n "$VIASH_PAR_OUTPUT" ] && ViashError Bad arguments for option \'--output\': \'$VIASH_PAR_OUTPUT\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_OUTPUT="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --output. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --test_h5ad=*)
-            [ -n "$VIASH_PAR_TEST_H5AD" ] && ViashError Bad arguments for option \'--test_h5ad=*\': \'$VIASH_PAR_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_TEST_H5AD=$(ViashRemoveFlags "$1")
+        --output=*)
+            [ -n "$VIASH_PAR_OUTPUT" ] && ViashError Bad arguments for option \'--output=*\': \'$VIASH_PAR_OUTPUT\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_OUTPUT=$(ViashRemoveFlags "$1")
             shift 1
             ;;
-        --output_train_h5ad)
-            [ -n "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--output_train_h5ad\': \'$VIASH_PAR_OUTPUT_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_OUTPUT_TRAIN_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --output_train_h5ad. Use "--help" to get more information on the parameters. && exit 1
+        --bootstrap_obs)
+            [ -n "$VIASH_PAR_BOOTSTRAP_OBS" ] && ViashError Bad arguments for option \'--bootstrap_obs\': \'$VIASH_PAR_BOOTSTRAP_OBS\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_BOOTSTRAP_OBS="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --bootstrap_obs. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --output_train_h5ad=*)
-            [ -n "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--output_train_h5ad=*\': \'$VIASH_PAR_OUTPUT_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_OUTPUT_TRAIN_H5AD=$(ViashRemoveFlags "$1")
-            shift 1
-            ;;
-        --output_test_h5ad)
-            [ -n "$VIASH_PAR_OUTPUT_TEST_H5AD" ] && ViashError Bad arguments for option \'--output_test_h5ad\': \'$VIASH_PAR_OUTPUT_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_OUTPUT_TEST_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --output_test_h5ad. Use "--help" to get more information on the parameters. && exit 1
-            shift 2
-            ;;
-        --output_test_h5ad=*)
-            [ -n "$VIASH_PAR_OUTPUT_TEST_H5AD" ] && ViashError Bad arguments for option \'--output_test_h5ad=*\': \'$VIASH_PAR_OUTPUT_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_OUTPUT_TEST_H5AD=$(ViashRemoveFlags "$1")
-            shift 1
-            ;;
-        --num_replicates)
-            [ -n "$VIASH_PAR_NUM_REPLICATES" ] && ViashError Bad arguments for option \'--num_replicates\': \'$VIASH_PAR_NUM_REPLICATES\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_NUM_REPLICATES="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --num_replicates. Use "--help" to get more information on the parameters. && exit 1
-            shift 2
-            ;;
-        --num_replicates=*)
-            [ -n "$VIASH_PAR_NUM_REPLICATES" ] && ViashError Bad arguments for option \'--num_replicates=*\': \'$VIASH_PAR_NUM_REPLICATES\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_NUM_REPLICATES=$(ViashRemoveFlags "$1")
+        --bootstrap_obs=*)
+            [ -n "$VIASH_PAR_BOOTSTRAP_OBS" ] && ViashError Bad arguments for option \'--bootstrap_obs=*\': \'$VIASH_PAR_BOOTSTRAP_OBS\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_BOOTSTRAP_OBS=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         --obs_fraction)
@@ -661,6 +644,28 @@ while [[ $# -gt 0 ]]; do
             VIASH_PAR_OBS_FRACTION=$(ViashRemoveFlags "$1")
             shift 1
             ;;
+        --obs_replace)
+            [ -n "$VIASH_PAR_OBS_REPLACE" ] && ViashError Bad arguments for option \'--obs_replace\': \'$VIASH_PAR_OBS_REPLACE\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_OBS_REPLACE="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --obs_replace. Use "--help" to get more information on the parameters. && exit 1
+            shift 2
+            ;;
+        --obs_replace=*)
+            [ -n "$VIASH_PAR_OBS_REPLACE" ] && ViashError Bad arguments for option \'--obs_replace=*\': \'$VIASH_PAR_OBS_REPLACE\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_OBS_REPLACE=$(ViashRemoveFlags "$1")
+            shift 1
+            ;;
+        --bootstrap_var)
+            [ -n "$VIASH_PAR_BOOTSTRAP_VAR" ] && ViashError Bad arguments for option \'--bootstrap_var\': \'$VIASH_PAR_BOOTSTRAP_VAR\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_BOOTSTRAP_VAR="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --bootstrap_var. Use "--help" to get more information on the parameters. && exit 1
+            shift 2
+            ;;
+        --bootstrap_var=*)
+            [ -n "$VIASH_PAR_BOOTSTRAP_VAR" ] && ViashError Bad arguments for option \'--bootstrap_var=*\': \'$VIASH_PAR_BOOTSTRAP_VAR\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_BOOTSTRAP_VAR=$(ViashRemoveFlags "$1")
+            shift 1
+            ;;
         --var_fraction)
             [ -n "$VIASH_PAR_VAR_FRACTION" ] && ViashError Bad arguments for option \'--var_fraction\': \'$VIASH_PAR_VAR_FRACTION\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
             VIASH_PAR_VAR_FRACTION="$2"
@@ -670,6 +675,17 @@ while [[ $# -gt 0 ]]; do
         --var_fraction=*)
             [ -n "$VIASH_PAR_VAR_FRACTION" ] && ViashError Bad arguments for option \'--var_fraction=*\': \'$VIASH_PAR_VAR_FRACTION\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
             VIASH_PAR_VAR_FRACTION=$(ViashRemoveFlags "$1")
+            shift 1
+            ;;
+        --var_replace)
+            [ -n "$VIASH_PAR_VAR_REPLACE" ] && ViashError Bad arguments for option \'--var_replace\': \'$VIASH_PAR_VAR_REPLACE\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_VAR_REPLACE="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --var_replace. Use "--help" to get more information on the parameters. && exit 1
+            shift 2
+            ;;
+        --var_replace=*)
+            [ -n "$VIASH_PAR_VAR_REPLACE" ] && ViashError Bad arguments for option \'--var_replace=*\': \'$VIASH_PAR_VAR_REPLACE\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_VAR_REPLACE=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         ---setup)
@@ -790,32 +806,12 @@ fi
 
 
 # check whether required parameters exist
-if [ -z ${VIASH_PAR_TRAIN_H5AD+x} ]; then
-  ViashError '--train_h5ad' is a required argument. Use "--help" to get more information on the parameters.
+if [ -z ${VIASH_PAR_INPUT+x} ]; then
+  ViashError '--input' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
-if [ -z ${VIASH_PAR_TEST_H5AD+x} ]; then
-  ViashError '--test_h5ad' is a required argument. Use "--help" to get more information on the parameters.
-  exit 1
-fi
-if [ -z ${VIASH_PAR_OUTPUT_TRAIN_H5AD+x} ]; then
-  ViashError '--output_train_h5ad' is a required argument. Use "--help" to get more information on the parameters.
-  exit 1
-fi
-if [ -z ${VIASH_PAR_OUTPUT_TEST_H5AD+x} ]; then
-  ViashError '--output_test_h5ad' is a required argument. Use "--help" to get more information on the parameters.
-  exit 1
-fi
-if [ -z ${VIASH_PAR_NUM_REPLICATES+x} ]; then
-  ViashError '--num_replicates' is a required argument. Use "--help" to get more information on the parameters.
-  exit 1
-fi
-if [ -z ${VIASH_PAR_OBS_FRACTION+x} ]; then
-  ViashError '--obs_fraction' is a required argument. Use "--help" to get more information on the parameters.
-  exit 1
-fi
-if [ -z ${VIASH_PAR_VAR_FRACTION+x} ]; then
-  ViashError '--var_fraction' is a required argument. Use "--help" to get more information on the parameters.
+if [ -z ${VIASH_PAR_OUTPUT+x} ]; then
+  ViashError '--output' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
 if [ -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then
@@ -839,32 +835,36 @@ if [ -z ${VIASH_META_TEMP_DIR+x} ]; then
   exit 1
 fi
 
-# check whether required files exist
-if [ ! -z "$VIASH_PAR_TRAIN_H5AD" ] && [ ! -e "$VIASH_PAR_TRAIN_H5AD" ]; then
-  ViashError "Input file '$VIASH_PAR_TRAIN_H5AD' does not exist."
-  exit 1
+# filling in defaults
+if [ -z ${VIASH_PAR_BOOTSTRAP_OBS+x} ]; then
+  VIASH_PAR_BOOTSTRAP_OBS="true"
 fi
-if [ ! -z "$VIASH_PAR_TEST_H5AD" ] && [ ! -e "$VIASH_PAR_TEST_H5AD" ]; then
-  ViashError "Input file '$VIASH_PAR_TEST_H5AD' does not exist."
+if [ -z ${VIASH_PAR_OBS_FRACTION+x} ]; then
+  VIASH_PAR_OBS_FRACTION="1.0"
+fi
+if [ -z ${VIASH_PAR_OBS_REPLACE+x} ]; then
+  VIASH_PAR_OBS_REPLACE="true"
+fi
+if [ -z ${VIASH_PAR_BOOTSTRAP_VAR+x} ]; then
+  VIASH_PAR_BOOTSTRAP_VAR="false"
+fi
+if [ -z ${VIASH_PAR_VAR_FRACTION+x} ]; then
+  VIASH_PAR_VAR_FRACTION="1.0"
+fi
+if [ -z ${VIASH_PAR_VAR_REPLACE+x} ]; then
+  VIASH_PAR_VAR_REPLACE="true"
+fi
+
+# check whether required files exist
+if [ ! -z "$VIASH_PAR_INPUT" ] && [ ! -e "$VIASH_PAR_INPUT" ]; then
+  ViashError "Input file '$VIASH_PAR_INPUT' does not exist."
   exit 1
 fi
 
 # check whether parameters values are of the right type
-if [[ -n "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ]]; then
-  if ! [[ "$VIASH_PAR_OUTPUT_TRAIN_H5AD" =~ \* ]]; then
-    ViashError '--output_train_h5ad' has to be a path containing a wildcard, e.g. 'output_*.txt'. Use "--help" to get more information on the parameters.
-    exit 1
-  fi
-fi
-if [[ -n "$VIASH_PAR_OUTPUT_TEST_H5AD" ]]; then
-  if ! [[ "$VIASH_PAR_OUTPUT_TEST_H5AD" =~ \* ]]; then
-    ViashError '--output_test_h5ad' has to be a path containing a wildcard, e.g. 'output_*.txt'. Use "--help" to get more information on the parameters.
-    exit 1
-  fi
-fi
-if [[ -n "$VIASH_PAR_NUM_REPLICATES" ]]; then
-  if ! [[ "$VIASH_PAR_NUM_REPLICATES" =~ ^[-+]?[0-9]+$ ]]; then
-    ViashError '--num_replicates' has to be an integer. Use "--help" to get more information on the parameters.
+if [[ -n "$VIASH_PAR_BOOTSTRAP_OBS" ]]; then
+  if ! [[ "$VIASH_PAR_BOOTSTRAP_OBS" =~ ^(true|True|TRUE|false|False|FALSE|yes|Yes|YES|no|No|NO)$ ]]; then
+    ViashError '--bootstrap_obs' has to be a boolean. Use "--help" to get more information on the parameters.
     exit 1
   fi
 fi
@@ -874,9 +874,27 @@ if [[ -n "$VIASH_PAR_OBS_FRACTION" ]]; then
     exit 1
   fi
 fi
+if [[ -n "$VIASH_PAR_OBS_REPLACE" ]]; then
+  if ! [[ "$VIASH_PAR_OBS_REPLACE" =~ ^(true|True|TRUE|false|False|FALSE|yes|Yes|YES|no|No|NO)$ ]]; then
+    ViashError '--obs_replace' has to be a boolean. Use "--help" to get more information on the parameters.
+    exit 1
+  fi
+fi
+if [[ -n "$VIASH_PAR_BOOTSTRAP_VAR" ]]; then
+  if ! [[ "$VIASH_PAR_BOOTSTRAP_VAR" =~ ^(true|True|TRUE|false|False|FALSE|yes|Yes|YES|no|No|NO)$ ]]; then
+    ViashError '--bootstrap_var' has to be a boolean. Use "--help" to get more information on the parameters.
+    exit 1
+  fi
+fi
 if [[ -n "$VIASH_PAR_VAR_FRACTION" ]]; then
   if ! [[ "$VIASH_PAR_VAR_FRACTION" =~ ^[-+]?(\.[0-9]+|[0-9]+(\.[0-9]*)?)([eE][-+]?[0-9]+)?$ ]]; then
     ViashError '--var_fraction' has to be a double. Use "--help" to get more information on the parameters.
+    exit 1
+  fi
+fi
+if [[ -n "$VIASH_PAR_VAR_REPLACE" ]]; then
+  if ! [[ "$VIASH_PAR_VAR_REPLACE" =~ ^(true|True|TRUE|false|False|FALSE|yes|Yes|YES|no|No|NO)$ ]]; then
+    ViashError '--var_replace' has to be a boolean. Use "--help" to get more information on the parameters.
     exit 1
   fi
 fi
@@ -924,32 +942,20 @@ if [[ -n "$VIASH_META_MEMORY_PB" ]]; then
 fi
 
 # create parent directories of output files, if so desired
-if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ] && [ ! -d "$(dirname "$VIASH_PAR_OUTPUT_TRAIN_H5AD")" ]; then
-  mkdir -p "$(dirname "$VIASH_PAR_OUTPUT_TRAIN_H5AD")"
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TEST_H5AD" ] && [ ! -d "$(dirname "$VIASH_PAR_OUTPUT_TEST_H5AD")" ]; then
-  mkdir -p "$(dirname "$VIASH_PAR_OUTPUT_TEST_H5AD")"
+if [ ! -z "$VIASH_PAR_OUTPUT" ] && [ ! -d "$(dirname "$VIASH_PAR_OUTPUT")" ]; then
+  mkdir -p "$(dirname "$VIASH_PAR_OUTPUT")"
 fi
 
 # detect volumes from file arguments
 VIASH_CHOWN_VARS=()
-if [ ! -z "$VIASH_PAR_TRAIN_H5AD" ]; then
-  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_TRAIN_H5AD")" )
-  VIASH_PAR_TRAIN_H5AD=$(ViashAutodetectMount "$VIASH_PAR_TRAIN_H5AD")
+if [ ! -z "$VIASH_PAR_INPUT" ]; then
+  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_INPUT")" )
+  VIASH_PAR_INPUT=$(ViashAutodetectMount "$VIASH_PAR_INPUT")
 fi
-if [ ! -z "$VIASH_PAR_TEST_H5AD" ]; then
-  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_TEST_H5AD")" )
-  VIASH_PAR_TEST_H5AD=$(ViashAutodetectMount "$VIASH_PAR_TEST_H5AD")
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ]; then
-  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_OUTPUT_TRAIN_H5AD")" )
-  VIASH_PAR_OUTPUT_TRAIN_H5AD=$(ViashAutodetectMount "$VIASH_PAR_OUTPUT_TRAIN_H5AD")
-  VIASH_CHOWN_VARS+=( "$VIASH_PAR_OUTPUT_TRAIN_H5AD" )
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TEST_H5AD" ]; then
-  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_OUTPUT_TEST_H5AD")" )
-  VIASH_PAR_OUTPUT_TEST_H5AD=$(ViashAutodetectMount "$VIASH_PAR_OUTPUT_TEST_H5AD")
-  VIASH_CHOWN_VARS+=( "$VIASH_PAR_OUTPUT_TEST_H5AD" )
+if [ ! -z "$VIASH_PAR_OUTPUT" ]; then
+  VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_PAR_OUTPUT")" )
+  VIASH_PAR_OUTPUT=$(ViashAutodetectMount "$VIASH_PAR_OUTPUT")
+  VIASH_CHOWN_VARS+=( "$VIASH_PAR_OUTPUT" )
 fi
 if [ ! -z "$VIASH_META_RESOURCES_DIR" ]; then
   VIASH_EXTRA_MOUNTS+=( "$(ViashAutodetectMountArg "$VIASH_META_RESOURCES_DIR")" )
@@ -997,7 +1003,7 @@ fi
 ViashDebug "Running command: $(echo docker run --entrypoint=bash -i --rm ${VIASH_UNIQUE_MOUNTS[@]} $VIASH_EXTRA_DOCKER_ARGS ghcr.io/openproblems-bio/task-dge-perturbation-prediction/process_dataset/bootstrap:main_build)"
 cat << VIASHEOF | eval docker run --entrypoint=bash -i --rm ${VIASH_UNIQUE_MOUNTS[@]} $VIASH_EXTRA_DOCKER_ARGS ghcr.io/openproblems-bio/task-dge-perturbation-prediction/process_dataset/bootstrap:main_build
 set -e
-tempscript=\$(mktemp "$VIASH_META_TEMP_DIR/viash-run-bootstrap-XXXXXX").R
+tempscript=\$(mktemp "$VIASH_META_TEMP_DIR/viash-run-bootstrap-XXXXXX").py
 function clean_up {
   rm "\$tempscript"
 }
@@ -1008,127 +1014,77 @@ function interrupt {
 trap clean_up EXIT
 trap interrupt INT SIGINT
 cat > "\$tempscript" << 'VIASHMAIN'
-requireNamespace("anndata", quietly = TRUE)
-requireNamespace("arrow", quietly = TRUE)
-library(dplyr, warn.conflicts = FALSE)
-library(tidyr, warn.conflicts = FALSE)
-library(purrr, warn.conflicts = FALSE)
+import anndata as ad
+import numpy as np
 
-## VIASH START
+# VIASH START
 # The following code has been auto-generated by Viash.
-# treat warnings as errors
-.viash_orig_warn <- options(warn = 2)
-
-par <- list(
-  "train_h5ad" = $( if [ ! -z ${VIASH_PAR_TRAIN_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_TRAIN_H5AD" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "test_h5ad" = $( if [ ! -z ${VIASH_PAR_TEST_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_TEST_H5AD" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "output_train_h5ad" = $( if [ ! -z ${VIASH_PAR_OUTPUT_TRAIN_H5AD+x} ]; then echo -n "strsplit('"; echo -n "$VIASH_PAR_OUTPUT_TRAIN_H5AD" | sed "s#['\\]#\\\\&#g"; echo "', split = ':')[[1]]"; else echo NULL; fi ),
-  "output_test_h5ad" = $( if [ ! -z ${VIASH_PAR_OUTPUT_TEST_H5AD+x} ]; then echo -n "strsplit('"; echo -n "$VIASH_PAR_OUTPUT_TEST_H5AD" | sed "s#['\\]#\\\\&#g"; echo "', split = ':')[[1]]"; else echo NULL; fi ),
-  "num_replicates" = $( if [ ! -z ${VIASH_PAR_NUM_REPLICATES+x} ]; then echo -n "as.integer('"; echo -n "$VIASH_PAR_NUM_REPLICATES" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "obs_fraction" = $( if [ ! -z ${VIASH_PAR_OBS_FRACTION+x} ]; then echo -n "as.numeric('"; echo -n "$VIASH_PAR_OBS_FRACTION" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "var_fraction" = $( if [ ! -z ${VIASH_PAR_VAR_FRACTION+x} ]; then echo -n "as.numeric('"; echo -n "$VIASH_PAR_VAR_FRACTION" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi )
-)
-meta <- list(
-  "functionality_name" = $( if [ ! -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then echo -n "'"; echo -n "$VIASH_META_FUNCTIONALITY_NAME" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "resources_dir" = $( if [ ! -z ${VIASH_META_RESOURCES_DIR+x} ]; then echo -n "'"; echo -n "$VIASH_META_RESOURCES_DIR" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "executable" = $( if [ ! -z ${VIASH_META_EXECUTABLE+x} ]; then echo -n "'"; echo -n "$VIASH_META_EXECUTABLE" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "config" = $( if [ ! -z ${VIASH_META_CONFIG+x} ]; then echo -n "'"; echo -n "$VIASH_META_CONFIG" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "temp_dir" = $( if [ ! -z ${VIASH_META_TEMP_DIR+x} ]; then echo -n "'"; echo -n "$VIASH_META_TEMP_DIR" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "cpus" = $( if [ ! -z ${VIASH_META_CPUS+x} ]; then echo -n "as.integer('"; echo -n "$VIASH_META_CPUS" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_b" = $( if [ ! -z ${VIASH_META_MEMORY_B+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_B" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_kb" = $( if [ ! -z ${VIASH_META_MEMORY_KB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_KB" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_mb" = $( if [ ! -z ${VIASH_META_MEMORY_MB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_MB" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_gb" = $( if [ ! -z ${VIASH_META_MEMORY_GB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_GB" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_tb" = $( if [ ! -z ${VIASH_META_MEMORY_TB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_TB" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_pb" = $( if [ ! -z ${VIASH_META_MEMORY_PB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_PB" | sed "s#['\\]#\\\\&#g"; echo "')"; else echo NULL; fi )
-)
-dep <- list(
+par = {
+  'input': $( if [ ! -z ${VIASH_PAR_INPUT+x} ]; then echo "r'${VIASH_PAR_INPUT//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'bootstrap_obs': $( if [ ! -z ${VIASH_PAR_BOOTSTRAP_OBS+x} ]; then echo "r'${VIASH_PAR_BOOTSTRAP_OBS//\'/\'\"\'\"r\'}'.lower() == 'true'"; else echo None; fi ),
+  'obs_fraction': $( if [ ! -z ${VIASH_PAR_OBS_FRACTION+x} ]; then echo "float(r'${VIASH_PAR_OBS_FRACTION//\'/\'\"\'\"r\'}')"; else echo None; fi ),
+  'obs_replace': $( if [ ! -z ${VIASH_PAR_OBS_REPLACE+x} ]; then echo "r'${VIASH_PAR_OBS_REPLACE//\'/\'\"\'\"r\'}'.lower() == 'true'"; else echo None; fi ),
+  'bootstrap_var': $( if [ ! -z ${VIASH_PAR_BOOTSTRAP_VAR+x} ]; then echo "r'${VIASH_PAR_BOOTSTRAP_VAR//\'/\'\"\'\"r\'}'.lower() == 'true'"; else echo None; fi ),
+  'var_fraction': $( if [ ! -z ${VIASH_PAR_VAR_FRACTION+x} ]; then echo "float(r'${VIASH_PAR_VAR_FRACTION//\'/\'\"\'\"r\'}')"; else echo None; fi ),
+  'var_replace': $( if [ ! -z ${VIASH_PAR_VAR_REPLACE+x} ]; then echo "r'${VIASH_PAR_VAR_REPLACE//\'/\'\"\'\"r\'}'.lower() == 'true'"; else echo None; fi )
+}
+meta = {
+  'functionality_name': $( if [ ! -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then echo "r'${VIASH_META_FUNCTIONALITY_NAME//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'resources_dir': $( if [ ! -z ${VIASH_META_RESOURCES_DIR+x} ]; then echo "r'${VIASH_META_RESOURCES_DIR//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'executable': $( if [ ! -z ${VIASH_META_EXECUTABLE+x} ]; then echo "r'${VIASH_META_EXECUTABLE//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'config': $( if [ ! -z ${VIASH_META_CONFIG+x} ]; then echo "r'${VIASH_META_CONFIG//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'temp_dir': $( if [ ! -z ${VIASH_META_TEMP_DIR+x} ]; then echo "r'${VIASH_META_TEMP_DIR//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'cpus': $( if [ ! -z ${VIASH_META_CPUS+x} ]; then echo "int(r'${VIASH_META_CPUS//\'/\'\"\'\"r\'}')"; else echo None; fi ),
+  'memory_b': $( if [ ! -z ${VIASH_META_MEMORY_B+x} ]; then echo "int(r'${VIASH_META_MEMORY_B//\'/\'\"\'\"r\'}')"; else echo None; fi ),
+  'memory_kb': $( if [ ! -z ${VIASH_META_MEMORY_KB+x} ]; then echo "int(r'${VIASH_META_MEMORY_KB//\'/\'\"\'\"r\'}')"; else echo None; fi ),
+  'memory_mb': $( if [ ! -z ${VIASH_META_MEMORY_MB+x} ]; then echo "int(r'${VIASH_META_MEMORY_MB//\'/\'\"\'\"r\'}')"; else echo None; fi ),
+  'memory_gb': $( if [ ! -z ${VIASH_META_MEMORY_GB+x} ]; then echo "int(r'${VIASH_META_MEMORY_GB//\'/\'\"\'\"r\'}')"; else echo None; fi ),
+  'memory_tb': $( if [ ! -z ${VIASH_META_MEMORY_TB+x} ]; then echo "int(r'${VIASH_META_MEMORY_TB//\'/\'\"\'\"r\'}')"; else echo None; fi ),
+  'memory_pb': $( if [ ! -z ${VIASH_META_MEMORY_PB+x} ]; then echo "int(r'${VIASH_META_MEMORY_PB//\'/\'\"\'\"r\'}')"; else echo None; fi )
+}
+dep = {
   
-)
+}
 
-
-# restore original warn setting
-options(.viash_orig_warn)
-rm(.viash_orig_warn)
-
-## VIASH END
+# VIASH END
 
 # Load data
-train_h5ad <- anndata::read_h5ad(par\$train_h5ad)
-test_h5ad <- anndata::read_h5ad(par\$test_h5ad)
+data = ad.read_h5ad(par["input"])
 
-for (i in seq_len(par\$num_replicates)) {
-  cat("Generating replicate", i, "\\n", sep = "")
+if par["bootstrap_obs"]:
+    # Sample indices
+    obs_ix = np.random.choice(
+        range(data.n_obs),
+        int(data.n_obs * par["obs_fraction"]),
+        replace=par["obs_replace"]
+    )
+    data = data[obs_ix, :]
 
-  # sample indices
-  obs_ix <- sample.int(
-    nrow(train_h5ad),
-    round(nrow(train_h5ad) * par\$obs_fraction, 0),
-    replace = FALSE
-  )
-  var_ix <- sample.int(
-    ncol(train_h5ad),
-    round(ncol(train_h5ad) * par\$var_fraction, 0),
-    replace = FALSE
-  )
+if par["bootstrap_var"]:
+    # Sample indices
+    var_ix = np.random.choice(
+        range(data.n_vars),
+        int(data.n_vars * par["var_fraction"]),
+        replace=par["var_replace"]
+    )
+    data = data[:, var_ix]
 
-  # subset h5ad
-  output_train_h5ad <- train_h5ad[obs_ix, var_ix]
-  output_test_h5ad <- test_h5ad[, var_ix]
-
-  original_dataset_id <- output_train_h5ad\$uns[["dataset_id"]]
-  dataset_id <- paste0(original_dataset_id, "-bootstrap", i)
-  output_train_h5ad\$uns[["dataset_id"]] <- dataset_id
-  output_test_h5ad\$uns[["dataset_id"]] <- dataset_id
-  output_train_h5ad\$uns[["original_dataset_id"]] <- original_dataset_id
-  output_test_h5ad\$uns[["original_dataset_id"]] <- original_dataset_id
-
-  # write output
-  output_train_h5ad_path <- gsub("\\\\*", i, par\$output_train_h5ad)
-  output_test_h5ad_path <- gsub("\\\\*", i, par\$output_test_h5ad)
-
-  zzz <- output_train_h5ad\$write_h5ad(output_train_h5ad_path, compression = "gzip")
-  zzz <- output_test_h5ad\$write_h5ad(output_test_h5ad_path, compression = "gzip")
-}
+# Write output
+data.write_h5ad(par["output"], compression="gzip")
 VIASHMAIN
-Rscript "\$tempscript" &
+python -B "\$tempscript" &
 wait "\$!"
 
 VIASHEOF
 
 
 # strip viash automount from file paths
-if [ ! -z "$VIASH_PAR_TRAIN_H5AD" ]; then
-  VIASH_PAR_TRAIN_H5AD=$(ViashStripAutomount "$VIASH_PAR_TRAIN_H5AD")
+if [ ! -z "$VIASH_PAR_INPUT" ]; then
+  VIASH_PAR_INPUT=$(ViashStripAutomount "$VIASH_PAR_INPUT")
 fi
-if [ ! -z "$VIASH_PAR_TEST_H5AD" ]; then
-  VIASH_PAR_TEST_H5AD=$(ViashStripAutomount "$VIASH_PAR_TEST_H5AD")
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ]; then
-  unset VIASH_TEST_OUTPUT_TRAIN_H5AD
-  IFS=':'
-  for var in $VIASH_PAR_OUTPUT_TRAIN_H5AD; do
-    unset IFS
-    if [ -z "$VIASH_TEST_OUTPUT_TRAIN_H5AD" ]; then
-      VIASH_TEST_OUTPUT_TRAIN_H5AD="$(ViashStripAutomount "$var")"
-    else
-      VIASH_TEST_OUTPUT_TRAIN_H5AD="$VIASH_TEST_OUTPUT_TRAIN_H5AD:""$(ViashStripAutomount "$var")"
-    fi
-  done
-  VIASH_PAR_OUTPUT_TRAIN_H5AD="$VIASH_TEST_OUTPUT_TRAIN_H5AD"
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TEST_H5AD" ]; then
-  unset VIASH_TEST_OUTPUT_TEST_H5AD
-  IFS=':'
-  for var in $VIASH_PAR_OUTPUT_TEST_H5AD; do
-    unset IFS
-    if [ -z "$VIASH_TEST_OUTPUT_TEST_H5AD" ]; then
-      VIASH_TEST_OUTPUT_TEST_H5AD="$(ViashStripAutomount "$var")"
-    else
-      VIASH_TEST_OUTPUT_TEST_H5AD="$VIASH_TEST_OUTPUT_TEST_H5AD:""$(ViashStripAutomount "$var")"
-    fi
-  done
-  VIASH_PAR_OUTPUT_TEST_H5AD="$VIASH_TEST_OUTPUT_TEST_H5AD"
+if [ ! -z "$VIASH_PAR_OUTPUT" ]; then
+  VIASH_PAR_OUTPUT=$(ViashStripAutomount "$VIASH_PAR_OUTPUT")
 fi
 if [ ! -z "$VIASH_META_RESOURCES_DIR" ]; then
   VIASH_META_RESOURCES_DIR=$(ViashStripAutomount "$VIASH_META_RESOURCES_DIR")
@@ -1145,12 +1101,8 @@ fi
 
 
 # check whether required files exist
-if [ ! -z "$VIASH_PAR_OUTPUT_TRAIN_H5AD" ] && ! compgen -G "$VIASH_PAR_OUTPUT_TRAIN_H5AD" > /dev/null; then
-  ViashError "Output file '$VIASH_PAR_OUTPUT_TRAIN_H5AD' does not exist."
-  exit 1
-fi
-if [ ! -z "$VIASH_PAR_OUTPUT_TEST_H5AD" ] && ! compgen -G "$VIASH_PAR_OUTPUT_TEST_H5AD" > /dev/null; then
-  ViashError "Output file '$VIASH_PAR_OUTPUT_TEST_H5AD' does not exist."
+if [ ! -z "$VIASH_PAR_OUTPUT" ] && [ ! -e "$VIASH_PAR_OUTPUT" ]; then
+  ViashError "Output file '$VIASH_PAR_OUTPUT' does not exist."
   exit 1
 fi
 

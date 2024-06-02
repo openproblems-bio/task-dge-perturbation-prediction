@@ -2958,13 +2958,13 @@ meta = [
         "description" : "Define the sampling strategy for the stability analysis.",
         "arguments" : [
           {
-            "type" : "integer",
-            "name" : "--bootstrap_num_replicates",
-            "description" : "Number of bootstraps to generate.",
+            "type" : "boolean",
+            "name" : "--bootstrap_obs",
+            "description" : "Whether to sample observations.",
             "default" : [
-              10
+              true
             ],
-            "required" : true,
+            "required" : false,
             "direction" : "input",
             "multiple" : false,
             "multiple_sep" : ":",
@@ -2975,9 +2975,35 @@ meta = [
             "name" : "--bootstrap_obs_fraction",
             "description" : "Fraction of the obs of the sc_counts to include in each bootstrap.",
             "default" : [
-              0.95
+              1.0
             ],
-            "required" : true,
+            "required" : false,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "boolean",
+            "name" : "--bootstrap_obs_replace",
+            "description" : "Whether to sample with replacement.",
+            "default" : [
+              true
+            ],
+            "required" : false,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "boolean",
+            "name" : "--bootstrap_var",
+            "description" : "Whether to sample variables.",
+            "default" : [
+              false
+            ],
+            "required" : false,
             "direction" : "input",
             "multiple" : false,
             "multiple_sep" : ":",
@@ -2990,7 +3016,20 @@ meta = [
             "default" : [
               1.0
             ],
-            "required" : true,
+            "required" : false,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "boolean",
+            "name" : "--bootstrap_var_replace",
+            "description" : "Whether to sample with replacement.",
+            "default" : [
+              true
+            ],
+            "required" : false,
             "direction" : "input",
             "multiple" : false,
             "multiple_sep" : ":",
@@ -3061,25 +3100,25 @@ meta = [
     "status" : "enabled",
     "dependencies" : [
       {
-        "name" : "process_dataset/bootstrap_sc_counts",
+        "name" : "process_dataset/bootstrap",
         "repository" : {
           "type" : "local",
           "localPath" : ""
         },
-        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap_sc_counts/config.vsh.yaml",
+        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/config.vsh.yaml",
         "configInfo" : {
-          "functionalityName" : "bootstrap_sc_counts",
+          "functionalityName" : "bootstrap",
           "git_tag" : "",
           "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
           "viash_version" : "0.8.6",
-          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap_sc_counts/config.vsh.yaml",
+          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/config.vsh.yaml",
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
-          "executable" : "/nextflow/process_dataset/bootstrap_sc_counts/main.nf"
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "executable" : "/nextflow/process_dataset/bootstrap/main.nf"
         },
-        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap_sc_counts"
+        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap"
       },
       {
         "name" : "workflows/process_dataset",
@@ -3097,7 +3136,7 @@ meta = [
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/workflows/process_dataset/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/process_dataset"
@@ -3118,7 +3157,7 @@ meta = [
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/workflows/run_benchmark/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark"
@@ -3174,7 +3213,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_stability_analysis",
     "viash_version" : "0.8.6",
-    "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+    "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3182,7 +3221,7 @@ meta = [
 
 // resolve dependencies dependencies (if any)
 meta["root_dir"] = getRootDir()
-include { bootstrap_sc_counts } from "${meta.resources_dir}/../../../nextflow/process_dataset/bootstrap_sc_counts/main.nf"
+include { bootstrap } from "${meta.resources_dir}/../../../nextflow/process_dataset/bootstrap/main.nf"
 include { process_dataset } from "${meta.resources_dir}/../../../nextflow/workflows/process_dataset/main.nf"
 include { run_benchmark } from "${meta.resources_dir}/../../../nextflow/workflows/run_benchmark/main.nf"
 
@@ -3218,11 +3257,15 @@ workflow run_wf {
       }
     }
 
-    | bootstrap_sc_counts.run(
+    | bootstrap.run(
       fromState: [
         input: "sc_counts",
+        bootstrap_obs: "bootstrap_obs",
         obs_fraction: "bootstrap_obs_fraction",
-        var_fraction: "bootstrap_var_fraction"
+        obs_replace: "bootstrap_obs_replace",
+        bootstrap_var: "bootstrap_var",
+        var_fraction: "bootstrap_var_fraction",
+        var_replace: "bootstrap_var_replace"
       ],
       toState: [
         sc_counts: "output"

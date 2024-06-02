@@ -123,13 +123,13 @@ functionality:
   - name: "Bootstrapping arguments"
     description: "Define the sampling strategy for the stability analysis."
     arguments:
-    - type: "integer"
-      name: "--bootstrap_num_replicates"
-      description: "Number of bootstraps to generate."
+    - type: "boolean"
+      name: "--bootstrap_obs"
+      description: "Whether to sample observations."
       info: null
       default:
-      - 10
-      required: true
+      - true
+      required: false
       direction: "input"
       multiple: false
       multiple_sep: ":"
@@ -139,8 +139,30 @@ functionality:
       description: "Fraction of the obs of the sc_counts to include in each bootstrap."
       info: null
       default:
-      - 0.95
-      required: true
+      - 1.0
+      required: false
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "boolean"
+      name: "--bootstrap_obs_replace"
+      description: "Whether to sample with replacement."
+      info: null
+      default:
+      - true
+      required: false
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "boolean"
+      name: "--bootstrap_var"
+      description: "Whether to sample variables."
+      info: null
+      default:
+      - false
+      required: false
       direction: "input"
       multiple: false
       multiple_sep: ":"
@@ -151,7 +173,18 @@ functionality:
       info: null
       default:
       - 1.0
-      required: true
+      required: false
+      direction: "input"
+      multiple: false
+      multiple_sep: ":"
+      dest: "par"
+    - type: "boolean"
+      name: "--bootstrap_var_replace"
+      description: "Whether to sample with replacement."
+      info: null
+      default:
+      - true
+      required: false
       direction: "input"
       multiple: false
       multiple_sep: ":"
@@ -203,23 +236,23 @@ functionality:
   info: null
   status: "enabled"
   dependencies:
-  - name: "process_dataset/bootstrap_sc_counts"
+  - name: "process_dataset/bootstrap"
     repository:
       type: "local"
       localPath: ""
-    foundConfigPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap_sc_counts/config.vsh.yaml"
+    foundConfigPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/config.vsh.yaml"
     configInfo:
-      functionalityName: "bootstrap_sc_counts"
+      functionalityName: "bootstrap"
       git_tag: ""
       git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
       viash_version: "0.8.6"
-      config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap_sc_counts/config.vsh.yaml"
+      config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/config.vsh.yaml"
       functionalityNamespace: "process_dataset"
       output: ""
       platform: ""
-      git_commit: "1dca6d5d8c2bec800243520ade9a996698cba2ae"
-      executable: "/nextflow/process_dataset/bootstrap_sc_counts/main.nf"
-    writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap_sc_counts"
+      git_commit: "02d3dff2a7157ffcc0a321d0ea417a1239f54954"
+      executable: "/nextflow/process_dataset/bootstrap/main.nf"
+    writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap"
   - name: "workflows/process_dataset"
     repository:
       type: "local"
@@ -234,7 +267,7 @@ functionality:
       functionalityNamespace: "workflows"
       output: ""
       platform: ""
-      git_commit: "1dca6d5d8c2bec800243520ade9a996698cba2ae"
+      git_commit: "02d3dff2a7157ffcc0a321d0ea417a1239f54954"
       executable: "/nextflow/workflows/process_dataset/main.nf"
     writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/process_dataset"
   - name: "workflows/run_benchmark"
@@ -251,7 +284,7 @@ functionality:
       functionalityNamespace: "workflows"
       output: ""
       platform: ""
-      git_commit: "1dca6d5d8c2bec800243520ade9a996698cba2ae"
+      git_commit: "02d3dff2a7157ffcc0a321d0ea417a1239f54954"
       executable: "/nextflow/workflows/run_benchmark/main.nf"
     writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark"
   repositories:
@@ -293,5 +326,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_stability_analysis"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_stability_analysis/main.nf"
   viash_version: "0.8.6"
-  git_commit: "1dca6d5d8c2bec800243520ade9a996698cba2ae"
+  git_commit: "02d3dff2a7157ffcc0a321d0ea417a1239f54954"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

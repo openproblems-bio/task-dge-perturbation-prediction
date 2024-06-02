@@ -424,9 +424,9 @@ ENTRYPOINT []
  
 RUN :
 LABEL org.opencontainers.image.description="Companion container for running component metrics mean_correlation"
-LABEL org.opencontainers.image.created="2024-06-01T14:04:34Z"
+LABEL org.opencontainers.image.created="2024-06-02T16:38:04Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="1dca6d5d8c2bec800243520ade9a996698cba2ae"
+LABEL org.opencontainers.image.revision="02d3dff2a7157ffcc0a321d0ea417a1239f54954"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER

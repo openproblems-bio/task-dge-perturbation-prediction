@@ -3300,9 +3300,9 @@ meta = [
           "name" : "",
           "repo" : "openproblems-bio/openproblems-v2",
           "tag" : "main_build",
-          "localPath" : "/tmp/viash_hub_repo11448751600088871940"
+          "localPath" : "/tmp/viash_hub_repo7202744226935079425"
         },
-        "foundConfigPath" : "/tmp/viash_hub_repo11448751600088871940/target/nextflow/common/extract_metadata/.config.vsh.yaml",
+        "foundConfigPath" : "/tmp/viash_hub_repo7202744226935079425/target/nextflow/common/extract_metadata/.config.vsh.yaml",
         "configInfo" : {
           "functionalityName" : "extract_metadata",
           "git_remote" : "https://github.com/openproblems-bio/openproblems-v2",
@@ -3332,7 +3332,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/control_methods/zeros/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/zeros"
@@ -3353,7 +3353,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/control_methods/sample/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/sample"
@@ -3374,7 +3374,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/control_methods/ground_truth/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/ground_truth"
@@ -3395,7 +3395,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/control_methods/mean_outcome/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_outcome"
@@ -3416,7 +3416,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/control_methods/mean_across_celltypes/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_celltypes"
@@ -3437,7 +3437,7 @@ meta = [
           "functionalityNamespace" : "control_methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/control_methods/mean_across_compounds/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/mean_across_compounds"
@@ -3458,7 +3458,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/methods/nn_retraining_with_pseudolabels/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/nn_retraining_with_pseudolabels"
@@ -3479,7 +3479,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/methods/scape/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/scape"
@@ -3500,7 +3500,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/methods/jn_ap_op2/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/jn_ap_op2"
@@ -3521,7 +3521,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/methods/lgc_ensemble/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/lgc_ensemble"
@@ -3542,7 +3542,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/methods/transformer_ensemble/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/transformer_ensemble"
@@ -3563,7 +3563,7 @@ meta = [
           "functionalityNamespace" : "methods",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/methods/pyboost/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/pyboost"
@@ -3584,7 +3584,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/metrics/mean_rowwise_error/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error"
@@ -3605,7 +3605,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/metrics/mean_cosine_sim/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim"
@@ -3626,7 +3626,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/metrics/mean_correlation/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_correlation"
@@ -3647,7 +3647,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/metrics/mean_rowwise_error_r/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error_r"
@@ -3668,7 +3668,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/metrics/mean_cosine_sim_r/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_cosine_sim_r"
@@ -3689,7 +3689,7 @@ meta = [
           "functionalityNamespace" : "metrics",
           "output" : "",
           "platform" : "",
-          "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
           "executable" : "/nextflow/metrics/mean_correlation_r/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_correlation_r"
@@ -3745,7 +3745,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark",
     "viash_version" : "0.8.6",
-    "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+    "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

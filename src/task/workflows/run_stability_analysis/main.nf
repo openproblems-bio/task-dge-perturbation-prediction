@@ -28,11 +28,15 @@ workflow run_wf {
       }
     }
 
-    | bootstrap_sc_counts.run(
+    | bootstrap.run(
       fromState: [
         input: "sc_counts",
+        bootstrap_obs: "bootstrap_obs",
         obs_fraction: "bootstrap_obs_fraction",
-        var_fraction: "bootstrap_var_fraction"
+        obs_replace: "bootstrap_obs_replace",
+        bootstrap_var: "bootstrap_var",
+        var_fraction: "bootstrap_var_fraction",
+        var_replace: "bootstrap_var_replace"
       ],
       toState: [
         sc_counts: "output"

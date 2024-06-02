@@ -2789,23 +2789,9 @@ meta = [
         "arguments" : [
           {
             "type" : "file",
-            "name" : "--train_h5ad",
+            "name" : "--input",
             "example" : [
-              "resources/neurips-2023-kaggle/de_train.h5ad"
-            ],
-            "must_exist" : true,
-            "create_parent" : true,
-            "required" : true,
-            "direction" : "input",
-            "multiple" : false,
-            "multiple_sep" : ":",
-            "dest" : "par"
-          },
-          {
-            "type" : "file",
-            "name" : "--test_h5ad",
-            "example" : [
-              "resources/neurips-2023-kaggle/de_test.h5ad"
+              "resources/neurips-2023-raw/sc_counts_reannotated_with_counts.h5ad"
             ],
             "must_exist" : true,
             "create_parent" : true,
@@ -2822,45 +2808,32 @@ meta = [
         "arguments" : [
           {
             "type" : "file",
-            "name" : "--output_train_h5ad",
+            "name" : "--output",
             "example" : [
-              "de_train_bootstrap.h5ad"
+              "sc_counts_bootstrap.h5ad"
             ],
             "must_exist" : true,
             "create_parent" : true,
             "required" : true,
             "direction" : "output",
-            "multiple" : true,
-            "multiple_sep" : ":",
-            "dest" : "par"
-          },
-          {
-            "type" : "file",
-            "name" : "--output_test_h5ad",
-            "example" : [
-              "de_test_bootstrap.h5ad"
-            ],
-            "must_exist" : true,
-            "create_parent" : true,
-            "required" : true,
-            "direction" : "output",
-            "multiple" : true,
+            "multiple" : false,
             "multiple_sep" : ":",
             "dest" : "par"
           }
         ]
       },
       {
-        "name" : "Arguments",
+        "name" : "Sampling parameters",
+        "description" : "Parameters for sampling the bootstraps.",
         "arguments" : [
           {
-            "type" : "integer",
-            "name" : "--num_replicates",
-            "description" : "Number of bootstraps to generate.",
+            "type" : "boolean",
+            "name" : "--bootstrap_obs",
+            "description" : "Whether to sample observations.",
             "default" : [
-              10
+              true
             ],
-            "required" : true,
+            "required" : false,
             "direction" : "input",
             "multiple" : false,
             "multiple_sep" : ":",
@@ -2869,11 +2842,37 @@ meta = [
           {
             "type" : "double",
             "name" : "--obs_fraction",
-            "description" : "Fraction of the training dataset obs to include in each bootstrap.",
+            "description" : "Fraction of the obs of the sc_counts to include in each bootstrap.",
             "default" : [
-              0.95
+              1.0
             ],
-            "required" : true,
+            "required" : false,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "boolean",
+            "name" : "--obs_replace",
+            "description" : "Whether to sample with replacement.",
+            "default" : [
+              true
+            ],
+            "required" : false,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "boolean",
+            "name" : "--bootstrap_var",
+            "description" : "Whether to sample variables.",
+            "default" : [
+              false
+            ],
+            "required" : false,
             "direction" : "input",
             "multiple" : false,
             "multiple_sep" : ":",
@@ -2882,11 +2881,24 @@ meta = [
           {
             "type" : "double",
             "name" : "--var_fraction",
-            "description" : "Fraction of the training & test dataset var to include in each bootstrap.",
+            "description" : "Fraction of the var of the sc_counts to include in each bootstrap.",
             "default" : [
-              0.95
+              1.0
             ],
-            "required" : true,
+            "required" : false,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
+          {
+            "type" : "boolean",
+            "name" : "--var_replace",
+            "description" : "Whether to sample with replacement.",
+            "default" : [
+              true
+            ],
+            "required" : false,
             "direction" : "input",
             "multiple" : false,
             "multiple_sep" : ":",
@@ -2897,8 +2909,8 @@ meta = [
     ],
     "resources" : [
       {
-        "type" : "r_script",
-        "path" : "script.R",
+        "type" : "python_script",
+        "path" : "script.py",
         "is_executable" : true,
         "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/"
       }
@@ -2918,27 +2930,14 @@ meta = [
     {
       "type" : "docker",
       "id" : "docker",
-      "image" : "ghcr.io/openproblems-bio/base_r:1.0.4",
+      "image" : "ghcr.io/openproblems-bio/base_python:1.0.4",
       "target_organization" : "openproblems-bio/task-dge-perturbation-prediction",
       "target_registry" : "ghcr.io",
       "namespace_separator" : "/",
       "resolve_volume" : "Automatic",
       "chown" : true,
       "setup_strategy" : "ifneedbepullelsecachedbuild",
-      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
-      "setup" : [
-        {
-          "type" : "r",
-          "cran" : [
-            "dplyr",
-            "tidyr",
-            "purrr",
-            "tibble",
-            "arrow"
-          ],
-          "bioc_force_install" : false
-        }
-      ]
+      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
     },
     {
       "type" : "nextflow",
@@ -2946,8 +2945,8 @@ meta = [
       "directives" : {
         "label" : [
           "midtime",
-          "midmem",
-          "lowcpu"
+          "highmem",
+          "midcpu"
         ],
         "tag" : "$id"
       },
@@ -2983,7 +2982,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap",
     "viash_version" : "0.8.6",
-    "git_commit" : "1dca6d5d8c2bec800243520ade9a996698cba2ae",
+    "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -2998,90 +2997,66 @@ def innerWorkflowFactory(args) {
   def rawScript = '''set -e
 tempscript=".viash_script.sh"
 cat > "$tempscript" << VIASHMAIN
-requireNamespace("anndata", quietly = TRUE)
-requireNamespace("arrow", quietly = TRUE)
-library(dplyr, warn.conflicts = FALSE)
-library(tidyr, warn.conflicts = FALSE)
-library(purrr, warn.conflicts = FALSE)
+import anndata as ad
+import numpy as np
 
-## VIASH START
+# VIASH START
 # The following code has been auto-generated by Viash.
-# treat warnings as errors
-.viash_orig_warn <- options(warn = 2)
-
-par <- list(
-  "train_h5ad" = $( if [ ! -z ${VIASH_PAR_TRAIN_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_TRAIN_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "test_h5ad" = $( if [ ! -z ${VIASH_PAR_TEST_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_TEST_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "output_train_h5ad" = $( if [ ! -z ${VIASH_PAR_OUTPUT_TRAIN_H5AD+x} ]; then echo -n "strsplit('"; echo -n "$VIASH_PAR_OUTPUT_TRAIN_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "', split = ':')[[1]]"; else echo NULL; fi ),
-  "output_test_h5ad" = $( if [ ! -z ${VIASH_PAR_OUTPUT_TEST_H5AD+x} ]; then echo -n "strsplit('"; echo -n "$VIASH_PAR_OUTPUT_TEST_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "', split = ':')[[1]]"; else echo NULL; fi ),
-  "num_replicates" = $( if [ ! -z ${VIASH_PAR_NUM_REPLICATES+x} ]; then echo -n "as.integer('"; echo -n "$VIASH_PAR_NUM_REPLICATES" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "obs_fraction" = $( if [ ! -z ${VIASH_PAR_OBS_FRACTION+x} ]; then echo -n "as.numeric('"; echo -n "$VIASH_PAR_OBS_FRACTION" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "var_fraction" = $( if [ ! -z ${VIASH_PAR_VAR_FRACTION+x} ]; then echo -n "as.numeric('"; echo -n "$VIASH_PAR_VAR_FRACTION" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi )
-)
-meta <- list(
-  "functionality_name" = $( if [ ! -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then echo -n "'"; echo -n "$VIASH_META_FUNCTIONALITY_NAME" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "resources_dir" = $( if [ ! -z ${VIASH_META_RESOURCES_DIR+x} ]; then echo -n "'"; echo -n "$VIASH_META_RESOURCES_DIR" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "executable" = $( if [ ! -z ${VIASH_META_EXECUTABLE+x} ]; then echo -n "'"; echo -n "$VIASH_META_EXECUTABLE" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "config" = $( if [ ! -z ${VIASH_META_CONFIG+x} ]; then echo -n "'"; echo -n "$VIASH_META_CONFIG" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "temp_dir" = $( if [ ! -z ${VIASH_META_TEMP_DIR+x} ]; then echo -n "'"; echo -n "$VIASH_META_TEMP_DIR" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "cpus" = $( if [ ! -z ${VIASH_META_CPUS+x} ]; then echo -n "as.integer('"; echo -n "$VIASH_META_CPUS" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_b" = $( if [ ! -z ${VIASH_META_MEMORY_B+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_B" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_kb" = $( if [ ! -z ${VIASH_META_MEMORY_KB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_KB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_mb" = $( if [ ! -z ${VIASH_META_MEMORY_MB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_MB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_gb" = $( if [ ! -z ${VIASH_META_MEMORY_GB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_GB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_tb" = $( if [ ! -z ${VIASH_META_MEMORY_TB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_TB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
-  "memory_pb" = $( if [ ! -z ${VIASH_META_MEMORY_PB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_PB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi )
-)
-dep <- list(
+par = {
+  'input': $( if [ ! -z ${VIASH_PAR_INPUT+x} ]; then echo "r'${VIASH_PAR_INPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'bootstrap_obs': $( if [ ! -z ${VIASH_PAR_BOOTSTRAP_OBS+x} ]; then echo "r'${VIASH_PAR_BOOTSTRAP_OBS//\\'/\\'\\"\\'\\"r\\'}'.lower() == 'true'"; else echo None; fi ),
+  'obs_fraction': $( if [ ! -z ${VIASH_PAR_OBS_FRACTION+x} ]; then echo "float(r'${VIASH_PAR_OBS_FRACTION//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'obs_replace': $( if [ ! -z ${VIASH_PAR_OBS_REPLACE+x} ]; then echo "r'${VIASH_PAR_OBS_REPLACE//\\'/\\'\\"\\'\\"r\\'}'.lower() == 'true'"; else echo None; fi ),
+  'bootstrap_var': $( if [ ! -z ${VIASH_PAR_BOOTSTRAP_VAR+x} ]; then echo "r'${VIASH_PAR_BOOTSTRAP_VAR//\\'/\\'\\"\\'\\"r\\'}'.lower() == 'true'"; else echo None; fi ),
+  'var_fraction': $( if [ ! -z ${VIASH_PAR_VAR_FRACTION+x} ]; then echo "float(r'${VIASH_PAR_VAR_FRACTION//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'var_replace': $( if [ ! -z ${VIASH_PAR_VAR_REPLACE+x} ]; then echo "r'${VIASH_PAR_VAR_REPLACE//\\'/\\'\\"\\'\\"r\\'}'.lower() == 'true'"; else echo None; fi )
+}
+meta = {
+  'functionality_name': $( if [ ! -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then echo "r'${VIASH_META_FUNCTIONALITY_NAME//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'resources_dir': $( if [ ! -z ${VIASH_META_RESOURCES_DIR+x} ]; then echo "r'${VIASH_META_RESOURCES_DIR//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'executable': $( if [ ! -z ${VIASH_META_EXECUTABLE+x} ]; then echo "r'${VIASH_META_EXECUTABLE//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'config': $( if [ ! -z ${VIASH_META_CONFIG+x} ]; then echo "r'${VIASH_META_CONFIG//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'temp_dir': $( if [ ! -z ${VIASH_META_TEMP_DIR+x} ]; then echo "r'${VIASH_META_TEMP_DIR//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'cpus': $( if [ ! -z ${VIASH_META_CPUS+x} ]; then echo "int(r'${VIASH_META_CPUS//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'memory_b': $( if [ ! -z ${VIASH_META_MEMORY_B+x} ]; then echo "int(r'${VIASH_META_MEMORY_B//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'memory_kb': $( if [ ! -z ${VIASH_META_MEMORY_KB+x} ]; then echo "int(r'${VIASH_META_MEMORY_KB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'memory_mb': $( if [ ! -z ${VIASH_META_MEMORY_MB+x} ]; then echo "int(r'${VIASH_META_MEMORY_MB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'memory_gb': $( if [ ! -z ${VIASH_META_MEMORY_GB+x} ]; then echo "int(r'${VIASH_META_MEMORY_GB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'memory_tb': $( if [ ! -z ${VIASH_META_MEMORY_TB+x} ]; then echo "int(r'${VIASH_META_MEMORY_TB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'memory_pb': $( if [ ! -z ${VIASH_META_MEMORY_PB+x} ]; then echo "int(r'${VIASH_META_MEMORY_PB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi )
+}
+dep = {
   
-)
+}
 
-
-# restore original warn setting
-options(.viash_orig_warn)
-rm(.viash_orig_warn)
-
-## VIASH END
+# VIASH END
 
 # Load data
-train_h5ad <- anndata::read_h5ad(par\\$train_h5ad)
-test_h5ad <- anndata::read_h5ad(par\\$test_h5ad)
+data = ad.read_h5ad(par["input"])
 
-for (i in seq_len(par\\$num_replicates)) {
-  cat("Generating replicate", i, "\\\\n", sep = "")
+if par["bootstrap_obs"]:
+    # Sample indices
+    obs_ix = np.random.choice(
+        range(data.n_obs),
+        int(data.n_obs * par["obs_fraction"]),
+        replace=par["obs_replace"]
+    )
+    data = data[obs_ix, :]
 
-  # sample indices
-  obs_ix <- sample.int(
-    nrow(train_h5ad),
-    round(nrow(train_h5ad) * par\\$obs_fraction, 0),
-    replace = FALSE
-  )
-  var_ix <- sample.int(
-    ncol(train_h5ad),
-    round(ncol(train_h5ad) * par\\$var_fraction, 0),
-    replace = FALSE
-  )
+if par["bootstrap_var"]:
+    # Sample indices
+    var_ix = np.random.choice(
+        range(data.n_vars),
+        int(data.n_vars * par["var_fraction"]),
+        replace=par["var_replace"]
+    )
+    data = data[:, var_ix]
 
-  # subset h5ad
-  output_train_h5ad <- train_h5ad[obs_ix, var_ix]
-  output_test_h5ad <- test_h5ad[, var_ix]
-
-  original_dataset_id <- output_train_h5ad\\$uns[["dataset_id"]]
-  dataset_id <- paste0(original_dataset_id, "-bootstrap", i)
-  output_train_h5ad\\$uns[["dataset_id"]] <- dataset_id
-  output_test_h5ad\\$uns[["dataset_id"]] <- dataset_id
-  output_train_h5ad\\$uns[["original_dataset_id"]] <- original_dataset_id
-  output_test_h5ad\\$uns[["original_dataset_id"]] <- original_dataset_id
-
-  # write output
-  output_train_h5ad_path <- gsub("\\\\\\\\*", i, par\\$output_train_h5ad)
-  output_test_h5ad_path <- gsub("\\\\\\\\*", i, par\\$output_test_h5ad)
-
-  zzz <- output_train_h5ad\\$write_h5ad(output_train_h5ad_path, compression = "gzip")
-  zzz <- output_test_h5ad\\$write_h5ad(output_test_h5ad_path, compression = "gzip")
-}
+# Write output
+data.write_h5ad(par["output"], compression="gzip")
 VIASHMAIN
-Rscript "$tempscript"
+python -B "$tempscript"
 '''
   
   return vdsl3WorkflowFactory(args, meta, rawScript)
@@ -3435,8 +3410,8 @@ meta["defaults"] = [
   },
   "label" : [
     "midtime",
-    "midmem",
-    "lowcpu"
+    "highmem",
+    "midcpu"
   ],
   "tag" : "$id"
 }'''),

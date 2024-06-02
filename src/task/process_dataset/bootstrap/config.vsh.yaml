@@ -11,56 +11,51 @@ functionality:
   argument_groups:
     - name: Inputs
       arguments:
-      - name: --train_h5ad
+      - name: --input
         type: file
         required: true
         direction: input
-        example: resources/neurips-2023-kaggle/de_train.h5ad
-      - name: --test_h5ad
-        type: file
-        required: true
-        direction: input
-        example: resources/neurips-2023-kaggle/de_test.h5ad
+        example: resources/neurips-2023-raw/sc_counts_reannotated_with_counts.h5ad
     - name: Outputs
       arguments:
-        - name: --output_train_h5ad
+        - name: --output
           type: file
           required: true
           direction: output
-          multiple: true
-          example: [de_train_bootstrap.h5ad]
-        - name: --output_test_h5ad
-          type: file
-          required: true
-          direction: output
-          multiple: true
-          example: [de_test_bootstrap.h5ad]
-    - name: Arguments
+          example: sc_counts_bootstrap.h5ad
+    - name: Sampling parameters
+      description: Parameters for sampling the bootstraps.
       arguments:
-        - name: --num_replicates
-          type: integer
-          required: true
-          default: 10
-          description: Number of bootstraps to generate.
+        - name: --bootstrap_obs
+          type: boolean
+          default: true
+          description: Whether to sample observations.
         - name: --obs_fraction
           type: double
-          required: true
-          default: 0.95
-          description: Fraction of the training dataset obs to include in each bootstrap.
+          default: 1
+          description: Fraction of the obs of the sc_counts to include in each bootstrap.
+        - name: --obs_replace
+          type: boolean
+          default: true
+          description: Whether to sample with replacement.
+        - name: --bootstrap_var
+          type: boolean
+          default: false
+          description: Whether to sample variables.
         - name: --var_fraction
           type: double
-          required: true
-          default: 0.95
-          description: Fraction of the training & test dataset var to include in each bootstrap.
+          default: 1
+          description: Fraction of the var of the sc_counts to include in each bootstrap.
+        - name: --var_replace
+          type: boolean
+          default: true
+          description: Whether to sample with replacement.
   resources:
-    - type: r_script
-      path: script.R
+    - type: python_script
+      path: script.py
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_r:1.0.4
-    setup:
-      - type: r
-        cran: [ dplyr, tidyr, purrr, tibble, arrow ]
+    image: ghcr.io/openproblems-bio/base_python:1.0.4
   - type: nextflow
     directives:
-      label: [ midtime, midmem, lowcpu ]
+      label: [ midtime, highmem, midcpu ]
