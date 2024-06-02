@@ -1,5 +1,5 @@
 functionality:
-  name: "mean_correlation_r"
+  name: "mean_rowwise_correlation"
   namespace: "metrics"
   version: "main_build"
   arguments:
@@ -78,11 +78,16 @@ functionality:
           required: true
         - name: "sign_log10_pval"
           type: "double"
-          description: "Differential expression value (-log10(p-value) * sign(LFC))\
+          description: "Differential expression value (`-log10(p-value) * sign(LFC)`)\
             \ for each gene.\nHere, LFC is the estimated log-fold change in expression\
             \ between the treatment\nand control condition after shrinkage as calculated\
             \ by Limma. Positive LFC means\nthe gene goes up in the treatment condition\
             \ relative to the control.\n"
+          required: true
+        - name: "clipped_sign_log10_pval"
+          type: "double"
+          description: "A clipped version of the sign_log10_pval layer. Values are\
+            \ clipped to be between\n-4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).\n"
           required: true
         uns:
         - type: "string"
@@ -135,7 +140,7 @@ functionality:
     description: "In which layer to find the DE data."
     info: null
     default:
-    - "sign_log10_pval"
+    - "clipped_sign_log10_pval"
     required: false
     direction: "input"
     multiple: false
@@ -247,8 +252,8 @@ functionality:
     dest: "resources/neurips-2023-data"
   info:
     metrics:
-    - name: "mean_pearson_r"
-      label: "Mean Pearson bis"
+    - name: "mean_rowwise_pearson"
+      label: "Mean Rowwise Pearson"
       summary: "The mean of Pearson correlations per row (perturbation)."
       description: "The **Mean Pearson Correlation** is computed as follows:\n\n$$\n\
         \\textrm{Mean-Pearson} = \\frac{1}{R}\\sum_{i=1}^R\\frac{\\textrm{Cov}(\\\
@@ -261,8 +266,8 @@ functionality:
       min: -1
       max: 1
       maximize: true
-    - name: "mean_spearman_r"
-      label: "Mean Spearman bis"
+    - name: "mean_rowwise_spearman"
+      label: "Mean Rowwise Spearman"
       summary: "The mean of Spearman correlations per row (perturbation)."
       description: "The **Mean Spearman Correlation** is computed as follows:\n\n\
         $$\n\\textrm{Mean-Pearson} = \\frac{1}{R}\\sum_{i=1}^R\\frac{\\textrm{Cov}(\\\
@@ -270,6 +275,20 @@ functionality:
         textrm{Var}(\\mathbf{\\hat{r}}_i)}\n$$\n\nwhere $(R)$ is the number of scored\
         \ rows, and $(\\mathbf{r}_i)$ and $(\\mathbf{\\hat{r}}_i)$ are the ranks of\
         \ the actual and predicted values, respectively, for row $(i)$.\n"
+      repository_url: null
+      documentation_url: null
+      min: -1
+      max: 1
+      maximize: true
+    - name: "mean_rowwise_cosine"
+      label: "Mean Rowwise Cosine"
+      summary: "The mean of cosine similarities per row (perturbation)."
+      description: "The **Mean Cosine Similarity** is computed as follows:\n\n$$\n\
+        \\textrm{Mean-Cosine} = \\frac{1}{R}\\sum_{i=1}^R\\frac{\\mathbf{y}_i\\cdot\
+        \ \\mathbf{\\hat{y}}_i}{\\|\\mathbf{y}_i\\| \\|\\mathbf{\\hat{y}}_i\\|}\n\
+        $$\n\nwhere $(R)$ is the number of scored rows, and $(\\mathbf{y}_i)$ and\
+        \ $(\\mathbf{\\hat{y}}_i)$ are the actual and predicted values, respectively,\
+        \ for row $(i)$.\n"
       repository_url: null
       documentation_url: null
       min: -1
@@ -293,6 +312,11 @@ platforms:
   chown: true
   setup_strategy: "ifneedbepullelsecachedbuild"
   target_image_source: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+  setup:
+  - type: "r"
+    packages:
+    - "proxyC"
+    bioc_force_install: false
   entrypoint: []
   cmd: null
 - type: "nextflow"
@@ -325,10 +349,10 @@ platforms:
   debug: false
   container: "docker"
 info:
-  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/metrics/mean_correlation_r/config.vsh.yaml"
-  platform: "nextflow"
-  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_correlation_r"
-  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_correlation_r/mean_correlation_r"
+  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/metrics/mean_rowwise_correlation/config.vsh.yaml"
+  platform: "docker"
+  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_correlation"
+  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_correlation/mean_rowwise_correlation"
   viash_version: "0.8.6"
-  git_commit: "02d3dff2a7157ffcc0a321d0ea417a1239f54954"
+  git_commit: "753f37cc9a90bac99eca5ee3042ed317aa531ff9"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

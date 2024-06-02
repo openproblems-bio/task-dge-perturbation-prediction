@@ -78,11 +78,16 @@ functionality:
           required: true
         - name: "sign_log10_pval"
           type: "double"
-          description: "Differential expression value (-log10(p-value) * sign(LFC))\
+          description: "Differential expression value (`-log10(p-value) * sign(LFC)`)\
             \ for each gene.\nHere, LFC is the estimated log-fold change in expression\
             \ between the treatment\nand control condition after shrinkage as calculated\
             \ by Limma. Positive LFC means\nthe gene goes up in the treatment condition\
             \ relative to the control.\n"
+          required: true
+        - name: "clipped_sign_log10_pval"
+          type: "double"
+          description: "A clipped version of the sign_log10_pval layer. Values are\
+            \ clipped to be between\n-4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).\n"
           required: true
         uns:
         - type: "string"
@@ -135,7 +140,7 @@ functionality:
     description: "In which layer to find the DE data."
     info: null
     default:
-    - "sign_log10_pval"
+    - "clipped_sign_log10_pval"
     required: false
     direction: "input"
     multiple: false
@@ -235,8 +240,8 @@ functionality:
     multiple_sep: ":"
     dest: "par"
   resources:
-  - type: "python_script"
-    path: "script.py"
+  - type: "r_script"
+    path: "script.R"
     is_executable: true
   test_resources:
   - type: "python_script"
@@ -251,23 +256,12 @@ functionality:
       label: "Mean Rowwise RMSE"
       summary: "The mean of the root mean squared error (RMSE) of each row in the\
         \ matrix."
-      description: "The **Mean Rowwise Root Mean Squared Error** is computed as follows:\n\
-        \n$$\n\\textrm{MRRMSE} = \\frac{1}{R}\\sum_{i=1}^R\\left(\\frac{1}{n} \\sum_{j=1}^{n}\
-        \ (y_{ij} - \\widehat{y}_{ij})^2\\right)^{1/2}\n$$\n\nwhere $(R)$ is the number\
-        \ of scored rows, and $(y_{ij})$ and $(\\widehat{y}_{ij})$ are the actual\
-        \ and predicted values, respectively, for row $(i)$ and column $(j)$, and\
-        \ $(n)$ bis the number of columns.\n"
-      repository_url: null
-      documentation_url: null
-      min: 0
-      max: "+inf"
-      maximize: false
-    - name: "mean_rowwise_rmse_clipped_0001"
-      label: "Mean Rowwise RMSE clipped at 0.0001"
-      summary: "The mean of the root mean squared error (RMSE) of each row in the\
-        \ matrix, where the values are clipped to 0.0001 adjusted p-values"
-      description: "This metric is the same as `mean_rowwise_rmse`, but with the values\
-        \ clipped to [-log10(0.0001), log10(0.0001)]."
+      description: "We use the **Mean Rowwise Root Mean Squared Error** to score submissions,\
+        \ computed as follows:\n\n$$\n\\textrm{MRRMSE} = \\frac{1}{R}\\sum_{i=1}^R\\\
+        left(\\frac{1}{n} \\sum_{j=1}^{n} (y_{ij} - \\widehat{y}_{ij})^2\\right)^{1/2}\n\
+        $$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\widehat{y}_{ij})$\
+        \ are the actual and predicted values, respectively, for row $(i)$ and column\
+        \ $(j)$, and $(n)$ bis the number of columns.\n"
       repository_url: null
       documentation_url: null
       min: 0
@@ -276,23 +270,12 @@ functionality:
     - name: "mean_rowwise_mae"
       label: "Mean Rowwise MAE"
       summary: "The mean of the absolute error (MAE) of each row in the matrix."
-      description: "The **Mean Rowwise Absolute Error** is computed as follows:\n\n\
-        $$\n\\textrm{MRMAE} = \\frac{1}{R}\\sum_{i=1}^R\\left(\\frac{1}{n} \\sum_{j=1}^{n}\
-        \ |y_{ij} - \\widehat{y}_{ij}|\\right)\n$$\n\nwhere $(R)$ is the number of\
-        \ scored rows, and $(y_{ij})$ and $(\\widehat{y}_{ij})$ are the actual and\
-        \ predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$\
-        \ bis the number of columns.\n"
-      repository_url: null
-      documentation_url: null
-      min: 0
-      max: "+inf"
-      maximize: false
-    - name: "mean_rowwise_mae_clipped_0001"
-      label: "Mean Rowwise MAE clipped at 0.0001"
-      summary: "The mean of the absolute error (MAE) of each row in the matrix. The\
-        \ values are clipped to 0.0001 adjusted p-values."
-      description: "This metric is the same as `mean_rowwise_mae`, but with the values\
-        \ clipped to [-log10(0.0001), log10(0.0001)]."
+      description: "We use the **Mean Rowwise Absolute Error** to score submissions,\
+        \ computed as follows:\n\n$$\n\\textrm{MRMAE} = \\frac{1}{R}\\sum_{i=1}^R\\\
+        left(\\frac{1}{n} \\sum_{j=1}^{n} |y_{ij} - \\widehat{y}_{ij}|\\right)\n$$\n\
+        \nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\widehat{y}_{ij})$\
+        \ are the actual and predicted values, respectively, for row $(i)$ and column\
+        \ $(j)$, and $(n)$ bis the number of columns.\n"
       repository_url: null
       documentation_url: null
       min: 0
@@ -308,7 +291,7 @@ functionality:
 platforms:
 - type: "docker"
   id: "docker"
-  image: "ghcr.io/openproblems-bio/base_python:1.0.4"
+  image: "ghcr.io/openproblems-bio/base_r:1.0.4"
   target_organization: "openproblems-bio/task-dge-perturbation-prediction"
   target_registry: "ghcr.io"
   namespace_separator: "/"
@@ -316,6 +299,11 @@ platforms:
   chown: true
   setup_strategy: "ifneedbepullelsecachedbuild"
   target_image_source: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+  setup:
+  - type: "r"
+    packages:
+    - "proxyC"
+    bioc_force_install: false
   entrypoint: []
   cmd: null
 - type: "nextflow"
@@ -353,5 +341,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_error"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/metrics/mean_rowwise_error/mean_rowwise_error"
   viash_version: "0.8.6"
-  git_commit: "02d3dff2a7157ffcc0a321d0ea417a1239f54954"
+  git_commit: "753f37cc9a90bac99eca5ee3042ed317aa531ff9"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

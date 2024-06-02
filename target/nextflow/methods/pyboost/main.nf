@@ -2882,7 +2882,13 @@ meta = [
               {
                 "name" : "sign_log10_pval",
                 "type" : "double",
-                "description" : "Differential expression value (-log10(p-value) * sign(LFC)) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "description" : "Differential expression value (`-log10(p-value) * sign(LFC)`) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "required" : true
+              },
+              {
+                "name" : "clipped_sign_log10_pval",
+                "type" : "double",
+                "description" : "A clipped version of the sign_log10_pval layer. Values are clipped to be between\n-4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).\n",
                 "required" : true
               }
             ],
@@ -2995,7 +3001,7 @@ meta = [
         "name" : "--layer",
         "description" : "Which layer to use for prediction.",
         "default" : [
-          "sign_log10_pval"
+          "clipped_sign_log10_pval"
         ],
         "required" : false,
         "direction" : "input",
@@ -3204,7 +3210,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/pyboost",
     "viash_version" : "0.8.6",
-    "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+    "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

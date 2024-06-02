@@ -183,7 +183,7 @@ function ViashHelp {
   echo ""
   echo "    --layer"
   echo "        type: string"
-  echo "        default: sign_log10_pval"
+  echo "        default: clipped_sign_log10_pval"
   echo "        Which layer to use for prediction."
   echo ""
   echo "    --output"
@@ -422,7 +422,7 @@ fi
 
 # filling in defaults
 if [ -z ${VIASH_PAR_LAYER+x} ]; then
-  VIASH_PAR_LAYER="sign_log10_pval"
+  VIASH_PAR_LAYER="clipped_sign_log10_pval"
 fi
 if [ -z ${VIASH_PAR_N_REPLICA+x} ]; then
   VIASH_PAR_N_REPLICA="10"

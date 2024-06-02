@@ -13,7 +13,7 @@ functionality:
     - name: --layer
       type: string
       direction: input
-      default: sign_log10_pval
+      default: clipped_sign_log10_pval
       description: Which layer to use for prediction.
     - name: --train_data_aug_dir
       type: file

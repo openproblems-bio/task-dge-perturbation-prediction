@@ -13,7 +13,7 @@ par = {
     "id_map": "resources/neurips-2023-data/id_map.csv",
     "output": "output.h5ad",
     "num_train_epochs": 10,
-    "layer": "sign_log10_pval"
+    "layer": "clipped_sign_log10_pval"
 }
 meta = {
     "resources_dir": "src/task/methods/transformer_ensemble",

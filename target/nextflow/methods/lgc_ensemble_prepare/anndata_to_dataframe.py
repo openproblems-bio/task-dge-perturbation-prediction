@@ -1,5 +1,5 @@
 
-def anndata_to_dataframe(adata, layer_name="sign_log10_pval"):
+def anndata_to_dataframe(adata, layer_name="clipped_sign_log10_pval"):
   import pandas as pd
 
   metadata_cols = ['cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'split', 'control']

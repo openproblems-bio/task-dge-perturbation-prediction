@@ -187,7 +187,7 @@ function ViashHelp {
   echo ""
   echo "    --layer"
   echo "        type: string"
-  echo "        default: sign_log10_pval"
+  echo "        default: clipped_sign_log10_pval"
   echo "        Which layer to use for prediction."
   echo ""
   echo "    --output"
@@ -422,9 +422,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet"
 
 LABEL org.opencontainers.image.description="Companion container for running component control_methods sample"
-LABEL org.opencontainers.image.created="2024-06-02T16:38:06Z"
+LABEL org.opencontainers.image.created="2024-06-02T18:44:29Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="02d3dff2a7157ffcc0a321d0ea417a1239f54954"
+LABEL org.opencontainers.image.revision="753f37cc9a90bac99eca5ee3042ed317aa531ff9"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -791,7 +791,7 @@ fi
 
 # filling in defaults
 if [ -z ${VIASH_PAR_LAYER+x} ]; then
-  VIASH_PAR_LAYER="sign_log10_pval"
+  VIASH_PAR_LAYER="clipped_sign_log10_pval"
 fi
 
 # check whether required files exist

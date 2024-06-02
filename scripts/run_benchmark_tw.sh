@@ -4,14 +4,23 @@ RUN_ID="run_$(date +%Y-%m-%d_%H-%M-%S)"
 publish_dir="s3://openproblems-data/resources/dge_perturbation_prediction/results/${RUN_ID}"
 
 cat > /tmp/params.yaml << HERE
-id: dge_perturbation_task
-input_states: s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/**/state.yaml
+param_list:
+  - id: neurips-2023-data
+    de_train_h5ad: resources/neurips-2023-data/de_train.h5ad
+    de_test_h5ad: resources/neurips-2023-data/de_test.h5ad
+    id_map: resources/neurips-2023-data/id_map.csv
+    layer: clipped_sign_log10_pval
+  - id: neurips-2023-kaggle
+    de_train_h5ad: resources/neurips-2023-kaggle/de_train.h5ad
+    de_test_h5ad: resources/neurips-2023-kaggle/de_test.h5ad
+    id_map: resources/neurips-2023-kaggle/id_map.csv
+    layer: sign_log10_pval
 output_state: "state.yaml"
 publish_dir: "$publish_dir"
 HERE
 
 tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
-  --revision main_build \
+  --revision remove_clipped_build \
   --pull-latest \
   --main-script target/nextflow/workflows/run_benchmark/main.nf \
   --workspace 53907369739130 \

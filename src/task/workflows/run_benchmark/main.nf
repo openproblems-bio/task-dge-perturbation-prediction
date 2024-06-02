@@ -17,11 +17,7 @@ methods = [
 // construct list of metrics
 metrics = [
   mean_rowwise_error,
-  mean_rowwise_error_r,
-  mean_cosine_sim,
-  mean_cosine_sim_r,
-  mean_correlation,
-  mean_correlation_r
+  mean_rowwise_correlation
 ]
 
 // helper workflow for starting a workflow based on lists of yaml files
@@ -63,7 +59,7 @@ workflow run_wf {
       methodToState: ["prediction": "output"],
       metricFromState: [
         de_test_h5ad: "de_test_h5ad",
-        layer: "layer",
+        de_test_layer: "layer",
         prediction: "prediction"
       ],
       metricToState: ["metric_output": "output"],

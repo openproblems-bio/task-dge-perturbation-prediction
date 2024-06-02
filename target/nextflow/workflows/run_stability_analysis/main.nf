@@ -2943,7 +2943,7 @@ meta = [
             "name" : "--layer",
             "description" : "Which layer to use for prediction and evaluation.",
             "default" : [
-              "sign_log10_pval"
+              "clipped_sign_log10_pval"
             ],
             "required" : false,
             "direction" : "input",
@@ -2957,6 +2957,19 @@ meta = [
         "name" : "Bootstrapping arguments",
         "description" : "Define the sampling strategy for the stability analysis.",
         "arguments" : [
+          {
+            "type" : "integer",
+            "name" : "--bootstrap_num_replicates",
+            "description" : "Number of bootstrap replicates to run.",
+            "default" : [
+              10
+            ],
+            "required" : false,
+            "direction" : "input",
+            "multiple" : false,
+            "multiple_sep" : ":",
+            "dest" : "par"
+          },
           {
             "type" : "boolean",
             "name" : "--bootstrap_obs",
@@ -3115,7 +3128,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
           "executable" : "/nextflow/process_dataset/bootstrap/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap"
@@ -3136,7 +3149,7 @@ meta = [
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
           "executable" : "/nextflow/workflows/process_dataset/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/process_dataset"
@@ -3157,7 +3170,7 @@ meta = [
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
           "executable" : "/nextflow/workflows/run_benchmark/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark"
@@ -3213,7 +3226,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_stability_analysis",
     "viash_version" : "0.8.6",
-    "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+    "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

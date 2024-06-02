@@ -7,23 +7,13 @@ functionality:
         label: Mean Rowwise RMSE
         summary: The mean of the root mean squared error (RMSE) of each row in the matrix.
         description: |
-          The **Mean Rowwise Root Mean Squared Error** is computed as follows:
+          We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:
 
           $$
           \textrm{MRRMSE} = \frac{1}{R}\sum_{i=1}^R\left(\frac{1}{n} \sum_{j=1}^{n} (y_{ij} - \widehat{y}_{ij})^2\right)^{1/2}
           $$
 
           where $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.
-
-        repository_url: null
-        documentation_url: null
-        min: 0
-        max: "+inf"
-        maximize: false
-      - name: mean_rowwise_rmse_clipped_0001
-        label: Mean Rowwise RMSE clipped at 0.0001
-        summary: The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.0001 adjusted p-values
-        description: This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.0001), log10(0.0001)].
         repository_url: null
         documentation_url: null
         min: 0
@@ -33,33 +23,27 @@ functionality:
         label: Mean Rowwise MAE
         summary: The mean of the absolute error (MAE) of each row in the matrix.
         description: |
-          The **Mean Rowwise Absolute Error** is computed as follows:
+            We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:
 
-          $$
-          \textrm{MRMAE} = \frac{1}{R}\sum_{i=1}^R\left(\frac{1}{n} \sum_{j=1}^{n} |y_{ij} - \widehat{y}_{ij}|\right)
-          $$
-
-          where $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.
-        repository_url: null
-        documentation_url: null
-        min: 0
-        max: "+inf"
-        maximize: false
-      - name: mean_rowwise_mae_clipped_0001
-        label: Mean Rowwise MAE clipped at 0.0001
-        summary: The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.0001 adjusted p-values.
-        description: This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.0001), log10(0.0001)].
+            $$
+            \textrm{MRMAE} = \frac{1}{R}\sum_{i=1}^R\left(\frac{1}{n} \sum_{j=1}^{n} |y_{ij} - \widehat{y}_{ij}|\right)
+            $$
+          
+            where $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.
         repository_url: null
         documentation_url: null
         min: 0
         max: "+inf"
         maximize: false
   resources:
-    - type: python_script
-      path: script.py
+    - type: r_script
+      path: script.R
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    image: ghcr.io/openproblems-bio/base_r:1.0.4
+    setup:
+      - type: r
+        packages: proxyC
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]

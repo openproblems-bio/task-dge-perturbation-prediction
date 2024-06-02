@@ -76,10 +76,16 @@ info:
       - name: sign_log10_pval
         type: double
         description: |
-          Differential expression value (-log10(p-value) * sign(LFC)) for each gene.
+          Differential expression value (`-log10(p-value) * sign(LFC)`) for each gene.
           Here, LFC is the estimated log-fold change in expression between the treatment
           and control condition after shrinkage as calculated by Limma. Positive LFC means
           the gene goes up in the treatment condition relative to the control.
+        required: true
+      - name: clipped_sign_log10_pval
+        type: double
+        description: |
+          A clipped version of the sign_log10_pval layer. Values are clipped to be between
+          -4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).
         required: true
     uns:
       - type: string

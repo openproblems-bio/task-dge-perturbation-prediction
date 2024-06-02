@@ -3023,7 +3023,13 @@ meta = [
               {
                 "name" : "sign_log10_pval",
                 "type" : "double",
-                "description" : "Differential expression value (-log10(p-value) * sign(LFC)) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "description" : "Differential expression value (`-log10(p-value) * sign(LFC)`) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "required" : true
+              },
+              {
+                "name" : "clipped_sign_log10_pval",
+                "type" : "double",
+                "description" : "A clipped version of the sign_log10_pval layer. Values are clipped to be between\n-4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).\n",
                 "required" : true
               }
             ],
@@ -3193,7 +3199,13 @@ meta = [
               {
                 "name" : "sign_log10_pval",
                 "type" : "double",
-                "description" : "Differential expression value (-log10(p-value) * sign(LFC)) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "description" : "Differential expression value (`-log10(p-value) * sign(LFC)`) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "required" : true
+              },
+              {
+                "name" : "clipped_sign_log10_pval",
+                "type" : "double",
+                "description" : "A clipped version of the sign_log10_pval layer. Values are clipped to be between\n-4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).\n",
                 "required" : true
               }
             ],
@@ -3413,7 +3425,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
           "executable" : "/nextflow/process_dataset/compute_pseudobulk/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/compute_pseudobulk"
@@ -3434,7 +3446,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
           "executable" : "/nextflow/process_dataset/filter_obs/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/filter_obs"
@@ -3455,7 +3467,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
           "executable" : "/nextflow/process_dataset/filter_vars/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/filter_vars"
@@ -3476,7 +3488,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
           "executable" : "/nextflow/process_dataset/add_uns_metadata/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/add_uns_metadata"
@@ -3497,7 +3509,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
           "executable" : "/nextflow/process_dataset/run_limma/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/run_limma"
@@ -3518,7 +3530,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+          "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
           "executable" : "/nextflow/process_dataset/generate_id_map/main.nf"
         },
         "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/generate_id_map"
@@ -3570,7 +3582,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/process_dataset",
     "viash_version" : "0.8.6",
-    "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+    "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))

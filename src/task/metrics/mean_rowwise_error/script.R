@@ -3,7 +3,7 @@ library(anndata)
 ## VIASH START (unchanged)
 par <- list(
   de_test_h5ad = "resources/neurips-2023-data/de_test.h5ad",
-  de_test_layer = "sign_log10_pval",
+  de_test_layer = "clipped_sign_log10_pval",
   prediction = "resources/neurips-2023-data/prediction.h5ad",
   prediction_layer = "prediction",
   resolve_genes = "de_test",
@@ -38,24 +38,13 @@ if (any(is.na(prediction_X))) {
   prediction_X[is.na(prediction_X)] <- 0
 }
 
-cat("Clipping values\n")
-threshold_0001 <- -log10(0.0001)
-de_test_X_clipped_0001 <- pmax(pmin(de_test_X, threshold_0001), -threshold_0001)
-prediction_clipped_0001 <- pmax(pmin(prediction_X, threshold_0001), -threshold_0001)
-
 cat("Calculate mean rowwise RMSE\n")
 rowwise_rmse <- sqrt(rowMeans((de_test_X - prediction_X)^2))
 mean_rowwise_rmse <- mean(rowwise_rmse)
 
-rowwise_rmse_clipped_0001 <- sqrt(rowMeans((de_test_X_clipped_0001 - prediction_clipped_0001)^2))
-mean_rowwise_rmse_clipped_0001 <- mean(rowwise_rmse_clipped_0001)
-
 cat("Calculate mean rowwise MAE\n")
 rowwise_mae <- rowMeans(abs(de_test_X - prediction_X))
 mean_rowwise_mae <- mean(rowwise_mae)
-
-rowwise_mae_clipped_0001 <- rowMeans(abs(de_test_X_clipped_0001 - prediction_clipped_0001))
-mean_rowwise_mae_clipped_0001 <- mean(rowwise_mae_clipped_0001)
 
 cat("Create output\n")
 output <- AnnData(
@@ -64,16 +53,15 @@ output <- AnnData(
     dataset_id = de_test$uns[["dataset_id"]],
     method_id = prediction$uns[["method_id"]],
     metric_ids = c(
-      "mean_rowwise_rmse_r",
-      "mean_rowwise_mae_r",
-      "mean_rowwise_rmse_clipped_0001_r",
-      "mean_rowwise_mae_clipped_0001_r"
+      "mean_rowwise_rmse",
+      "mean_rowwise_mae"
     ),
-    metric_values = c(
-      mean_rowwise_rmse,
-      mean_rowwise_mae,
-      mean_rowwise_rmse_clipped_0001,
-      mean_rowwise_mae_clipped_0001
+    metric_values = zapsmall(
+      c(
+        mean_rowwise_rmse,
+        mean_rowwise_mae
+      ),
+      10
     )
   )
 )

@@ -2882,7 +2882,13 @@ meta = [
               {
                 "name" : "sign_log10_pval",
                 "type" : "double",
-                "description" : "Differential expression value (-log10(p-value) * sign(LFC)) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "description" : "Differential expression value (`-log10(p-value) * sign(LFC)`) for each gene.\nHere, LFC is the estimated log-fold change in expression between the treatment\nand control condition after shrinkage as calculated by Limma. Positive LFC means\nthe gene goes up in the treatment condition relative to the control.\n",
+                "required" : true
+              },
+              {
+                "name" : "clipped_sign_log10_pval",
+                "type" : "double",
+                "description" : "A clipped version of the sign_log10_pval layer. Values are clipped to be between\n-4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).\n",
                 "required" : true
               }
             ],
@@ -2956,7 +2962,7 @@ meta = [
         "name" : "--de_test_layer",
         "description" : "In which layer to find the DE data.",
         "default" : [
-          "sign_log10_pval"
+          "clipped_sign_log10_pval"
         ],
         "required" : false,
         "direction" : "input",
@@ -3089,8 +3095,8 @@ meta = [
     ],
     "resources" : [
       {
-        "type" : "python_script",
-        "path" : "script.py",
+        "type" : "r_script",
+        "path" : "script.R",
         "is_executable" : true,
         "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/metrics/mean_rowwise_error/"
       }
@@ -3115,16 +3121,7 @@ meta = [
           "name" : "mean_rowwise_rmse",
           "label" : "Mean Rowwise RMSE",
           "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix.",
-          "description" : "The **Mean Rowwise Root Mean Squared Error** is computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} (y_{ij} - \\\\widehat{y}_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
-          "min" : 0,
-          "max" : "+inf",
-          "maximize" : false
-        },
-        {
-          "name" : "mean_rowwise_rmse_clipped_0001",
-          "label" : "Mean Rowwise RMSE clipped at 0.0001",
-          "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix, where the values are clipped to 0.0001 adjusted p-values",
-          "description" : "This metric is the same as `mean_rowwise_rmse`, but with the values clipped to [-log10(0.0001), log10(0.0001)].",
+          "description" : "We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} (y_{ij} - \\\\widehat{y}_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3133,16 +3130,7 @@ meta = [
           "name" : "mean_rowwise_mae",
           "label" : "Mean Rowwise MAE",
           "summary" : "The mean of the absolute error (MAE) of each row in the matrix.",
-          "description" : "The **Mean Rowwise Absolute Error** is computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
-          "min" : 0,
-          "max" : "+inf",
-          "maximize" : false
-        },
-        {
-          "name" : "mean_rowwise_mae_clipped_0001",
-          "label" : "Mean Rowwise MAE clipped at 0.0001",
-          "summary" : "The mean of the absolute error (MAE) of each row in the matrix. The values are clipped to 0.0001 adjusted p-values.",
-          "description" : "This metric is the same as `mean_rowwise_mae`, but with the values clipped to [-log10(0.0001), log10(0.0001)].",
+          "description" : "We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
           "min" : 0,
           "max" : "+inf",
           "maximize" : false
@@ -3162,14 +3150,23 @@ meta = [
     {
       "type" : "docker",
       "id" : "docker",
-      "image" : "ghcr.io/openproblems-bio/base_python:1.0.4",
+      "image" : "ghcr.io/openproblems-bio/base_r:1.0.4",
       "target_organization" : "openproblems-bio/task-dge-perturbation-prediction",
       "target_registry" : "ghcr.io",
       "namespace_separator" : "/",
       "resolve_volume" : "Automatic",
       "chown" : true,
       "setup_strategy" : "ifneedbepullelsecachedbuild",
-      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
+      "setup" : [
+        {
+          "type" : "r",
+          "packages" : [
+            "proxyC"
+          ],
+          "bioc_force_install" : false
+        }
+      ]
     },
     {
       "type" : "nextflow",
@@ -3214,7 +3211,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/metrics/mean_rowwise_error",
     "viash_version" : "0.8.6",
-    "git_commit" : "02d3dff2a7157ffcc0a321d0ea417a1239f54954",
+    "git_commit" : "753f37cc9a90bac99eca5ee3042ed317aa531ff9",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3229,99 +3226,105 @@ def innerWorkflowFactory(args) {
   def rawScript = '''set -e
 tempscript=".viash_script.sh"
 cat > "$tempscript" << VIASHMAIN
-import anndata as ad
-import numpy as np
+library(anndata)
 
-## VIASH START
+## VIASH START (unchanged)
 # The following code has been auto-generated by Viash.
-par = {
-  'de_test_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TEST_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'de_test_layer': $( if [ ! -z ${VIASH_PAR_DE_TEST_LAYER+x} ]; then echo "r'${VIASH_PAR_DE_TEST_LAYER//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'prediction': $( if [ ! -z ${VIASH_PAR_PREDICTION+x} ]; then echo "r'${VIASH_PAR_PREDICTION//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'prediction_layer': $( if [ ! -z ${VIASH_PAR_PREDICTION_LAYER+x} ]; then echo "r'${VIASH_PAR_PREDICTION_LAYER//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'resolve_genes': $( if [ ! -z ${VIASH_PAR_RESOLVE_GENES+x} ]; then echo "r'${VIASH_PAR_RESOLVE_GENES//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi )
-}
-meta = {
-  'functionality_name': $( if [ ! -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then echo "r'${VIASH_META_FUNCTIONALITY_NAME//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'resources_dir': $( if [ ! -z ${VIASH_META_RESOURCES_DIR+x} ]; then echo "r'${VIASH_META_RESOURCES_DIR//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'executable': $( if [ ! -z ${VIASH_META_EXECUTABLE+x} ]; then echo "r'${VIASH_META_EXECUTABLE//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'config': $( if [ ! -z ${VIASH_META_CONFIG+x} ]; then echo "r'${VIASH_META_CONFIG//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'temp_dir': $( if [ ! -z ${VIASH_META_TEMP_DIR+x} ]; then echo "r'${VIASH_META_TEMP_DIR//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'cpus': $( if [ ! -z ${VIASH_META_CPUS+x} ]; then echo "int(r'${VIASH_META_CPUS//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
-  'memory_b': $( if [ ! -z ${VIASH_META_MEMORY_B+x} ]; then echo "int(r'${VIASH_META_MEMORY_B//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
-  'memory_kb': $( if [ ! -z ${VIASH_META_MEMORY_KB+x} ]; then echo "int(r'${VIASH_META_MEMORY_KB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
-  'memory_mb': $( if [ ! -z ${VIASH_META_MEMORY_MB+x} ]; then echo "int(r'${VIASH_META_MEMORY_MB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
-  'memory_gb': $( if [ ! -z ${VIASH_META_MEMORY_GB+x} ]; then echo "int(r'${VIASH_META_MEMORY_GB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
-  'memory_tb': $( if [ ! -z ${VIASH_META_MEMORY_TB+x} ]; then echo "int(r'${VIASH_META_MEMORY_TB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
-  'memory_pb': $( if [ ! -z ${VIASH_META_MEMORY_PB+x} ]; then echo "int(r'${VIASH_META_MEMORY_PB//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi )
-}
-dep = {
+# treat warnings as errors
+.viash_orig_warn <- options(warn = 2)
+
+par <- list(
+  "de_test_h5ad" = $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "de_test_layer" = $( if [ ! -z ${VIASH_PAR_DE_TEST_LAYER+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST_LAYER" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "prediction" = $( if [ ! -z ${VIASH_PAR_PREDICTION+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_PREDICTION" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "prediction_layer" = $( if [ ! -z ${VIASH_PAR_PREDICTION_LAYER+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_PREDICTION_LAYER" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "output" = $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_OUTPUT" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "resolve_genes" = $( if [ ! -z ${VIASH_PAR_RESOLVE_GENES+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_RESOLVE_GENES" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi )
+)
+meta <- list(
+  "functionality_name" = $( if [ ! -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then echo -n "'"; echo -n "$VIASH_META_FUNCTIONALITY_NAME" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "resources_dir" = $( if [ ! -z ${VIASH_META_RESOURCES_DIR+x} ]; then echo -n "'"; echo -n "$VIASH_META_RESOURCES_DIR" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "executable" = $( if [ ! -z ${VIASH_META_EXECUTABLE+x} ]; then echo -n "'"; echo -n "$VIASH_META_EXECUTABLE" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "config" = $( if [ ! -z ${VIASH_META_CONFIG+x} ]; then echo -n "'"; echo -n "$VIASH_META_CONFIG" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "temp_dir" = $( if [ ! -z ${VIASH_META_TEMP_DIR+x} ]; then echo -n "'"; echo -n "$VIASH_META_TEMP_DIR" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "cpus" = $( if [ ! -z ${VIASH_META_CPUS+x} ]; then echo -n "as.integer('"; echo -n "$VIASH_META_CPUS" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
+  "memory_b" = $( if [ ! -z ${VIASH_META_MEMORY_B+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_B" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
+  "memory_kb" = $( if [ ! -z ${VIASH_META_MEMORY_KB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_KB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
+  "memory_mb" = $( if [ ! -z ${VIASH_META_MEMORY_MB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_MB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
+  "memory_gb" = $( if [ ! -z ${VIASH_META_MEMORY_GB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_GB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
+  "memory_tb" = $( if [ ! -z ${VIASH_META_MEMORY_TB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_TB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi ),
+  "memory_pb" = $( if [ ! -z ${VIASH_META_MEMORY_PB+x} ]; then echo -n "bit64::as.integer64('"; echo -n "$VIASH_META_MEMORY_PB" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "')"; else echo NULL; fi )
+)
+dep <- list(
   
-}
+)
+
+
+# restore original warn setting
+options(.viash_orig_warn)
+rm(.viash_orig_warn)
 
 ## VIASH END
 
-print("Load data", flush=True)
-de_test = ad.read_h5ad(par["de_test_h5ad"])
-print(f"de_test: {de_test}")
-prediction = ad.read_h5ad(par["prediction"])
-print(f"prediction: {prediction}")
+cat("Load data\\\\n")
+de_test <- read_h5ad(par\\$de_test_h5ad)
+cat("de_test: "); print(de_test)
+prediction <- read_h5ad(par\\$prediction)
+cat("prediction: "); print(prediction)
 
-print("Resolve genes", flush=True)
-if par["resolve_genes"] == "de_test":
-    genes = list(de_test.var_names)
-elif par["resolve_genes"] == "intersection":
-    genes = list(set(de_test.var_names) & set(prediction.var_names))
-de_test = de_test[:, genes]
-prediction = prediction[:, genes]
+cat("Resolve genes\\\\n")
+genes <-
+  if (par\\$resolve_genes == "de_test") {
+    de_test\\$var_names
+  } else if (par\\$resolve_genes == "intersection") {
+    intersect(de_test\\$var_names, prediction\\$var_names)
+  }
+de_test <- de_test[, genes]
+prediction <- prediction[, genes]
 
-# get data
-de_test_X = de_test.layers[par["de_test_layer"]]
-prediction_X = prediction.layers[par["prediction_layer"]]
+de_test_X <- de_test\\$layers[[par\\$de_test_layer]]
+prediction_X <- prediction\\$layers[[par\\$prediction_layer]]
 
-# check nans
-if np.isnan(de_test_X).any():
-    raise ValueError("NaNs in de_test_X")
-if np.isnan(prediction_X).any():
-    # warn and fill with 0s
-    print("NaNs in prediction_X, filling with zeros", flush=True)
-    prediction_X = np.nan_to_num(prediction_X)
+if (any(is.na(de_test_X))) {
+  stop("NA values in de_test_X")
+}
+if (any(is.na(prediction_X))) {
+  warning("NA values in prediction_X")
+  prediction_X[is.na(prediction_X)] <- 0
+}
 
-print("Clipping values", flush=True)
-threshold_0001 = -np.log10(0.0001)
-de_test_X_clipped_0001 = np.clip(de_test_X, -threshold_0001, threshold_0001)
-prediction_clipped_0001 = np.clip(prediction_X, -threshold_0001, threshold_0001)
+cat("Calculate mean rowwise RMSE\\\\n")
+rowwise_rmse <- sqrt(rowMeans((de_test_X - prediction_X)^2))
+mean_rowwise_rmse <- mean(rowwise_rmse)
 
-print("Calculate mean rowwise RMSE", flush=True)
-rowwise_rmse = np.sqrt(np.mean(np.square(de_test_X - prediction_X), axis=1))
-mean_rowwise_rmse = np.mean(rowwise_rmse)
+cat("Calculate mean rowwise MAE\\\\n")
+rowwise_mae <- rowMeans(abs(de_test_X - prediction_X))
+mean_rowwise_mae <- mean(rowwise_mae)
 
-rowwise_rmse_clipped_0001 = np.sqrt(np.mean(np.square(de_test_X_clipped_0001 - prediction_clipped_0001), axis=1))
-mean_rowwise_rmse_clipped_0001 = np.mean(rowwise_rmse_clipped_0001)
-
-rowwise_mae = np.mean(np.abs(de_test_X - prediction_X), axis=1)
-mean_rowwise_mae = np.mean(rowwise_mae)
-
-rowwise_mae_clipped_0001 = np.mean(np.abs(de_test_X_clipped_0001 - prediction_clipped_0001), axis=1)
-mean_rowwise_mae_clipped_0001 = np.mean(rowwise_mae_clipped_0001)
-
-print("Create output", flush=True)
-output = ad.AnnData(
-    uns={
-        "dataset_id": de_test.uns["dataset_id"],
-        "method_id": prediction.uns["method_id"],
-        "metric_ids": ["mean_rowwise_rmse", "mean_rowwise_mae",
-                          "mean_rowwise_rmse_clipped_0001", "mean_rowwise_mae_clipped_0001"],
-        "metric_values": [mean_rowwise_rmse, mean_rowwise_mae,
-                          mean_rowwise_rmse_clipped_0001, mean_rowwise_mae_clipped_0001]
-    }
+cat("Create output\\\\n")
+output <- AnnData(
+  shape = c(0L, 0L),
+  uns = list(
+    dataset_id = de_test\\$uns[["dataset_id"]],
+    method_id = prediction\\$uns[["method_id"]],
+    metric_ids = c(
+      "mean_rowwise_rmse",
+      "mean_rowwise_mae"
+    ),
+    metric_values = zapsmall(
+      c(
+        mean_rowwise_rmse,
+        mean_rowwise_mae
+      ),
+      10
+    )
+  )
 )
 
-print("Write output", flush=True)
-output.write_h5ad(par["output"], compression="gzip")
+cat("Write output\\\\n")
+write_h5ad(output, par\\$output, compression = "gzip")
 VIASHMAIN
-python -B "$tempscript"
+Rscript "$tempscript"
 '''
   
   return vdsl3WorkflowFactory(args, meta, rawScript)

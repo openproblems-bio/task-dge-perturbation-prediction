@@ -1,4 +1,5 @@
 import anndata as ad
+import numpy as np
 
 ## VIASH START
 par = {
@@ -27,6 +28,9 @@ input_test.obs.reset_index(names="id", inplace=True)
 print(">> Move X to layers", flush=True)
 input_train.layers["sign_log10_pval"] = input_train.X
 input_test.layers["sign_log10_pval"] = input_test.X
+clip_val = -np.log10(0.0001)
+input_train.layers["clipped_sign_log10_pval"] = np.clip(input_train.X, -clip_val, clip_val)
+input_test.layers["clipped_sign_log10_pval"] = np.clip(input_test.X, -clip_val, clip_val)
 del input_train.X
 del input_test.X
 

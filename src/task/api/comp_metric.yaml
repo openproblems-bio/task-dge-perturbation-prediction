@@ -15,7 +15,7 @@ functionality:
     - name: --de_test_layer
       type: string
       direction: input
-      default: sign_log10_pval
+      default: clipped_sign_log10_pval
       description: In which layer to find the DE data.
     - name: --prediction
       __merge__: file_prediction.yaml

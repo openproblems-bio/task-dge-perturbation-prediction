@@ -14,7 +14,7 @@ pd.set_option("min_rows", 6)
 ## VIASH START
 par = dict(
     de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
-    layer = "sign_log10_pval",
+    layer = "clipped_sign_log10_pval",
     id_map = "resources/neurips-2023-data/id_map.csv",
     predictor_names = ["py_boost"],
     output = "output.h5ad",
