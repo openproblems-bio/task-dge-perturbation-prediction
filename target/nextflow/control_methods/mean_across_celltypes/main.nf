@@ -3333,7 +3333,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/control_methods/mean_across_celltypes",
     "viash_version" : "0.8.6",
-    "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
+    "git_commit" : "503eb6d3a094cbc34006a0f0f1e363b9a1c27060",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   }
 }'''))

@@ -3128,7 +3128,7 @@ meta = [
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
+          "git_commit" : "503eb6d3a094cbc34006a0f0f1e363b9a1c27060",
           "executable" : "/nextflow/process_dataset/bootstrap/main.nf"
         },
         "writtenPath" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/process_dataset/bootstrap"
@@ -3149,7 +3149,7 @@ meta = [
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
+          "git_commit" : "503eb6d3a094cbc34006a0f0f1e363b9a1c27060",
           "executable" : "/nextflow/workflows/process_dataset/main.nf"
         },
         "writtenPath" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/workflows/process_dataset"
@@ -3170,7 +3170,7 @@ meta = [
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
+          "git_commit" : "503eb6d3a094cbc34006a0f0f1e363b9a1c27060",
           "executable" : "/nextflow/workflows/run_benchmark/main.nf"
         },
         "writtenPath" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/workflows/run_benchmark"
@@ -3226,7 +3226,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/workflows/run_stability_analysis",
     "viash_version" : "0.8.6",
-    "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
+    "git_commit" : "503eb6d3a094cbc34006a0f0f1e363b9a1c27060",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   }
 }'''))

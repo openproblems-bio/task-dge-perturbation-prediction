@@ -153,12 +153,10 @@ flowchart LR
   comp_process_dataset-->file_de_test_h5ad
   comp_process_dataset-->file_id_map
   file_de_train_h5ad---comp_control_method
-  file_de_train_h5ad---comp_method_notest
   file_de_train_h5ad---comp_method
   file_de_test_h5ad---comp_control_method
   file_de_test_h5ad---comp_metric
   file_id_map---comp_control_method
-  file_id_map---comp_method_notest
   file_id_map---comp_method
   comp_control_method-->file_prediction
   comp_method-->file_prediction

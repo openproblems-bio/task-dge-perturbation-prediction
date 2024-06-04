@@ -419,9 +419,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet"
 
 LABEL org.opencontainers.image.description="Companion container for running component control_methods mean_across_celltypes"
-LABEL org.opencontainers.image.created="2024-06-04T23:09:09Z"
+LABEL org.opencontainers.image.created="2024-06-04T23:11:18Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
-LABEL org.opencontainers.image.revision="aaa0ca579115d226cac9577d7da1c1c60ff6c031"
+LABEL org.opencontainers.image.revision="503eb6d3a094cbc34006a0f0f1e363b9a1c27060"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
