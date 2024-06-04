@@ -207,7 +207,7 @@ functionality:
       description: "A yaml file containing the scores of each of the methods"
       info: null
       default:
-      - "score_uns.yaml"
+      - "stability_uns.yaml"
       must_exist: true
       create_parent: true
       required: true
@@ -261,7 +261,7 @@ functionality:
       functionalityNamespace: "process_dataset"
       output: ""
       platform: ""
-      git_commit: "a161cfd989c11df9949386a103110fac45734cad"
+      git_commit: "9313317ab0269002d3eaf1d325e6bb30db714e77"
       executable: "/nextflow/process_dataset/bootstrap/main.nf"
     writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap"
   - name: "workflows/process_dataset"
@@ -278,7 +278,7 @@ functionality:
       functionalityNamespace: "workflows"
       output: ""
       platform: ""
-      git_commit: "a161cfd989c11df9949386a103110fac45734cad"
+      git_commit: "9313317ab0269002d3eaf1d325e6bb30db714e77"
       executable: "/nextflow/workflows/process_dataset/main.nf"
     writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/process_dataset"
   - name: "workflows/run_benchmark"
@@ -295,7 +295,7 @@ functionality:
       functionalityNamespace: "workflows"
       output: ""
       platform: ""
-      git_commit: "a161cfd989c11df9949386a103110fac45734cad"
+      git_commit: "9313317ab0269002d3eaf1d325e6bb30db714e77"
       executable: "/nextflow/workflows/run_benchmark/main.nf"
     writtenPath: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark"
   repositories:
@@ -337,5 +337,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_stability_analysis"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_stability_analysis/main.nf"
   viash_version: "0.8.6"
-  git_commit: "a161cfd989c11df9949386a103110fac45734cad"
+  git_commit: "9313317ab0269002d3eaf1d325e6bb30db714e77"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

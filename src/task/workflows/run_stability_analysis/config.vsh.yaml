@@ -55,7 +55,7 @@ functionality:
           required: true
           direction: output
           description: A yaml file containing the scores of each of the methods
-          default: score_uns.yaml
+          default: stability_uns.yaml
     - name: Arguments
       arguments:
         - name: "--method_ids"
