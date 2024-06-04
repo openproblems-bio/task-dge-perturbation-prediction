@@ -232,6 +232,39 @@ functionality:
     multiple: false
     multiple_sep: ":"
     dest: "par"
+  - type: "integer"
+    name: "--d_model"
+    description: "Dimensionality of the model."
+    info: null
+    default:
+    - 128
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "integer"
+    name: "--batch_size"
+    description: "Batch size."
+    info: null
+    default:
+    - 32
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "integer"
+    name: "--early_stopping"
+    description: "Number of epochs to wait for early stopping."
+    info: null
+    default:
+    - 5000
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
   resources:
   - type: "python_script"
     path: "script.py"
@@ -242,8 +275,6 @@ functionality:
     path: "utils.py"
   - type: "file"
     path: "train.py"
-  - type: "file"
-    path: "../../utils/anndata_to_dataframe.py"
   test_resources:
   - type: "python_script"
     path: "src/common/component_tests/run_and_check_output.py"
@@ -339,5 +370,5 @@ info:
   output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/transformer_ensemble"
   executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/docker/methods/transformer_ensemble/transformer_ensemble"
   viash_version: "0.8.6"
-  git_commit: "9313317ab0269002d3eaf1d325e6bb30db714e77"
+  git_commit: "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8"
   git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"

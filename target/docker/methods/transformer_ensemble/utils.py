@@ -22,29 +22,33 @@ def reduce_labels(Y, n_components):
 
 
 def prepare_augmented_data(
-        de_train,
+        de_train_h5ad,
         id_map,
+        layer,
         uncommon=False
     ):
-    de_train = de_train.drop(columns = ['split'])
     xlist = ['cell_type', 'sm_name']
-    _ylist = ['cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'control']
-    y = de_train.drop(columns=_ylist)
+    y = pd.DataFrame(
+        de_train_h5ad.layers[layer],
+        columns=de_train_h5ad.var_names,
+        index=de_train_h5ad.obs.index
+    )
 
     # Combine train and test data for one-hot encoding
-    combined_data = pd.concat([de_train[xlist], id_map[xlist]])
+    combined_data = pd.concat([de_train_h5ad.obs[xlist], id_map[xlist]])
 
     dum_data = pd.get_dummies(combined_data, columns=xlist)
 
     # Split the combined data back into train and test
-    train = dum_data.iloc[:len(de_train)]
-    test = dum_data.iloc[len(de_train):]
+    train = dum_data.iloc[:de_train_h5ad.n_obs]
+    test = dum_data.iloc[de_train_h5ad.n_obs:]
     if uncommon:
         uncommon = [f for f in train if f not in test]
         X = train.drop(columns=uncommon)
     X = train
-    de_cell_type = de_train.iloc[:, [0] + list(range(5, de_train.shape[1]))]
-    de_sm_name = de_train.iloc[:, [1] + list(range(5, de_train.shape[1]))]
+    
+    de_cell_type = pd.concat([de_train_h5ad.obs[['cell_type']], y], axis=1)
+    de_sm_name = pd.concat([de_train_h5ad.obs[['sm_name']], y], axis=1)
 
     mean_cell_type = de_cell_type.groupby('cell_type').mean().reset_index()
     std_cell_type = de_cell_type.groupby('cell_type').std().reset_index().fillna(0)
@@ -107,29 +111,30 @@ def prepare_augmented_data(
 
 
 def prepare_augmented_data_mean_only(
-        de_train,
+        de_train_h5ad,
+        layer,
         id_map
     ):
-    de_train = de_train.drop(columns = ['split'])
     xlist = ['cell_type', 'sm_name']
-    _ylist = ['cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'control']
-    y = de_train.drop(columns=_ylist)
-    # train = pd.get_dummies(de_train[xlist], columns=xlist)
-    # test = pd.get_dummies(id_map[xlist], columns=xlist)
+    y = pd.DataFrame(
+        de_train_h5ad.layers[layer],
+        columns=de_train_h5ad.var_names,
+        index=de_train_h5ad.obs.index
+    )
     # Combine train and test data for one-hot encoding
-    combined_data = pd.concat([de_train[xlist], id_map[xlist]])
+    combined_data = pd.concat([de_train_h5ad.obs[xlist], id_map[xlist]])
 
     dum_data = pd.get_dummies(combined_data, columns=xlist)
 
     # Split the combined data back into train and test
-    train = dum_data.iloc[:len(de_train)]
-    test = dum_data.iloc[len(de_train):]
+    train = dum_data.iloc[:de_train_h5ad.n_obs]
+    test = dum_data.iloc[de_train_h5ad.n_obs:]
     # uncommon = [f for f in train if f not in test]
     # X = train.drop(columns=uncommon)
 
     X = train
-    de_cell_type = de_train.iloc[:, [0] + list(range(5, de_train.shape[1]))]
-    de_sm_name = de_train.iloc[:, [1] + list(range(5, de_train.shape[1]))]
+    de_cell_type = pd.concat([de_train_h5ad.obs[['cell_type']], y], axis=1)
+    de_sm_name = pd.concat([de_train_h5ad.obs[['sm_name']], y], axis=1)
     mean_cell_type = de_cell_type.groupby('cell_type').mean().reset_index()
     mean_sm_name = de_sm_name.groupby('sm_name').mean().reset_index()
     rows = []

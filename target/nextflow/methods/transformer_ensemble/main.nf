@@ -3079,6 +3079,45 @@ meta = [
         "multiple" : false,
         "multiple_sep" : ":",
         "dest" : "par"
+      },
+      {
+        "type" : "integer",
+        "name" : "--d_model",
+        "description" : "Dimensionality of the model.",
+        "default" : [
+          128
+        ],
+        "required" : false,
+        "direction" : "input",
+        "multiple" : false,
+        "multiple_sep" : ":",
+        "dest" : "par"
+      },
+      {
+        "type" : "integer",
+        "name" : "--batch_size",
+        "description" : "Batch size.",
+        "default" : [
+          32
+        ],
+        "required" : false,
+        "direction" : "input",
+        "multiple" : false,
+        "multiple_sep" : ":",
+        "dest" : "par"
+      },
+      {
+        "type" : "integer",
+        "name" : "--early_stopping",
+        "description" : "Number of epochs to wait for early stopping.",
+        "default" : [
+          5000
+        ],
+        "required" : false,
+        "direction" : "input",
+        "multiple" : false,
+        "multiple_sep" : ":",
+        "dest" : "par"
       }
     ],
     "resources" : [
@@ -3101,11 +3140,6 @@ meta = [
       {
         "type" : "file",
         "path" : "train.py",
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/transformer_ensemble/"
-      },
-      {
-        "type" : "file",
-        "path" : "../../utils/anndata_to_dataframe.py",
         "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/transformer_ensemble/"
       }
     ],
@@ -3215,7 +3249,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/transformer_ensemble",
     "viash_version" : "0.8.6",
-    "git_commit" : "9313317ab0269002d3eaf1d325e6bb30db714e77",
+    "git_commit" : "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8",
     "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
   }
 }'''))
@@ -3234,7 +3268,7 @@ import pandas as pd
 import anndata as ad
 import sys
 import torch
-import copy
+import os
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -3246,7 +3280,10 @@ par = {
   'layer': $( if [ ! -z ${VIASH_PAR_LAYER+x} ]; then echo "r'${VIASH_PAR_LAYER//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'output_model': $( if [ ! -z ${VIASH_PAR_OUTPUT_MODEL+x} ]; then echo "r'${VIASH_PAR_OUTPUT_MODEL//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'num_train_epochs': $( if [ ! -z ${VIASH_PAR_NUM_TRAIN_EPOCHS+x} ]; then echo "int(r'${VIASH_PAR_NUM_TRAIN_EPOCHS//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi )
+  'num_train_epochs': $( if [ ! -z ${VIASH_PAR_NUM_TRAIN_EPOCHS+x} ]; then echo "int(r'${VIASH_PAR_NUM_TRAIN_EPOCHS//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'd_model': $( if [ ! -z ${VIASH_PAR_D_MODEL+x} ]; then echo "int(r'${VIASH_PAR_D_MODEL//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'batch_size': $( if [ ! -z ${VIASH_PAR_BATCH_SIZE+x} ]; then echo "int(r'${VIASH_PAR_BATCH_SIZE//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi ),
+  'early_stopping': $( if [ ! -z ${VIASH_PAR_EARLY_STOPPING+x} ]; then echo "int(r'${VIASH_PAR_EARLY_STOPPING//\\'/\\'\\"\\'\\"r\\'}')"; else echo None; fi )
 }
 meta = {
   'functionality_name': $( if [ ! -z ${VIASH_META_FUNCTIONALITY_NAME+x} ]; then echo "r'${VIASH_META_FUNCTIONALITY_NAME//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
@@ -3270,29 +3307,32 @@ dep = {
 
 sys.path.append(meta["resources_dir"])
 
-# Fixed training params
-d_model = 128
-batch_size = 32
-early_stopping = 5000
-
-from anndata_to_dataframe import anndata_to_dataframe
 from utils import prepare_augmented_data, prepare_augmented_data_mean_only
 from train import train_k_means_strategy, train_non_k_means_strategy
 
+# create output model directory if need be
+if par["output_model"]:
+    os.makedirs(par["output_model"], exist_ok=True)
+
 # read data
 de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
-de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
 id_map = pd.read_csv(par["id_map"])
+
+# convert .obs categoricals to string for ease of use
+for col in de_train_h5ad.obs.select_dtypes(include=["category"]).columns:
+    de_train_h5ad.obs[col] = de_train_h5ad.obs[col].astype(str)
+# reset index
+de_train_h5ad.obs.reset_index(drop=True, inplace=True)
 
 # determine other variables
 gene_names = list(de_train_h5ad.var_names)
 n_components = len(gene_names)
 
 # train and predict models
+# note, the weights intentionally don't add up to one
 argsets = [
     # Note by author - weight_df1: 0.5 (utilizing std, mean, and clustering sampling, yielding 0.551)
     {
-        "name": "weight_df1",
         "mean_std": "mean_std",
         "uncommon": False,
         "sampling_strategy": "random",
@@ -3300,7 +3340,6 @@ argsets = [
     },
     # Note by author - weight_df2: 0.25 (excluding uncommon elements, resulting in 0.559)
     {
-        "name": "weight_df2",
         "mean_std": "mean_std",
         "uncommon": True,
         "sampling_strategy": "random",
@@ -3308,7 +3347,6 @@ argsets = [
     },
     # Note by author - weight_df3: 0.25 (leveraging clustering sampling, achieving 0.575)
     {
-        "name": "weight_df3",
         "mean_std": "mean_std",
         "uncommon": False, # should this be set to False or True?
         "sampling_strategy": "k-means",
@@ -3316,9 +3354,8 @@ argsets = [
     },
     # Note by author - weight_df4: 0.3 (incorporating mean, random sampling, and excluding std, attaining 0.554)
     {
-        "name": "weight_df4",
         "mean_std": "mean",
-        "uncommon": False, # should this be set to False or True?
+        "uncommon": False,
         "sampling_strategy": "random",
         "weight": 0.3,
     }
@@ -3328,19 +3365,22 @@ argsets = [
 predictions = []
 
 print(f"Train and predict models", flush=True)
-for argset in argsets:
-    print(f"Train and predict model {argset['name']}", flush=True)
+for i, argset in enumerate(argsets):
+    print(f"Train and predict model {i+1}/{len(argsets)}", flush=True)
 
     print(f"> Prepare augmented data", flush=True)
     if argset["mean_std"] == "mean_std":
         one_hot_encode_features, targets, one_hot_test = prepare_augmented_data(
-            de_train=copy.deepcopy(de_train),
-            id_map=copy.deepcopy(id_map),
+            de_train_h5ad=de_train_h5ad,
+            id_map=id_map,
+            layer=par["layer"],
             uncommon=argset["uncommon"],
         )
     elif argset["mean_std"] == "mean":
-        one_hot_encode_features, targets, one_hot_test = (
-            prepare_augmented_data_mean_only(de_train=de_train, id_map=id_map)
+        one_hot_encode_features, targets, one_hot_test = prepare_augmented_data_mean_only(
+            de_train_h5ad=de_train_h5ad,
+            id_map=id_map,
+            layer=par["layer"],
         )
     else:
         raise ValueError("Invalid mean_std argument")
@@ -3349,24 +3389,24 @@ for argset in argsets:
     if argset["sampling_strategy"] == "k-means":
         label_reducer, scaler, transformer_model = train_k_means_strategy(
             n_components=n_components,
-            d_model=d_model,
+            d_model=par["d_model"],
             one_hot_encode_features=one_hot_encode_features,
             targets=targets,
             num_epochs=par["num_train_epochs"],
-            early_stopping=early_stopping,
-            batch_size=batch_size,
+            early_stopping=par["early_stopping"],
+            batch_size=par["batch_size"],
             device=device,
             mean_std=argset["mean_std"],
         )
     elif argset["sampling_strategy"] == "random":
         label_reducer, scaler, transformer_model = train_non_k_means_strategy(
             n_components=n_components,
-            d_model=d_model,
+            d_model=par["d_model"],
             one_hot_encode_features=one_hot_encode_features,
             targets=targets,
             num_epochs=par["num_train_epochs"],
-            early_stopping=early_stopping,
-            batch_size=batch_size,
+            early_stopping=par["early_stopping"],
+            batch_size=par["batch_size"],
             device=device,
             mean_std=argset["mean_std"],
         )
@@ -3386,8 +3426,8 @@ for argset in argsets:
     print(f"Predict on test data", flush=True)
     num_samples = len(unseen_data)
     transformed_data = []
-    for i in range(0, num_samples, batch_size):
-        batch_result = transformer_model(unseen_data[i : i + batch_size])
+    for i in range(0, num_samples, par["batch_size"]):
+        batch_result = transformer_model(unseen_data[i : i + par["batch_size"]])
         transformed_data.append(batch_result)
     transformed_data = torch.vstack(transformed_data)
     if scaler:
@@ -3398,13 +3438,20 @@ for argset in argsets:
         ).to(device)
 
     pred = transformed_data.cpu().detach().numpy()
+
+    if par["output_model"]:
+        model_path = f"{par['output_model']}/model_{i}.pt"
+        torch.save(transformer_model.state_dict(), model_path)
+        pred_path = f"{par['output_model']}/pred_{i}.csv"
+        pd.DataFrame(pred).to_csv(pred_path, index=False)
+
     predictions.append(pred)
 
 print(f"Combine predictions", flush=True)
 # compute weighted sum
-sum_weights = sum([argset["weight"] for argset in argsets])
+# note, the weights intentionally don't add up to one
 weighted_pred = sum([
-    pred * argset["weight"] / sum_weights
+    pred * argset["weight"]
     for argset, pred in zip(argsets, predictions)
 ])
 

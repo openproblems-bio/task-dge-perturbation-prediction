@@ -26,13 +26,24 @@ functionality:
       description: "Number of training epochs."
       info:
         test_default: 10
+    - name: --d_model
+      type: integer
+      default: 128
+      description: "Dimensionality of the model."
+    - name: --batch_size
+      type: integer
+      default: 32
+      description: "Batch size."
+    - name: --early_stopping
+      type: integer
+      default: 5000
+      description: "Number of epochs to wait for early stopping."
   resources:
     - type: python_script
       path: script.py
     - path: models.py
     - path: utils.py
     - path: train.py
-    - path: ../../utils/anndata_to_dataframe.py
 platforms:
   - type: docker
     image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
