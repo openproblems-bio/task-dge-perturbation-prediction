@@ -1,4 +1,4 @@
-# DGE Perturbation Prediction
+# Perturbation Prediction
 
 
 <!--
@@ -10,48 +10,54 @@ Predicting how small molecules change gene expression in different cell
 types.
 
 Path to source:
-[`src/task`](https://github.com/openproblems-bio/task-dge-perturbation-prediction/tree/main/src/task)
+[`src`](https://github.com/openproblems-bio/task_perturbation_prediction/tree/main/src)
+
+## README
 
 ## Installation
 
-You need to have Docker, Java, and Viash installed. Follow
-[these instructions](https://openproblems.bio/documentation/fundamentals/requirements)
+You need to have Docker, Java, and Viash installed. Follow [these
+instructions](https://openproblems.bio/documentation/fundamentals/requirements)
 to install the required dependencies.
 
 ## Add a method
 
-To add a method to the repository, follow the instructions in the `scripts/add_a_method.sh` script.
+To add a method to the repository, follow the instructions in the
+`scripts/add_a_method.sh` script.
 
 ## Frequently used commands
 
 To get started, you can run the following commands:
 
-```bash
-git clone git@github.com:openproblems-bio/task-dge-perturbation-prediction.git
+``` bash
+git clone git@github.com:openproblems-bio/task_perturbation_prediction.git
 
-cd task-dge-perturbation-prediction
+cd task_perturbation_prediction
 
 # download resources
 scripts/download_resources.sh
 ```
 
-To run the benchmark, you first need to build the components. Afterwards, you can run the benchmark:
+To run the benchmark, you first need to build the components.
+Afterwards, you can run the benchmark:
 
-```bash
+``` bash
 viash ns build --parallel --setup cachedbuild
 
 scripts/run_benchmark.sh
 ```
 
-After adding a component, it is recommended to run the tests to ensure that the component is working correctly:
+After adding a component, it is recommended to run the tests to ensure
+that the component is working correctly:
 
-```bash
+``` bash
 viash ns test --parallel
 ```
 
-Optionally, you can provide the `--query` argument to test only a subset of components:
+Optionally, you can provide the `--query` argument to test only a subset
+of components:
 
-```bash
+``` bash
 viash ns test --parallel --query "component_name"
 ```
 
@@ -114,41 +120,51 @@ perturbation responses in difference biological contexts.
 
 ## Authors & contributors
 
-| name              | roles  |
-|:------------------|:-------|
-| Artur Szałata     | author |
-| Robrecht Cannoodt | author |
+| name              | roles       |
+|:------------------|:------------|
+| Artur Szałata     | author      |
+| Robrecht Cannoodt | author      |
+| Daniel Burkhardt  | author      |
+| Malte D. Luecken  | author      |
+| Tin M. Tunjic     | contributor |
+| Mengbo Wang       | contributor |
+| Andrew Benz       | author      |
+| Tianyu Liu        | contributor |
+| Jalil Nourisa     | contributor |
+| Rico Meinl        | contributor |
 
 ## API
 
 ``` mermaid
 flowchart LR
   file_sc_counts("Single Cell Counts")
-  comp_process_dataset[/"Data processor"/]
-  file_de_train("DE train")
-  file_de_test("DE test")
+  comp_process_dataset[/"Process dataset"/]
+  file_de_train_h5ad("DE train")
+  file_de_test_h5ad("DE test")
   file_id_map("ID Map")
   comp_control_method[/"Control Method"/]
   comp_method[/"Method"/]
   comp_metric[/"Metric"/]
   file_prediction("Prediction")
+  file_model("Model")
   file_score("Score")
-  file_lincs_id_compound_mapping("Mapping compound names to lincs ids and smiles")
   file_sc_counts---comp_process_dataset
-  comp_process_dataset-->file_de_train
-  comp_process_dataset-->file_de_test
+  comp_process_dataset-->file_de_train_h5ad
+  comp_process_dataset-->file_de_test_h5ad
   comp_process_dataset-->file_id_map
-  file_de_train---comp_control_method
-  file_de_train---comp_method
-  file_de_test---comp_control_method
-  file_de_test---comp_metric
+  file_de_train_h5ad---comp_control_method
+  file_de_train_h5ad---comp_method_notest
+  file_de_train_h5ad---comp_method
+  file_de_test_h5ad---comp_control_method
+  file_de_test_h5ad---comp_metric
   file_id_map---comp_control_method
+  file_id_map---comp_method_notest
   file_id_map---comp_method
   comp_control_method-->file_prediction
   comp_method-->file_prediction
+  comp_method-->file_model
   comp_metric-->file_score
   file_prediction---comp_metric
-  file_lincs_id_compound_mapping---comp_process_dataset
 ```
 
 ## File format: Single Cell Counts
@@ -196,24 +212,23 @@ Slot description:
 
 </div>
 
-## Component type: Data processor
+## Component type: Process dataset
 
 Path:
 [`src/process_dataset`](https://github.com/openproblems-bio/openproblems-v2/tree/main/src/process_dataset)
 
-A DGE regression dataset processor
+Process the raw dataset
 
 Arguments:
 
 <div class="small">
 
-| Name                          | Type   | Description                                                                                  |
-|:------------------------------|:-------|:---------------------------------------------------------------------------------------------|
-| `--sc_counts`                 | `file` | Anndata with the counts of the whole dataset.                                                |
-| `--lincs_id_compound_mapping` | `file` | Parquet file mapping compound names to lincs ids and smiles.                                 |
-| `--de_train`                  | `file` | (*Output*) Differential expression results for training.                                     |
-| `--de_test`                   | `file` | (*Output*) Differential expression results for testing.                                      |
-| `--id_map`                    | `file` | (*Output*) File indicates the order of de_test, the cell types and the small molecule names. |
+| Name              | Type   | Description                                                                                                         |
+|:------------------|:-------|:--------------------------------------------------------------------------------------------------------------------|
+| `--sc_counts`     | `file` | Anndata with the counts of the whole dataset.                                                                       |
+| `--de_train_h5ad` | `file` | (*Output*) Differential expression results for training. Default: `de_train.h5ad`.                                  |
+| `--de_test_h5ad`  | `file` | (*Output*) Differential expression results for testing. Default: `de_test.h5ad`.                                    |
+| `--id_map`        | `file` | (*Output*) File indicates the order of de_test, the cell types and the small molecule names. Default: `id_map.csv`. |
 
 </div>
 
@@ -229,7 +244,8 @@ Format:
 
     AnnData object
      obs: 'cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'split', 'control'
-     layers: 'P.Value', 'adj.P.Value', 'is_de', 'is_de_adj', 'logFC', 'sign_log10_pval'
+     layers: 'logFC', 'AveExpr', 't', 'P.Value', 'adj.P.Value', 'B', 'is_de', 'is_de_adj', 'sign_log10_pval', 'clipped_sign_log10_pval'
+     uns: 'dataset_id', 'dataset_name', 'dataset_url', 'dataset_reference', 'dataset_summary', 'dataset_description', 'dataset_organism', 'single_cell_obs'
 
 </div>
 
@@ -237,20 +253,32 @@ Slot description:
 
 <div class="small">
 
-| Slot                        | Type      | Description                                                                                                                                                                                                                                                                                                      |
-|:----------------------------|:----------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `obs["cell_type"]`          | `string`  | The annotated cell type of each cell based on RNA expression.                                                                                                                                                                                                                                                    |
-| `obs["sm_name"]`            | `string`  | The primary name for the (parent) compound (in a standardized representation) as chosen by LINCS. This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                        |
-| `obs["sm_lincs_id"]`        | `string`  | The global LINCS ID (parent) compound (in a standardized representation). This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                                                |
-| `obs["SMILES"]`             | `string`  | Simplified molecular-input line-entry system (SMILES) representations of the compounds used in the experiment. This is a 1D representation of molecular structure. These SMILES are provided by Cellarity based on the specific compounds ordered for this experiment.                                           |
-| `obs["split"]`              | `string`  | Split. Must be one of ‘control’, ‘train’, ‘public_test’, or ‘private_test’.                                                                                                                                                                                                                                      |
-| `obs["control"]`            | `boolean` | Boolean indicating whether this instance was used as a control.                                                                                                                                                                                                                                                  |
-| `layers["P.Value"]`         | `double`  | P-value of the differential expression test.                                                                                                                                                                                                                                                                     |
-| `layers["adj.P.Value"]`     | `double`  | Adjusted P-value of the differential expression test.                                                                                                                                                                                                                                                            |
-| `layers["is_de"]`           | `boolean` | Whether the gene is differentially expressed.                                                                                                                                                                                                                                                                    |
-| `layers["is_de_adj"]`       | `boolean` | Whether the gene is differentially expressed after adjustment.                                                                                                                                                                                                                                                   |
-| `layers["logFC"]`           | `double`  | Log fold change of the differential expression test.                                                                                                                                                                                                                                                             |
-| `layers["sign_log10_pval"]` | `double`  | Differential expression value (-log10(p-value) \* sign(LFC)) for each gene. Here, LFC is the estimated log-fold change in expression between the treatment and control condition after shrinkage as calculated by Limma. Positive LFC means the gene goes up in the treatment condition relative to the control. |
+| Slot                                | Type        | Description                                                                                                                                                                                                                                                                                                       |
+|:------------------------------------|:------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `obs["cell_type"]`                  | `string`    | The annotated cell type of each cell based on RNA expression.                                                                                                                                                                                                                                                     |
+| `obs["sm_name"]`                    | `string`    | The primary name for the (parent) compound (in a standardized representation) as chosen by LINCS. This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                         |
+| `obs["sm_lincs_id"]`                | `string`    | The global LINCS ID (parent) compound (in a standardized representation). This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                                                 |
+| `obs["SMILES"]`                     | `string`    | Simplified molecular-input line-entry system (SMILES) representations of the compounds used in the experiment. This is a 1D representation of molecular structure. These SMILES are provided by Cellarity based on the specific compounds ordered for this experiment.                                            |
+| `obs["split"]`                      | `string`    | Split. Must be one of ‘control’, ‘train’, ‘public_test’, or ‘private_test’.                                                                                                                                                                                                                                       |
+| `obs["control"]`                    | `boolean`   | Boolean indicating whether this instance was used as a control.                                                                                                                                                                                                                                                   |
+| `layers["logFC"]`                   | `double`    | Log fold change of the differential expression test.                                                                                                                                                                                                                                                              |
+| `layers["AveExpr"]`                 | `double`    | (*Optional*) Average expression of the differential expression test.                                                                                                                                                                                                                                              |
+| `layers["t"]`                       | `double`    | (*Optional*) T-statistic of the differential expression test.                                                                                                                                                                                                                                                     |
+| `layers["P.Value"]`                 | `double`    | P-value of the differential expression test.                                                                                                                                                                                                                                                                      |
+| `layers["adj.P.Value"]`             | `double`    | Adjusted P-value of the differential expression test.                                                                                                                                                                                                                                                             |
+| `layers["B"]`                       | `double`    | (*Optional*) B-statistic of the differential expression test.                                                                                                                                                                                                                                                     |
+| `layers["is_de"]`                   | `boolean`   | Whether the gene is differentially expressed.                                                                                                                                                                                                                                                                     |
+| `layers["is_de_adj"]`               | `boolean`   | Whether the gene is differentially expressed after adjustment.                                                                                                                                                                                                                                                    |
+| `layers["sign_log10_pval"]`         | `double`    | Differential expression value (`-log10(p-value) * sign(LFC)`) for each gene. Here, LFC is the estimated log-fold change in expression between the treatment and control condition after shrinkage as calculated by Limma. Positive LFC means the gene goes up in the treatment condition relative to the control. |
+| `layers["clipped_sign_log10_pval"]` | `double`    | A clipped version of the sign_log10_pval layer. Values are clipped to be between -4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).                                                                                                                                                                           |
+| `uns["dataset_id"]`                 | `string`    | A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived.                                                                                                                                              |
+| `uns["dataset_name"]`               | `string`    | A human-readable name for the dataset.                                                                                                                                                                                                                                                                            |
+| `uns["dataset_url"]`                | `string`    | (*Optional*) Link to the original source of the dataset.                                                                                                                                                                                                                                                          |
+| `uns["dataset_reference"]`          | `string`    | (*Optional*) Bibtex reference of the paper in which the dataset was published.                                                                                                                                                                                                                                    |
+| `uns["dataset_summary"]`            | `string`    | Short description of the dataset.                                                                                                                                                                                                                                                                                 |
+| `uns["dataset_description"]`        | `string`    | Long description of the dataset.                                                                                                                                                                                                                                                                                  |
+| `uns["dataset_organism"]`           | `string`    | (*Optional*) The organism of the sample in the dataset.                                                                                                                                                                                                                                                           |
+| `uns["single_cell_obs"]`            | `dataframe` | A dataframe with the cell-level metadata for the training set.                                                                                                                                                                                                                                                    |
 
 </div>
 
@@ -265,8 +293,9 @@ Format:
 <div class="small">
 
     AnnData object
-     obs: 'id', 'cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'split', 'control'
-     layers: 'P.Value', 'adj.P.Value', 'is_de', 'is_de_adj', 'logFC', 'sign_log10_pval'
+     obs: 'cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'split', 'control'
+     layers: 'logFC', 'AveExpr', 't', 'P.Value', 'adj.P.Value', 'B', 'is_de', 'is_de_adj', 'sign_log10_pval', 'clipped_sign_log10_pval'
+     uns: 'dataset_id', 'dataset_name', 'dataset_url', 'dataset_reference', 'dataset_summary', 'dataset_description', 'dataset_organism', 'single_cell_obs'
 
 </div>
 
@@ -274,21 +303,32 @@ Slot description:
 
 <div class="small">
 
-| Slot                        | Type      | Description                                                                                                                                                                                                                                                                                                      |
-|:----------------------------|:----------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `obs["id"]`                 | `integer` | Index of the test observation.                                                                                                                                                                                                                                                                                   |
-| `obs["cell_type"]`          | `string`  | The annotated cell type of each cell based on RNA expression.                                                                                                                                                                                                                                                    |
-| `obs["sm_name"]`            | `string`  | The primary name for the (parent) compound (in a standardized representation) as chosen by LINCS. This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                        |
-| `obs["sm_lincs_id"]`        | `string`  | The global LINCS ID (parent) compound (in a standardized representation). This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                                                |
-| `obs["SMILES"]`             | `string`  | Simplified molecular-input line-entry system (SMILES) representations of the compounds used in the experiment. This is a 1D representation of molecular structure. These SMILES are provided by Cellarity based on the specific compounds ordered for this experiment.                                           |
-| `obs["split"]`              | `string`  | Split. Must be one of ‘control’, ‘train’, ‘public_test’, or ‘private_test’.                                                                                                                                                                                                                                      |
-| `obs["control"]`            | `boolean` | Boolean indicating whether this instance was used as a control.                                                                                                                                                                                                                                                  |
-| `layers["P.Value"]`         | `double`  | P-value of the differential expression test.                                                                                                                                                                                                                                                                     |
-| `layers["adj.P.Value"]`     | `double`  | Adjusted P-value of the differential expression test.                                                                                                                                                                                                                                                            |
-| `layers["is_de"]`           | `boolean` | Whether the gene is differentially expressed.                                                                                                                                                                                                                                                                    |
-| `layers["is_de_adj"]`       | `boolean` | Whether the gene is differentially expressed after adjustment.                                                                                                                                                                                                                                                   |
-| `layers["logFC"]`           | `double`  | Log fold change of the differential expression test.                                                                                                                                                                                                                                                             |
-| `layers["sign_log10_pval"]` | `double`  | Differential expression value (-log10(p-value) \* sign(LFC)) for each gene. Here, LFC is the estimated log-fold change in expression between the treatment and control condition after shrinkage as calculated by Limma. Positive LFC means the gene goes up in the treatment condition relative to the control. |
+| Slot                                | Type        | Description                                                                                                                                                                                                                                                                                                       |
+|:------------------------------------|:------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `obs["cell_type"]`                  | `string`    | The annotated cell type of each cell based on RNA expression.                                                                                                                                                                                                                                                     |
+| `obs["sm_name"]`                    | `string`    | The primary name for the (parent) compound (in a standardized representation) as chosen by LINCS. This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                         |
+| `obs["sm_lincs_id"]`                | `string`    | The global LINCS ID (parent) compound (in a standardized representation). This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                                                 |
+| `obs["SMILES"]`                     | `string`    | Simplified molecular-input line-entry system (SMILES) representations of the compounds used in the experiment. This is a 1D representation of molecular structure. These SMILES are provided by Cellarity based on the specific compounds ordered for this experiment.                                            |
+| `obs["split"]`                      | `string`    | Split. Must be one of ‘control’, ‘train’, ‘public_test’, or ‘private_test’.                                                                                                                                                                                                                                       |
+| `obs["control"]`                    | `boolean`   | Boolean indicating whether this instance was used as a control.                                                                                                                                                                                                                                                   |
+| `layers["logFC"]`                   | `double`    | Log fold change of the differential expression test.                                                                                                                                                                                                                                                              |
+| `layers["AveExpr"]`                 | `double`    | (*Optional*) Average expression of the differential expression test.                                                                                                                                                                                                                                              |
+| `layers["t"]`                       | `double`    | (*Optional*) T-statistic of the differential expression test.                                                                                                                                                                                                                                                     |
+| `layers["P.Value"]`                 | `double`    | P-value of the differential expression test.                                                                                                                                                                                                                                                                      |
+| `layers["adj.P.Value"]`             | `double`    | Adjusted P-value of the differential expression test.                                                                                                                                                                                                                                                             |
+| `layers["B"]`                       | `double`    | (*Optional*) B-statistic of the differential expression test.                                                                                                                                                                                                                                                     |
+| `layers["is_de"]`                   | `boolean`   | Whether the gene is differentially expressed.                                                                                                                                                                                                                                                                     |
+| `layers["is_de_adj"]`               | `boolean`   | Whether the gene is differentially expressed after adjustment.                                                                                                                                                                                                                                                    |
+| `layers["sign_log10_pval"]`         | `double`    | Differential expression value (`-log10(p-value) * sign(LFC)`) for each gene. Here, LFC is the estimated log-fold change in expression between the treatment and control condition after shrinkage as calculated by Limma. Positive LFC means the gene goes up in the treatment condition relative to the control. |
+| `layers["clipped_sign_log10_pval"]` | `double`    | A clipped version of the sign_log10_pval layer. Values are clipped to be between -4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).                                                                                                                                                                           |
+| `uns["dataset_id"]`                 | `string`    | A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived.                                                                                                                                              |
+| `uns["dataset_name"]`               | `string`    | A human-readable name for the dataset.                                                                                                                                                                                                                                                                            |
+| `uns["dataset_url"]`                | `string`    | (*Optional*) Link to the original source of the dataset.                                                                                                                                                                                                                                                          |
+| `uns["dataset_reference"]`          | `string`    | (*Optional*) Bibtex reference of the paper in which the dataset was published.                                                                                                                                                                                                                                    |
+| `uns["dataset_summary"]`            | `string`    | Short description of the dataset.                                                                                                                                                                                                                                                                                 |
+| `uns["dataset_description"]`        | `string`    | Long description of the dataset.                                                                                                                                                                                                                                                                                  |
+| `uns["dataset_organism"]`           | `string`    | (*Optional*) The organism of the sample in the dataset.                                                                                                                                                                                                                                                           |
+| `uns["single_cell_obs"]`            | `dataframe` | A dataframe with the cell-level metadata.                                                                                                                                                                                                                                                                         |
 
 </div>
 
@@ -303,8 +343,8 @@ Format:
 
 <div class="small">
 
-    AnnData object
-     obs: 'id', 'cell_type', 'sm_name'
+    Tabular data
+     'id', 'cell_type', 'sm_name'
 
 </div>
 
@@ -312,11 +352,11 @@ Slot description:
 
 <div class="small">
 
-| Slot               | Type      | Description                    |
-|:-------------------|:----------|:-------------------------------|
-| `obs["id"]`        | `integer` | Index of the test observation. |
-| `obs["cell_type"]` | `string`  | Cell type name.                |
-| `obs["sm_name"]`   | `string`  | Small molecule name.           |
+| Column      | Type      | Description                    |
+|:------------|:----------|:-------------------------------|
+| `id`        | `integer` | Index of the test observation. |
+| `cell_type` | `string`  | Cell type name.                |
+| `sm_name`   | `string`  | Small molecule name.           |
 
 </div>
 
@@ -331,14 +371,16 @@ Arguments:
 
 <div class="small">
 
-| Name         | Type   | Description                                                                       |
-|:-------------|:-------|:----------------------------------------------------------------------------------|
-| `--de_train` | `file` | Differential expression results for training.                                     |
-| `--de_test`  | `file` | Differential expression results for testing.                                      |
-| `--id_map`   | `file` | File indicates the order of de_test, the cell types and the small molecule names. |
-| `--output`   | `file` | (*Output*) Differential Gene Expression prediction.                               |
+| Name              | Type     | Description                                                                         |
+|:------------------|:---------|:------------------------------------------------------------------------------------|
+| `--de_train_h5ad` | `file`   | (*Optional*) Differential expression results for training.                          |
+| `--de_test_h5ad`  | `file`   | Differential expression results for testing.                                        |
+| `--id_map`        | `file`   | File indicates the order of de_test, the cell types and the small molecule names.   |
+| `--layer`         | `string` | (*Optional*) Which layer to use for prediction. Default: `clipped_sign_log10_pval`. |
+| `--output`        | `file`   | (*Output*) Differential Gene Expression prediction.                                 |
 
 </div>
+
 
 ## Component type: Method
 
@@ -351,11 +393,13 @@ Arguments:
 
 <div class="small">
 
-| Name         | Type   | Description                                                                       |
-|:-------------|:-------|:----------------------------------------------------------------------------------|
-| `--de_train` | `file` | Differential expression results for training.                                     |
-| `--id_map`   | `file` | File indicates the order of de_test, the cell types and the small molecule names. |
-| `--output`   | `file` | (*Output*) Differential Gene Expression prediction.                               |
+| Name              | Type     | Description                                                                                                         |
+|:------------------|:---------|:--------------------------------------------------------------------------------------------------------------------|
+| `--de_train_h5ad` | `file`   | (*Optional*) Differential expression results for training.                                                          |
+| `--id_map`        | `file`   | File indicates the order of de_test, the cell types and the small molecule names.                                   |
+| `--layer`         | `string` | (*Optional*) Which layer to use for prediction. Default: `clipped_sign_log10_pval`.                                 |
+| `--output`        | `file`   | (*Output*) Differential Gene Expression prediction.                                                                 |
+| `--output_model`  | `file`   | (*Optional, Output*) Optional model output. If no value is passed, the model will be removed at the end of the run. |
 
 </div>
 
@@ -370,11 +414,15 @@ Arguments:
 
 <div class="small">
 
-| Name           | Type   | Description                                       |
-|:---------------|:-------|:--------------------------------------------------|
-| `--de_test`    | `file` | Differential expression results for testing.      |
-| `--prediction` | `file` | Differential Gene Expression prediction.          |
-| `--output`     | `file` | (*Output*) File indicating the score of a metric. |
+| Name                 | Type     | Description                                                                                   |
+|:---------------------|:---------|:----------------------------------------------------------------------------------------------|
+| `--de_test_h5ad`     | `file`   | Differential expression results for testing.                                                  |
+| `--de_test_layer`    | `string` | (*Optional*) In which layer to find the DE data. Default: `clipped_sign_log10_pval`.          |
+| `--prediction`       | `file`   | Differential Gene Expression prediction.                                                      |
+| `--prediction_layer` | `string` | (*Optional*) In which layer to find the predicted DE data. Default: `prediction`.             |
+| `--output`           | `file`   | (*Output*) File indicating the score of a metric.                                             |
+| `--resolve_genes`    | `string` | (*Optional*) How to resolve difference in genes between the two datasets. Default: `de_test`. |
+| `--resolve_genes`    | `string` | (*Optional*) How to resolve difference in genes between the two datasets. Default: `de_test`. |
 
 </div>
 
@@ -382,15 +430,15 @@ Arguments:
 
 Differential Gene Expression prediction
 
-Example file: `resources/neurips-2023-data/output_rf.parquet`
+Example file: `resources/neurips-2023-data/prediction.h5ad`
 
 Format:
 
 <div class="small">
 
     AnnData object
-     obs: 'id'
-     layers: 'sign_log10_pval'
+     layers: 'prediction'
+     uns: 'dataset_id', 'method_id'
 
 </div>
 
@@ -398,10 +446,30 @@ Slot description:
 
 <div class="small">
 
-| Slot                        | Type      | Description                                                          |
-|:----------------------------|:----------|:---------------------------------------------------------------------|
-| `obs["id"]`                 | `integer` | Index of the test observation.                                       |
-| `layers["sign_log10_pval"]` | `double`  | Predicted sign of the logFC times the log10 of the adjusted p-value. |
+| Slot                   | Type     | Description                                                                                                                                                          |
+|:-----------------------|:---------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `layers["prediction"]` | `double` | Predicted differential gene expression.                                                                                                                              |
+| `uns["dataset_id"]`    | `string` | A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived. |
+| `uns["method_id"]`     | `string` | A unique identifier for the method used to generate the prediction.                                                                                                  |
+
+</div>
+
+## File format: Model
+
+Optional model output. If no value is passed, the model will be removed
+at the end of the run.
+
+Example file: `resources/neurips-2023-data/model/`
+
+Format:
+
+<div class="small">
+
+</div>
+
+Slot description:
+
+<div class="small">
 
 </div>
 
@@ -409,7 +477,7 @@ Slot description:
 
 File indicating the score of a metric.
 
-Example file: `resources/neurips-2023-data/score_rf.json`
+Example file: `resources/neurips-2023-data/score.h5ad`
 
 Format:
 
@@ -430,35 +498,6 @@ Slot description:
 | `uns["method_id"]`     | `string` | A unique identifier for the method.                                                          |
 | `uns["metric_ids"]`    | `string` | One or more unique metric identifiers.                                                       |
 | `uns["metric_values"]` | `double` | The metric values obtained for the given prediction. Must be of same length as ‘metric_ids’. |
-
-</div>
-
-## File format: Mapping compound names to lincs ids and smiles
-
-Parquet file mapping compound names to lincs ids and smiles.
-
-Example file:
-`resources/neurips-2023-raw/lincs_id_compound_mapping.parquet`
-
-Format:
-
-<div class="small">
-
-    AnnData object
-     obs: 'compound_id', 'sm_lincs_id', 'sm_name', 'smiles'
-
-</div>
-
-Slot description:
-
-<div class="small">
-
-| Slot                 | Type     | Description                                           |
-|:---------------------|:---------|:------------------------------------------------------|
-| `obs["compound_id"]` | `string` | Unique identifier for the compound.                   |
-| `obs["sm_lincs_id"]` | `string` | LINCS identifier for the compound.                    |
-| `obs["sm_name"]`     | `string` | Name of the compound.                                 |
-| `obs["smiles"]`      | `string` | SMILES notation representing the molecular structure. |
 
 </div>
 

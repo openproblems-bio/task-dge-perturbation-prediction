@@ -3101,13 +3101,13 @@ meta = [
         "type" : "nextflow_script",
         "path" : "main.nf",
         "is_executable" : true,
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/workflows/run_stability_analysis/",
+        "parent" : "file:/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/workflows/run_stability_analysis/",
         "entrypoint" : "run_wf"
       },
       {
         "type" : "file",
         "path" : "../../api/task_info.yaml",
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/workflows/run_stability_analysis/"
+        "parent" : "file:/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/workflows/run_stability_analysis/"
       }
     ],
     "status" : "enabled",
@@ -3118,20 +3118,20 @@ meta = [
           "type" : "local",
           "localPath" : ""
         },
-        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/config.vsh.yaml",
+        "foundConfigPath" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/process_dataset/bootstrap/config.vsh.yaml",
         "configInfo" : {
           "functionalityName" : "bootstrap",
           "git_tag" : "",
-          "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
+          "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction",
           "viash_version" : "0.8.6",
-          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/bootstrap/config.vsh.yaml",
+          "config" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/process_dataset/bootstrap/config.vsh.yaml",
           "functionalityNamespace" : "process_dataset",
           "output" : "",
           "platform" : "",
-          "git_commit" : "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8",
+          "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
           "executable" : "/nextflow/process_dataset/bootstrap/main.nf"
         },
-        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/bootstrap"
+        "writtenPath" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/process_dataset/bootstrap"
       },
       {
         "name" : "workflows/process_dataset",
@@ -3139,20 +3139,20 @@ meta = [
           "type" : "local",
           "localPath" : ""
         },
-        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/workflows/process_dataset/config.vsh.yaml",
+        "foundConfigPath" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/workflows/process_dataset/config.vsh.yaml",
         "configInfo" : {
           "functionalityName" : "process_dataset",
           "git_tag" : "",
-          "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
+          "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction",
           "viash_version" : "0.8.6",
-          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/workflows/process_dataset/config.vsh.yaml",
+          "config" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/workflows/process_dataset/config.vsh.yaml",
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8",
+          "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
           "executable" : "/nextflow/workflows/process_dataset/main.nf"
         },
-        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/process_dataset"
+        "writtenPath" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/workflows/process_dataset"
       },
       {
         "name" : "workflows/run_benchmark",
@@ -3160,20 +3160,20 @@ meta = [
           "type" : "local",
           "localPath" : ""
         },
-        "foundConfigPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/workflows/run_benchmark/config.vsh.yaml",
+        "foundConfigPath" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/workflows/run_benchmark/config.vsh.yaml",
         "configInfo" : {
           "functionalityName" : "run_benchmark",
           "git_tag" : "",
-          "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
+          "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction",
           "viash_version" : "0.8.6",
-          "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/workflows/run_benchmark/config.vsh.yaml",
+          "config" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/workflows/run_benchmark/config.vsh.yaml",
           "functionalityNamespace" : "workflows",
           "output" : "",
           "platform" : "",
-          "git_commit" : "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8",
+          "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
           "executable" : "/nextflow/workflows/run_benchmark/main.nf"
         },
-        "writtenPath" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_benchmark"
+        "writtenPath" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/workflows/run_benchmark"
       }
     ],
     "repositories" : [
@@ -3222,12 +3222,12 @@ meta = [
     }
   ],
   "info" : {
-    "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/workflows/run_stability_analysis/config.vsh.yaml",
+    "config" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/workflows/run_stability_analysis/config.vsh.yaml",
     "platform" : "nextflow",
-    "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/workflows/run_stability_analysis",
+    "output" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/workflows/run_stability_analysis",
     "viash_version" : "0.8.6",
-    "git_commit" : "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8",
-    "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+    "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
+    "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   }
 }'''))
 ]

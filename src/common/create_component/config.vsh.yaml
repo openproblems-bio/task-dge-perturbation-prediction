@@ -24,7 +24,7 @@ functionality:
       direction: output
       # required: true
       description: Path to the component directory. Suggested location is `src/<TASK>/<TYPE>s/<NAME>`.
-      default: src/task/methods/${VIASH_PAR_NAME}
+      default: src/methods/${VIASH_PAR_NAME}
     - type: file
       name: --api_file
       description: |
@@ -33,7 +33,7 @@ functionality:
         to manually specify a different API file to inherit from.
       must_exist: false
       # required: true
-      default: src/task/api/comp_method.yaml
+      default: src/api/comp_method.yaml
     - type: file
       name: --viash_yaml
       description: |

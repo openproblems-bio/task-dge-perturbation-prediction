@@ -2818,7 +2818,7 @@ meta = [
         "type" : "r_script",
         "path" : "script.R",
         "is_executable" : true,
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/clean_pseudobulk/"
+        "parent" : "file:/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/process_dataset/clean_pseudobulk/"
       }
     ],
     "info" : {
@@ -2837,13 +2837,13 @@ meta = [
       "type" : "docker",
       "id" : "docker",
       "image" : "ghcr.io/openproblems-bio/base_r:1.0.4",
-      "target_organization" : "openproblems-bio/task-dge-perturbation-prediction",
+      "target_organization" : "openproblems-bio/task_perturbation_prediction",
       "target_registry" : "ghcr.io",
       "namespace_separator" : "/",
       "resolve_volume" : "Automatic",
       "chown" : true,
       "setup_strategy" : "ifneedbepullelsecachedbuild",
-      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
+      "target_image_source" : "https://github.com/openproblems-bio/task_perturbation_prediction",
       "setup" : [
         {
           "type" : "r",
@@ -2898,12 +2898,12 @@ meta = [
     }
   ],
   "info" : {
-    "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/process_dataset/clean_pseudobulk/config.vsh.yaml",
+    "config" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/process_dataset/clean_pseudobulk/config.vsh.yaml",
     "platform" : "nextflow",
-    "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/process_dataset/filter_vars",
+    "output" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/process_dataset/filter_vars",
     "viash_version" : "0.8.6",
-    "git_commit" : "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8",
-    "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+    "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
+    "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   }
 }'''))
 ]
@@ -3344,7 +3344,7 @@ meta["defaults"] = [
   directives: readJsonBlob('''{
   "container" : {
     "registry" : "ghcr.io",
-    "image" : "openproblems-bio/task-dge-perturbation-prediction/process_dataset/filter_vars",
+    "image" : "openproblems-bio/task_perturbation_prediction/process_dataset/filter_vars",
     "tag" : "main_build"
   },
   "label" : [

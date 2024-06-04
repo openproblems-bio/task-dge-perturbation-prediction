@@ -3055,7 +3055,14 @@ meta = [
       {
         "type" : "file",
         "name" : "--output_model",
-        "description" : "Optional model output. If no value is passed, the model will be removed at the end of the run.",
+        "info" : {
+          "label" : "Model",
+          "summary" : "Optional model output. If no value is passed, the model will be removed at the end of the run.",
+          "file_type" : "directory"
+        },
+        "example" : [
+          "resources/neurips-2023-data/model"
+        ],
         "must_exist" : false,
         "create_parent" : true,
         "required" : false,
@@ -3086,22 +3093,22 @@ meta = [
         "type" : "python_script",
         "path" : "script.py",
         "is_executable" : true,
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/nn_retraining_with_pseudolabels/"
+        "parent" : "file:/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/methods/nn_retraining_with_pseudolabels/"
       },
       {
         "type" : "file",
         "path" : "notebook_264.py",
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/nn_retraining_with_pseudolabels/"
+        "parent" : "file:/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/methods/nn_retraining_with_pseudolabels/"
       },
       {
         "type" : "file",
         "path" : "notebook_266.py",
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/nn_retraining_with_pseudolabels/"
+        "parent" : "file:/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/methods/nn_retraining_with_pseudolabels/"
       },
       {
         "type" : "file",
         "path" : "../../utils/anndata_to_dataframe.py",
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/nn_retraining_with_pseudolabels/"
+        "parent" : "file:/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/methods/nn_retraining_with_pseudolabels/"
       }
     ],
     "test_resources" : [
@@ -3109,13 +3116,13 @@ meta = [
         "type" : "python_script",
         "path" : "src/common/component_tests/run_and_check_output.py",
         "is_executable" : true,
-        "parent" : "file:///home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/"
+        "parent" : "file:///home/runner/work/task_perturbation_prediction/task_perturbation_prediction/"
       },
       {
         "type" : "file",
         "path" : "resources/neurips-2023-data",
         "dest" : "resources/neurips-2023-data",
-        "parent" : "file:///home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/"
+        "parent" : "file:///home/runner/work/task_perturbation_prediction/task_perturbation_prediction/"
       }
     ],
     "info" : {
@@ -3140,13 +3147,13 @@ meta = [
       "type" : "docker",
       "id" : "docker",
       "image" : "nvcr.io/nvidia/tensorflow:24.03-tf2-py3",
-      "target_organization" : "openproblems-bio/task-dge-perturbation-prediction",
+      "target_organization" : "openproblems-bio/task_perturbation_prediction",
       "target_registry" : "ghcr.io",
       "namespace_separator" : "/",
       "resolve_volume" : "Automatic",
       "chown" : true,
       "setup_strategy" : "ifneedbepullelsecachedbuild",
-      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
+      "target_image_source" : "https://github.com/openproblems-bio/task_perturbation_prediction",
       "setup" : [
         {
           "type" : "apt",
@@ -3223,12 +3230,12 @@ meta = [
     }
   ],
   "info" : {
-    "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/methods/nn_retraining_with_pseudolabels/config.vsh.yaml",
+    "config" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/methods/nn_retraining_with_pseudolabels/config.vsh.yaml",
     "platform" : "nextflow",
-    "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/methods/nn_retraining_with_pseudolabels",
+    "output" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/methods/nn_retraining_with_pseudolabels",
     "viash_version" : "0.8.6",
-    "git_commit" : "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8",
-    "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+    "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
+    "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   }
 }'''))
 ]
@@ -3689,7 +3696,7 @@ meta["defaults"] = [
   directives: readJsonBlob('''{
   "container" : {
     "registry" : "ghcr.io",
-    "image" : "openproblems-bio/task-dge-perturbation-prediction/methods/nn_retraining_with_pseudolabels",
+    "image" : "openproblems-bio/task_perturbation_prediction/methods/nn_retraining_with_pseudolabels",
     "tag" : "main_build"
   },
   "label" : [

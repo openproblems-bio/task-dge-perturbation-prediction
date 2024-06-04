@@ -33,7 +33,7 @@ functionality:
     description: "Path to the component directory. Suggested location is `src/<TASK>/<TYPE>s/<NAME>`."
     info: null
     default:
-    - "src/task/methods/${VIASH_PAR_NAME}"
+    - "src/methods/${VIASH_PAR_NAME}"
     must_exist: true
     create_parent: true
     required: false
@@ -48,7 +48,7 @@ functionality:
       \ you might need\nto manually specify a different API file to inherit from.\n"
     info: null
     default:
-    - "src/task/api/comp_method.yaml"
+    - "src/api/comp_method.yaml"
     must_exist: false
     create_parent: true
     required: false
@@ -86,13 +86,13 @@ platforms:
 - type: "docker"
   id: "docker"
   image: "python:3.10-slim"
-  target_organization: "openproblems-bio/task-dge-perturbation-prediction"
+  target_organization: "openproblems-bio/task_perturbation_prediction"
   target_registry: "ghcr.io"
   namespace_separator: "/"
   resolve_volume: "Automatic"
   chown: true
   setup_strategy: "ifneedbepullelsecachedbuild"
-  target_image_source: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+  target_image_source: "https://github.com/openproblems-bio/task_perturbation_prediction"
   setup:
   - type: "python"
     user: false
@@ -129,10 +129,10 @@ platforms:
   debug: false
   container: "docker"
 info:
-  config: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/common/create_component/config.vsh.yaml"
+  config: "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/common/create_component/config.vsh.yaml"
   platform: "nextflow"
-  output: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/common/create_component"
-  executable: "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/common/create_component/create_component"
+  output: "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/common/create_component"
+  executable: "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/common/create_component/create_component"
   viash_version: "0.8.6"
-  git_commit: "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8"
-  git_remote: "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+  git_commit: "aaa0ca579115d226cac9577d7da1c1c60ff6c031"
+  git_remote: "https://github.com/openproblems-bio/task_perturbation_prediction"

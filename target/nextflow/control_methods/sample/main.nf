@@ -3231,7 +3231,7 @@ meta = [
         "type" : "r_script",
         "path" : "script.R",
         "is_executable" : true,
-        "parent" : "file:/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/sample/"
+        "parent" : "file:/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/control_methods/sample/"
       }
     ],
     "test_resources" : [
@@ -3239,13 +3239,13 @@ meta = [
         "type" : "python_script",
         "path" : "src/common/component_tests/run_and_check_output.py",
         "is_executable" : true,
-        "parent" : "file:///home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/"
+        "parent" : "file:///home/runner/work/task_perturbation_prediction/task_perturbation_prediction/"
       },
       {
         "type" : "file",
         "path" : "resources/neurips-2023-data",
         "dest" : "resources/neurips-2023-data",
-        "parent" : "file:///home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/"
+        "parent" : "file:///home/runner/work/task_perturbation_prediction/task_perturbation_prediction/"
       }
     ],
     "info" : {
@@ -3268,13 +3268,13 @@ meta = [
       "type" : "docker",
       "id" : "docker",
       "image" : "ghcr.io/openproblems-bio/base_r:1.0.4",
-      "target_organization" : "openproblems-bio/task-dge-perturbation-prediction",
+      "target_organization" : "openproblems-bio/task_perturbation_prediction",
       "target_registry" : "ghcr.io",
       "namespace_separator" : "/",
       "resolve_volume" : "Automatic",
       "chown" : true,
       "setup_strategy" : "ifneedbepullelsecachedbuild",
-      "target_image_source" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction",
+      "target_image_source" : "https://github.com/openproblems-bio/task_perturbation_prediction",
       "setup" : [
         {
           "type" : "r",
@@ -3333,12 +3333,12 @@ meta = [
     }
   ],
   "info" : {
-    "config" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/src/task/control_methods/sample/config.vsh.yaml",
+    "config" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/control_methods/sample/config.vsh.yaml",
     "platform" : "nextflow",
-    "output" : "/home/runner/work/task-dge-perturbation-prediction/task-dge-perturbation-prediction/target/nextflow/control_methods/sample",
+    "output" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/control_methods/sample",
     "viash_version" : "0.8.6",
-    "git_commit" : "ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8",
-    "git_remote" : "https://github.com/openproblems-bio/task-dge-perturbation-prediction"
+    "git_commit" : "aaa0ca579115d226cac9577d7da1c1c60ff6c031",
+    "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   }
 }'''))
 ]
@@ -3769,7 +3769,7 @@ meta["defaults"] = [
   directives: readJsonBlob('''{
   "container" : {
     "registry" : "ghcr.io",
-    "image" : "openproblems-bio/task-dge-perturbation-prediction/control_methods/sample",
+    "image" : "openproblems-bio/task_perturbation_prediction/control_methods/sample",
     "tag" : "main_build"
   },
   "label" : [

@@ -426,9 +426,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet" "pandas==2.1.3" "pyarrow==14.0.1" "tqdm==4.66.1" "scikit-learn==1.3.2" "transformers==4.35.2" "matplotlib==3.8.2" "torch-summary"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods lgc_ensemble_train"
-LABEL org.opencontainers.image.created="2024-06-04T11:24:57Z"
-LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task-dge-perturbation-prediction"
-LABEL org.opencontainers.image.revision="ca5de78dcd61bff064a6c8f4047b99f59b8f7ec8"
+LABEL org.opencontainers.image.created="2024-06-04T23:09:08Z"
+LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
+LABEL org.opencontainers.image.revision="aaa0ca579115d226cac9577d7da1c1c60ff6c031"
 LABEL org.opencontainers.image.version="main_build"
 
 VIASHDOCKER
@@ -717,14 +717,14 @@ eval set -- $VIASH_POSITIONAL_ARGS
 ViashDockerInstallationCheck
 
 if [ $VIASH_MODE == "docker_setup" ]; then
-  ViashDockerSetup 'ghcr.io/openproblems-bio/task-dge-perturbation-prediction/methods/lgc_ensemble_train:main_build' "$VIASH_DOCKER_SETUP_STRATEGY"
+  ViashDockerSetup 'ghcr.io/openproblems-bio/task_perturbation_prediction/methods/lgc_ensemble_train:main_build' "$VIASH_DOCKER_SETUP_STRATEGY"
   exit 0
 fi
-ViashDockerSetup 'ghcr.io/openproblems-bio/task-dge-perturbation-prediction/methods/lgc_ensemble_train:main_build' ifneedbepullelsecachedbuild
+ViashDockerSetup 'ghcr.io/openproblems-bio/task_perturbation_prediction/methods/lgc_ensemble_train:main_build' ifneedbepullelsecachedbuild
 
 if [ $VIASH_MODE == "docker_debug" ]; then
-  ViashNotice "+ docker run --entrypoint=bash -i --rm --shm-size=2g -v "$(pwd)":/pwd --workdir /pwd -t 'ghcr.io/openproblems-bio/task-dge-perturbation-prediction/methods/lgc_ensemble_train:main_build'"
-  docker run --entrypoint=bash -i --rm --shm-size=2g -v "$(pwd)":/pwd --workdir /pwd -t 'ghcr.io/openproblems-bio/task-dge-perturbation-prediction/methods/lgc_ensemble_train:main_build'
+  ViashNotice "+ docker run --entrypoint=bash -i --rm --shm-size=2g -v "$(pwd)":/pwd --workdir /pwd -t 'ghcr.io/openproblems-bio/task_perturbation_prediction/methods/lgc_ensemble_train:main_build'"
+  docker run --entrypoint=bash -i --rm --shm-size=2g -v "$(pwd)":/pwd --workdir /pwd -t 'ghcr.io/openproblems-bio/task_perturbation_prediction/methods/lgc_ensemble_train:main_build'
   exit 0
 fi
 
@@ -945,7 +945,7 @@ VIASH_UNIQUE_MOUNTS=($(for val in "${VIASH_EXTRA_MOUNTS[@]}"; do echo "$val"; do
 function ViashPerformChown {
   if (( ${#VIASH_CHOWN_VARS[@]} )); then
     set +e
-    eval docker run --entrypoint=bash -i --rm --shm-size=2g ${VIASH_UNIQUE_MOUNTS[@]} ghcr.io/openproblems-bio/task-dge-perturbation-prediction/methods/lgc_ensemble_train:main_build -c "'chown $(id -u):$(id -g) --silent --recursive ${VIASH_CHOWN_VARS[@]}'"
+    eval docker run --entrypoint=bash -i --rm --shm-size=2g ${VIASH_UNIQUE_MOUNTS[@]} ghcr.io/openproblems-bio/task_perturbation_prediction/methods/lgc_ensemble_train:main_build -c "'chown $(id -u):$(id -g) --silent --recursive ${VIASH_CHOWN_VARS[@]}'"
     set -e
   fi
 }
@@ -964,8 +964,8 @@ fi
 # set dependency paths
 
 
-ViashDebug "Running command: $(echo docker run --entrypoint=bash -i --rm --shm-size=2g ${VIASH_UNIQUE_MOUNTS[@]} $VIASH_EXTRA_DOCKER_ARGS ghcr.io/openproblems-bio/task-dge-perturbation-prediction/methods/lgc_ensemble_train:main_build)"
-cat << VIASHEOF | eval docker run --entrypoint=bash -i --rm --shm-size=2g ${VIASH_UNIQUE_MOUNTS[@]} $VIASH_EXTRA_DOCKER_ARGS ghcr.io/openproblems-bio/task-dge-perturbation-prediction/methods/lgc_ensemble_train:main_build
+ViashDebug "Running command: $(echo docker run --entrypoint=bash -i --rm --shm-size=2g ${VIASH_UNIQUE_MOUNTS[@]} $VIASH_EXTRA_DOCKER_ARGS ghcr.io/openproblems-bio/task_perturbation_prediction/methods/lgc_ensemble_train:main_build)"
+cat << VIASHEOF | eval docker run --entrypoint=bash -i --rm --shm-size=2g ${VIASH_UNIQUE_MOUNTS[@]} $VIASH_EXTRA_DOCKER_ARGS ghcr.io/openproblems-bio/task_perturbation_prediction/methods/lgc_ensemble_train:main_build
 set -e
 tempscript=\$(mktemp "$VIASH_META_TEMP_DIR/viash-run-lgc_ensemble_train-XXXXXX").py
 function clean_up {
@@ -1027,7 +1027,7 @@ from models import Conv, LSTM, GRU
 from helper_functions import train_function
 
 ###################################################################
-# Interpretation from src/task/methods/lgc_ensemble/helper_functions.py
+# Interpretation from src/methods/lgc_ensemble/helper_functions.py
 
 print("Load data...", flush=True)
 # read kf_cv_initial from json

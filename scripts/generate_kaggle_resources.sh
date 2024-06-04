@@ -18,7 +18,7 @@ if [[ ! -f "$OUT/2023-09-12_de_by_cell_type_test.h5ad" ]]; then
     "import anndata as ad; ad.read_h5ad('$OUT/2023-09-12_de_by_cell_type_train.h5ad').write_h5ad('$OUT/2023-09-12_de_by_cell_type_train.h5ad', compression='gzip')"
 fi
 
-viash run src/task/process_dataset/convert_kaggle_h5ad_to_parquet/config.vsh.yaml -- \
+viash run src/process_dataset/convert_kaggle_h5ad_to_parquet/config.vsh.yaml -- \
   --input_train "$OUT/2023-09-12_de_by_cell_type_train.h5ad" \
   --input_test "$OUT/2023-09-12_de_by_cell_type_test.h5ad" \
   --input_single_cell_h5ad "resources/neurips-2023-raw/sc_counts.h5ad" \
@@ -34,14 +34,14 @@ viash run src/task/process_dataset/convert_kaggle_h5ad_to_parquet/config.vsh.yam
   --dataset_organism homo_sapiens
 
 echo ">> Run method"
-viash run src/task/control_methods/mean_across_compounds/config.vsh.yaml -- \
+viash run src/control_methods/mean_across_compounds/config.vsh.yaml -- \
   --de_train_h5ad "$OUT/de_train.h5ad" \
   --de_test_h5ad "$OUT/de_test.h5ad" \
   --id_map "$OUT/id_map.csv" \
   --output "$OUT/prediction.h5ad"
 
 echo ">> Run metric"
-viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
+viash run src/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --prediction "$OUT/prediction.h5ad" \
   --de_test_h5ad "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"

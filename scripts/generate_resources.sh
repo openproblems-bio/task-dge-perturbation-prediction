@@ -32,14 +32,14 @@ nextflow run \
   --publish_dir "$OUT"
 
 echo ">> Run method"
-viash run src/task/control_methods/mean_across_compounds/config.vsh.yaml -- \
+viash run src/control_methods/mean_across_compounds/config.vsh.yaml -- \
   --de_train_h5ad "$OUT/de_train.h5ad" \
   --de_test_h5ad "$OUT/de_test.h5ad" \
   --id_map "$OUT/id_map.csv" \
   --output "$OUT/prediction.h5ad"
 
 echo ">> Run metric"
-viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
+viash run src/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --prediction "$OUT/prediction.h5ad" \
   --de_test_h5ad "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"

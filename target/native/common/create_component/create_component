@@ -194,13 +194,13 @@ function ViashHelp {
   echo ""
   echo "    --output"
   echo "        type: file, output, file must exist"
-  echo "        default: src/task/methods/\${VIASH_PAR_NAME}"
+  echo "        default: src/methods/\${VIASH_PAR_NAME}"
   echo "        Path to the component directory. Suggested location is"
   echo "        \`src/<TASK>/<TYPE>s/<NAME>\`."
   echo ""
   echo "    --api_file"
   echo "        type: file"
-  echo "        default: src/task/api/comp_method.yaml"
+  echo "        default: src/api/comp_method.yaml"
   echo "        Which API file to use. Defaults to \`src/<TASK>/api/comp_<TYPE>.yaml\`."
   echo "        In tasks with different subtypes of method, this location might not"
   echo "        exist and you might need"
@@ -398,10 +398,10 @@ if [ -z ${VIASH_PAR_LANGUAGE+x} ]; then
   VIASH_PAR_LANGUAGE="python"
 fi
 if [ -z ${VIASH_PAR_OUTPUT+x} ]; then
-  VIASH_PAR_OUTPUT="src/task/methods/${VIASH_PAR_NAME}"
+  VIASH_PAR_OUTPUT="src/methods/${VIASH_PAR_NAME}"
 fi
 if [ -z ${VIASH_PAR_API_FILE+x} ]; then
-  VIASH_PAR_API_FILE="src/task/api/comp_method.yaml"
+  VIASH_PAR_API_FILE="src/api/comp_method.yaml"
 fi
 if [ -z ${VIASH_PAR_VIASH_YAML+x} ]; then
   VIASH_PAR_VIASH_YAML="_viash.yaml"

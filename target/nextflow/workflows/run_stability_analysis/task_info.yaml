@@ -1,5 +1,5 @@
-name: dge_perturbation_prediction
-label: DGE Perturbation Prediction
+name: perturbation_prediction
+label: Perturbation Prediction
 summary: Predicting how small molecules change gene expression in different cell types.
 readme: |
   ## Installation
@@ -17,9 +17,9 @@ readme: |
   To get started, you can run the following commands:
 
   ```bash
-  git clone git@github.com:openproblems-bio/task-dge-perturbation-prediction.git
+  git clone git@github.com:openproblems-bio/task_perturbation_prediction.git
 
-  cd task-dge-perturbation-prediction
+  cd task_perturbation_prediction
   
   # download resources
   scripts/download_resources.sh
@@ -99,3 +99,43 @@ authors:
     info:
       github: rcannood
       orcid: "0000-0003-3641-729X"
+  - name: Daniel Burkhardt
+    roles: [ author ]
+    info:
+      github: dburkhardt
+      orcid: 0000-0001-7744-1363
+  - name: Malte D. Luecken
+    roles: [ author ]
+    info:
+      github: LuckyMD
+      orcid: 0000-0001-7464-7921
+  - name: Tin M. Tunjic
+    roles: [ contributor ]
+    info:
+      github: ttunja
+      orcid: 0000-0001-8842-6548
+  - name: Mengbo Wang
+    roles: [ contributor ]
+    info:
+      github: wangmengbo
+      orcid: 0000-0002-0266-9993
+  - name: Andrew Benz
+    roles: [ author ]
+    info:
+      github: andrew-benz
+      orcid: 0009-0002-8118-1861
+  - name: Tianyu Liu
+    roles: [ contributor ]
+    info:
+      github: HelloWorldLTY
+      orcid: 0000-0002-9412-6573
+  - name: Jalil Nourisa
+    roles: [ contributor ]
+    info:
+      github: janursa
+      orcid: 0000-0002-7539-4396
+  - name: Rico Meinl
+    roles: [ contributor ]
+    info:
+      github: ricomnl
+      orcid: 0000-0003-4356-6058

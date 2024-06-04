@@ -192,8 +192,7 @@ function ViashHelp {
   echo ""
   echo "    --output_model"
   echo "        type: file, output"
-  echo "        Optional model output. If no value is passed, the model will be removed"
-  echo "        at the end of the run."
+  echo "        example: resources/neurips-2023-data/model"
   echo ""
   echo "    --n_replica"
   echo "        type: integer"
@@ -563,12 +562,10 @@ dep = {
 
 sys.path.append(meta["resources_dir"])
 
-from anndata_to_dataframe import anndata_to_dataframe
 from helper import plant_seed, MultiOutputTargetEncoder, train
 
 print('Reading input files', flush=True)
 de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
-de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
 id_map = pd.read_csv(par["id_map"])
 
 gene_names = list(de_train_h5ad.var_names)
@@ -595,10 +592,10 @@ plant_seed(SEED, USE_GPU)
 
 print('Data location', flush=True)
 # Data location
-cell_types = de_train['cell_type']
-sm_names = de_train['sm_name']
+cell_types = de_train_h5ad.obs['cell_type'].astype(str)
+sm_names = de_train_h5ad.obs['sm_name'].astype(str)
 
-data = de_train.drop(columns=["cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control"]).to_numpy(dtype=float)
+data = de_train_h5ad.layers[par["layer"]]
 
 print('Train model', flush=True)
 # ... train model ...

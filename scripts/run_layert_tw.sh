@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RUN_ID="layert_$(date +%Y-%m-%d_%H-%M-%S)"
-publish_dir="s3://openproblems-data/resources/dge_perturbation_prediction/results/${RUN_ID}"
+publish_dir="s3://openproblems-data/resources/perturbation_prediction/results/${RUN_ID}"
 
 cat > /tmp/params.yaml << HERE
 id: dge_perturbation_task
@@ -12,7 +12,7 @@ rename_keys: "de_train_h5ad:de_train_h5ad,de_test_h5ad:de_test_h5ad,id_map:id_ma
 settings: '{"layer": "t"}'
 HERE
 
-tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
+tw launch https://github.com/openproblems-bio/task_perturbation_prediction.git \
   --revision main_build \
   --pull-latest \
   --main-script target/nextflow/workflows/run_benchmark/main.nf \
