@@ -1,0 +1,55 @@
+__merge__: ../../api/wf_method.yaml
+
+functionality:
+  name: lgc_ensemble
+  info:
+    label: LSTM-GRU-CNN Ensemble
+    neurips2023_rank: 1
+    summary: An ensemble of LSTM, GRU, and 1D CNN models
+    description: |
+      An ensemble of LSTM, GRU, and 1D CNN models with a variety of input features derived from ChemBERTa embeddings,
+      one-hot encoding of cell type/small molecule pairs, and various statistical measures of target gene expression.
+      The models were trained with a combination of MSE, MAE, LogCosh, and BCE loss functions to improve their
+      robustness and predictive performance. The approach also included data augmentation techniques to ensure
+      generalization and account for noise in the data.
+    documentation_url: https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/459258
+    repository_url: https://github.com/Jean-KOUAGOU/1st-place-solution-single-cell-pbs/tree/main
+
+  arguments:
+    - name: --epochs
+      type: integer
+      default: 250
+      description: "Number of epochs to train."
+      info:
+        test_default: 1
+    - name: --kf_n_splits
+      type: integer
+      default: 5
+      description: "Number of splits for KFold."
+      info:
+        test_default: 2
+    - name: --schemes
+      type: string
+      default: [initial, light, heavy]
+      multiple: true
+      info:
+        test_default: [initial, light]
+    - name: --models
+      type: string
+      default: [LSTM, GRU, Conv]
+      multiple: true
+      info:
+        test_default: [LSTM, GRU]
+
+  resources:
+    - type: nextflow_script
+      path: main.nf
+      entrypoint: run_wf
+
+  dependencies:
+    - name: methods/lgc_ensemble_prepare
+    - name: methods/lgc_ensemble_train
+    - name: methods/lgc_ensemble_predict
+    
+platforms:
+  - type: nextflow

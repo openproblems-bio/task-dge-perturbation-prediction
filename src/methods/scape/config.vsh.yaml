@@ -1,0 +1,88 @@
+__merge__: ../../api/comp_method.yaml
+functionality:
+  name: scape
+  info:
+    label: ScAPE
+    neurips2023_rank: 16
+    summary: Neural network model for drug effect prediction
+    description: |
+      ScAPE is utilises a neural network (NN) model to estimate drug effects on gene expression in
+      peripheral blood mononuclear cells (PBMCs). The model took drug and cell features as input,
+      with these features primarily derived from the median of signed log-pvalues and log fold-changes
+      grouped by drug and cell type. The NN was trained using a leave-one-drug-out cross-validation
+      strategy, focusing on NK cells as a representative cell type due to their similarity to B cells
+      and Myeloid cells in principal component analysis. Model performance was evaluated by comparing
+      its predictions against two baselines: predicting zero effect and predicting the median
+      log-pvalue for each drug. The final submission combined predictions from models trained on
+      different gene and drug subsets, aiming to enhance overall prediction accuracy.
+    reference: pablormier2023scape
+    documentation_url: https://docs.google.com/document/d/1w0GIJ8VoQx3HEJNmLXoU-Y_STB-h5-bXusL80_6EVuU/edit
+    repository_url: https://github.com/scapeML/scape
+  arguments:
+    - type: string
+      name: --cell
+      description: Pre-defined cell type held for pre-training.
+      required: false
+      default: NK cells
+    - type: integer
+      name: --epochs
+      description: Number of epochs for coarse training.
+      default: 300
+      info:
+        test_default: 2
+    - type: integer
+      name: --epochs_enhanced
+      description: Number of epochs for enhanced training.
+      default: 800
+      info:
+        test_default: 2
+    - type: integer
+      name: --n_genes
+      description: The number of genes for coarse training.
+      default: 64
+      info:
+        test_default: 10
+    - type: integer
+      name: --n_genes_enhanced
+      description: The number of genes for enhanced training.
+      default: 256
+      info:
+        test_default: 10
+    - type: integer
+      name: --n_drugs
+      description: The number of drugs to consider for coarse training. If none, all drugs are considered.
+      info:
+        test_default: 5
+    - type: integer
+      name: --min_n_top_drugs
+      description: The minimum number of top drugs to consider.
+      default: 50
+      info:
+        test_default: 0
+  resources:
+    - type: python_script
+      path: script.py
+platforms:
+  - type: docker
+    image: nvcr.io/nvidia/tensorflow:24.03-tf2-py3
+    setup:
+      - type: apt
+        packages:
+          - procps
+      - type: python
+        packages:
+          - anndata~=0.8.0
+          - scanpy
+          - pyyaml
+          - requests
+          - jsonschema
+      - type: python
+        packages:
+          # - tensorflow~=2.14.0
+          - tensorflow-io-gcs-filesystem>=0.31.0
+          - scikit-learn~=1.2.2
+          - fastparquet~=2023.10.1
+          - git+https://github.com/scapeML/scape.git
+  - type: nextflow
+    directives:
+      label: [ hightime, highmem, highcpu, gpu, midsharedmem ]

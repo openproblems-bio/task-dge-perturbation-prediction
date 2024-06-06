@@ -1,0 +1,99 @@
+functionality:
+  name: "run_benchmark"
+  namespace: "workflows"
+  argument_groups:
+    - name: Inputs
+      arguments:
+        - name: "--de_train_h5ad"
+          __merge__: ../../api/file_de_train_h5ad.yaml
+          required: true
+          direction: input
+        - name: "--de_test_h5ad"
+          __merge__: ../../api/file_de_test_h5ad.yaml
+          required: true
+          direction: input
+        - name: "--id_map"
+          __merge__: ../../api/file_id_map.yaml
+          required: true
+          direction: input
+        - name: --layer
+          type: string
+          direction: input
+          default: clipped_sign_log10_pval
+          description: Which layer to use for prediction and evaluation.
+    - name: Outputs
+      arguments:
+        - name: "--scores"
+          type: file
+          required: true
+          direction: output
+          description: A yaml file containing the scores of each of the methods
+          default: score_uns.yaml
+        - name: "--method_configs"
+          type: file
+          required: true
+          direction: output
+          default: method_configs.yaml
+        - name: "--metric_configs"
+          type: file
+          required: true
+          direction: output
+          default: metric_configs.yaml
+        - name: "--dataset_uns"
+          type: file
+          required: true
+          direction: output
+          default: dataset_uns.yaml
+        - name: "--task_info"
+          type: file
+          required: true
+          direction: output
+          default: task_info.yaml
+    - name: Arguments
+      arguments:
+        - name: "--method_ids"
+          type: string
+          multiple: true
+          description: A list of method ids to run. If not specified, all methods will be run.
+        - name: "--metric_ids"
+          type: string
+          multiple: true
+          description: A list of metric ids to run. If not specified, all metric will be run.
+  resources:
+    - type: nextflow_script
+      path: main.nf
+      entrypoint: run_wf
+    - type: file
+      path: "../../api/task_info.yaml"
+  dependencies:
+    - name: common/extract_metadata
+      repository: openproblemsv2
+    - name: control_methods/zeros
+    - name: control_methods/sample
+    - name: control_methods/ground_truth
+    - name: control_methods/mean_outcome
+    - name: control_methods/mean_across_celltypes
+    - name: control_methods/mean_across_compounds
+    - name: methods/nn_retraining_with_pseudolabels
+    - name: methods/scape
+    - name: methods/jn_ap_op2
+    - name: methods/lgc_ensemble
+    - name: methods/transformer_ensemble
+    - name: methods/pyboost
+    - name: metrics/mean_rowwise_error
+    - name: metrics/mean_rowwise_correlation
+  repositories:
+    - name: openproblemsv2
+      type: github
+      repo: openproblems-bio/openproblems-v2
+      tag: main_build
+platforms:
+  - type: nextflow
+    config:
+      script: |
+        process.errorStrategy = 'ignore'
+        trace {
+            enabled = true
+            overwrite = true
+            file = "${params.publish_dir}/trace.txt"
+        }

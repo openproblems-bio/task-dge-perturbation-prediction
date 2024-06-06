@@ -1,0 +1,342 @@
+functionality:
+  name: "pyboost"
+  namespace: "methods"
+  version: "build/main"
+  arguments:
+  - type: "file"
+    name: "--de_train_h5ad"
+    info:
+      label: "DE train"
+      summary: "Differential expression results for training."
+      file_type: "h5ad"
+      slots:
+        obs:
+        - name: "cell_type"
+          type: "string"
+          description: "The annotated cell type of each cell based on RNA expression."
+          required: true
+        - name: "sm_name"
+          type: "string"
+          description: "The primary name for the (parent) compound (in a standardized\
+            \ representation)\nas chosen by LINCS. This is provided to map the data\
+            \ in this experiment to \nthe LINCS Connectivity Map data.\n"
+          required: true
+        - name: "sm_lincs_id"
+          type: "string"
+          description: "The global LINCS ID (parent) compound (in a standardized representation).\n\
+            This is provided to map the data in this experiment to the LINCS Connectivity\n\
+            Map data.\n"
+          required: true
+        - name: "SMILES"
+          type: "string"
+          description: "Simplified molecular-input line-entry system (SMILES) representations\
+            \ of the\ncompounds used in the experiment. This is a 1D representation\
+            \ of molecular\nstructure. These SMILES are provided by Cellarity based\
+            \ on the specific\ncompounds ordered for this experiment.\n"
+          required: true
+        - name: "split"
+          type: "string"
+          description: "Split. Must be one of 'control', 'train', 'public_test', or\
+            \ 'private_test'"
+          required: true
+        - name: "control"
+          type: "boolean"
+          description: "Boolean indicating whether this instance was used as a control."
+          required: true
+        layers:
+        - name: "logFC"
+          type: "double"
+          description: "Log fold change of the differential expression test"
+          required: true
+        - name: "AveExpr"
+          type: "double"
+          description: "Average expression of the differential expression test"
+          required: false
+        - name: "t"
+          type: "double"
+          description: "T-statistic of the differential expression test"
+          required: false
+        - name: "P.Value"
+          type: "double"
+          description: "P-value of the differential expression test"
+          required: true
+        - name: "adj.P.Value"
+          type: "double"
+          description: "Adjusted P-value of the differential expression test"
+          required: true
+        - name: "B"
+          type: "double"
+          description: "B-statistic of the differential expression test"
+          required: false
+        - name: "is_de"
+          type: "boolean"
+          description: "Whether the gene is differentially expressed"
+          required: true
+        - name: "is_de_adj"
+          type: "boolean"
+          description: "Whether the gene is differentially expressed after adjustment"
+          required: true
+        - name: "sign_log10_pval"
+          type: "double"
+          description: "Differential expression value (`-log10(p-value) * sign(LFC)`)\
+            \ for each gene.\nHere, LFC is the estimated log-fold change in expression\
+            \ between the treatment\nand control condition after shrinkage as calculated\
+            \ by Limma. Positive LFC means\nthe gene goes up in the treatment condition\
+            \ relative to the control.\n"
+          required: true
+        - name: "clipped_sign_log10_pval"
+          type: "double"
+          description: "A clipped version of the sign_log10_pval layer. Values are\
+            \ clipped to be between\n-4 and 4 (i.e. `-log10(0.0001)` and `-log10(0.0001)`).\n"
+          required: true
+        uns:
+        - type: "string"
+          name: "dataset_id"
+          description: "A unique identifier for the dataset. This is different from\
+            \ the `obs.dataset_id` field, which is the identifier for the dataset\
+            \ from which the cell data is derived."
+          required: true
+        - name: "dataset_name"
+          type: "string"
+          description: "A human-readable name for the dataset."
+          required: true
+        - type: "string"
+          name: "dataset_url"
+          description: "Link to the original source of the dataset."
+          required: false
+        - name: "dataset_reference"
+          type: "string"
+          description: "Bibtex reference of the paper in which the dataset was published."
+          required: false
+          multiple: true
+        - name: "dataset_summary"
+          type: "string"
+          description: "Short description of the dataset."
+          required: true
+        - name: "dataset_description"
+          type: "string"
+          description: "Long description of the dataset."
+          required: true
+        - name: "dataset_organism"
+          type: "string"
+          description: "The organism of the sample in the dataset."
+          required: false
+          multiple: true
+        - name: "single_cell_obs"
+          type: "dataframe"
+          description: "A dataframe with the cell-level metadata for the training\
+            \ set.\n"
+          required: true
+    example:
+    - "resources/neurips-2023-data/de_train.h5ad"
+    must_exist: true
+    create_parent: true
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "file"
+    name: "--id_map"
+    info:
+      label: "ID Map"
+      summary: "File indicates the order of de_test, the cell types and the small\
+        \ molecule names."
+      file_type: "csv"
+      columns:
+      - name: "id"
+        type: "integer"
+        description: "Index of the test observation"
+        required: true
+      - name: "cell_type"
+        type: "string"
+        description: "Cell type name"
+        required: true
+      - name: "sm_name"
+        type: "string"
+        description: "Small molecule name"
+        required: true
+    example:
+    - "resources/neurips-2023-data/id_map.csv"
+    must_exist: true
+    create_parent: true
+    required: true
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "string"
+    name: "--layer"
+    description: "Which layer to use for prediction."
+    info: null
+    default:
+    - "clipped_sign_log10_pval"
+    required: false
+    direction: "input"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "file"
+    name: "--output"
+    info:
+      label: "Prediction"
+      summary: "Differential Gene Expression prediction"
+      file_type: "h5ad"
+      slots:
+        layers:
+        - name: "prediction"
+          type: "double"
+          description: "Predicted differential gene expression"
+          required: true
+        uns:
+        - type: "string"
+          name: "dataset_id"
+          description: "A unique identifier for the dataset. This is different from\
+            \ the `obs.dataset_id` field, which is the identifier for the dataset\
+            \ from which the cell data is derived."
+          required: true
+        - type: "string"
+          name: "method_id"
+          description: "A unique identifier for the method used to generate the prediction."
+          required: true
+    example:
+    - "resources/neurips-2023-data/prediction.h5ad"
+    must_exist: true
+    create_parent: true
+    required: true
+    direction: "output"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "file"
+    name: "--output_model"
+    info:
+      label: "Model"
+      summary: "Optional model output. If no value is passed, the model will be removed\
+        \ at the end of the run."
+      file_type: "directory"
+    example:
+    - "resources/neurips-2023-data/model"
+    must_exist: false
+    create_parent: true
+    required: false
+    direction: "output"
+    multiple: false
+    multiple_sep: ":"
+    dest: "par"
+  - type: "string"
+    name: "--predictor_names"
+    description: "Which predictor(s) to use."
+    info:
+      test_default:
+      - "knn_recommender"
+    default:
+    - "py_boost"
+    required: false
+    choices:
+    - "py_boost"
+    - "ridge_recommender"
+    - "knn_recommender"
+    - "predict_extratrees"
+    direction: "input"
+    multiple: true
+    multiple_sep: ";"
+    dest: "par"
+  resources:
+  - type: "python_script"
+    path: "script.py"
+    is_executable: true
+  - type: "file"
+    path: "helper.py"
+  - type: "file"
+    path: "../../utils/anndata_to_dataframe.py"
+  test_resources:
+  - type: "python_script"
+    path: "src/common/component_tests/run_and_check_output.py"
+    is_executable: true
+  - type: "file"
+    path: "resources/neurips-2023-data"
+    dest: "resources/neurips-2023-data"
+  info:
+    label: "Py-boost"
+    neurips2023_rank: 18
+    summary: "Py-boost predicting t-scores"
+    description: "An ensemble of four models was considered: \n\n* Py-boost (a ridge\
+      \ regression-based recommender system)\n* ExtraTrees (a decision tree ensemble\
+      \ with target-encoded features)\n* a k-nearest neighbors recommender system\n\
+      * a ridge regression model\n\nEach model offered distinct strengths and weaknesses:\
+      \ ExtraTrees and\nknn were unable to extrapolate beyond the training data, while\
+      \ ridge\nregression provided extrapolation capability. To enhance model performance,\n\
+      data augmentation techniques were used, including averaging differential\nexpressions\
+      \ for compound mixtures and adjusting cell counts to reduce biases.\n\nIn the\
+      \ end, only the py-boost model is used for generating predictions.\n"
+    documentation_url: "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458661"
+    repository_url: "https://github.com/Ambros-M/Single-Cell-Perturbations-2023"
+    type: "method"
+    type_info:
+      label: "Method"
+      summary: "A perturbation prediction method"
+      description: "A method for predicting the perturbation response of small molecules\
+        \ on certain cell types.\n"
+  status: "enabled"
+  set_wd_to_resources_dir: false
+platforms:
+- type: "docker"
+  id: "docker"
+  image: "ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4"
+  target_organization: "openproblems-bio/task_perturbation_prediction"
+  target_registry: "ghcr.io"
+  namespace_separator: "/"
+  resolve_volume: "Automatic"
+  chown: true
+  setup_strategy: "ifneedbepullelsecachedbuild"
+  target_image_source: "https://github.com/openproblems-bio/task_perturbation_prediction"
+  setup:
+  - type: "python"
+    user: false
+    packages:
+    - "colorama"
+    - "py-boost==0.4.3"
+    upgrade: true
+  entrypoint: []
+  cmd: null
+- type: "native"
+  id: "native"
+- type: "nextflow"
+  id: "nextflow"
+  directives:
+    label:
+    - "midtime"
+    - "midmem"
+    - "midcpu"
+    - "gpu"
+    tag: "$id"
+  auto:
+    simplifyInput: true
+    simplifyOutput: false
+    transcript: false
+    publish: false
+  config:
+    labels:
+      lowmem: "memory = 20.Gb"
+      midmem: "memory = 50.Gb"
+      highmem: "memory = 100.Gb"
+      lowcpu: "cpus = 5"
+      midcpu: "cpus = 15"
+      highcpu: "cpus = 30"
+      lowtime: "time = 1.h"
+      midtime: "time = 4.h"
+      hightime: "time = 8.h"
+      veryhightime: "time = 24.h"
+    script:
+    - "process.errorStrategy = 'ignore'"
+  debug: false
+  container: "docker"
+info:
+  config: "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/src/methods/pyboost/config.vsh.yaml"
+  platform: "docker"
+  output: "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/docker/methods/pyboost"
+  executable: "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/docker/methods/pyboost/pyboost"
+  viash_version: "0.8.6"
+  git_commit: "33a27528c858187bbea4118dc8960ca6889f3bb8"
+  git_remote: "https://github.com/openproblems-bio/task_perturbation_prediction"

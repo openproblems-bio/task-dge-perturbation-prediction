@@ -1,0 +1,72 @@
+functionality:
+  name: lgc_ensemble_train
+  namespace: methods
+  arguments:
+    - name: --train_data_aug_dir
+      type: file
+      required: true
+      direction: input
+    - name: --scheme
+      type: string
+      required: true
+      direction: input
+      description: "The scheme to use for training."
+      choices: [initial, light, heavy]
+    - name: --model
+      type: string
+      required: true
+      direction: input
+      description: "The name of the model to train."
+      choices: [LSTM, GRU, Conv]
+    - name: --fold
+      type: integer
+      required: true
+      direction: input
+      description: "The fold to train."
+    - name: --model_file
+      type: file
+      required: true
+      direction: output
+      example: model.pt
+    - name: --log_file
+      type: file
+      required: true
+      direction: output
+      example: log.json
+  resources:
+    - type: python_script
+      path: script.py
+    - path: ../lgc_ensemble_helpers/helper_classes.py
+    - path: ../lgc_ensemble_helpers/helper_functions.py
+    - path: ../lgc_ensemble_helpers/models.py
+    - path: ../lgc_ensemble_helpers/predict.py
+    - path: ../lgc_ensemble_helpers/prepare_data.py
+    - path: ../lgc_ensemble_helpers/train.py
+    - path: ../lgc_ensemble_helpers/divisor_finder.py
+    - path: ../../utils/anndata_to_dataframe.py
+    
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
+    run_args: ["--shm-size=2g"]
+    setup:
+      - type: python
+        packages:
+          - torch==2.1.1
+          - --index-url
+          - https://download.pytorch.org/whl/cu121
+      - type: python
+        packages:
+          - fastparquet
+          - pandas==2.1.3
+          - pyarrow==14.0.1
+          - tqdm==4.66.1
+          - scikit-learn==1.3.2
+          - transformers==4.35.2
+          - matplotlib==3.8.2
+          - torch-summary
+
+  - type: native
+  - type: nextflow
+    directives:
+      label: [hightime, veryhighmem, highcpu, highsharedmem, gpu]

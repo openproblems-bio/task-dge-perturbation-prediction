@@ -1,0 +1,7 @@
+__merge__: wf_method.yaml
+functionality:
+  test_resources:
+    - type: python_script
+      path: /src/common/component_tests/run_and_check_output.py
+    - path: /resources/neurips-2023-data
+      dest: resources/neurips-2023-data

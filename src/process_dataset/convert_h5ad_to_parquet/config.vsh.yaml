@@ -1,0 +1,49 @@
+functionality:
+  name: convert_h5ad_to_parquet
+  namespace: "process_dataset"
+  info:
+    type: process_dataset
+    type_info:
+      label: Split dataset
+      summary: Split dataset into training and test parquet files
+      description: |
+        Split dataset into training and test parquet files.
+  arguments:
+    - name: --input_train
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-data/de_train.h5ad
+    - name: --input_test
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-data/de_test.h5ad
+    - name: --output_train
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-data/de_train.parquet
+    - name: --output_test
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-data/de_test.parquet
+    - name: --output_id_map
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-data/id_map.csv
+  resources:
+    - type: python_script
+      path: script.py
+    - path: ../../utils/anndata_to_dataframe.py
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    setup:
+      - type: python
+        packages: [ fastparquet, anndata, pandas ]
+  - type: nextflow
+    directives:
+      label: [ midtime, midmem, lowcpu ]
