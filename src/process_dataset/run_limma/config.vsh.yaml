@@ -1,0 +1,55 @@
+functionality:
+  name: run_limma
+  namespace: "process_dataset"
+  info:
+    type: process_dataset
+    type_info:
+      label: Limma
+      summary: Run limma
+      description: |
+        Run limma for the perturbation regression task.
+  arguments:
+    - name: --input
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-data/pseudobulk_cleaned.h5ad
+    - name: --input_splits
+      type: string
+      multiple: true
+      description: The splits to use for the limma fitting
+      example: [ train, control, public_test, private_test ]
+    - name: --output
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-data/de.h5ad
+    - name: --output_splits
+      type: string
+      multiple: true
+      description: The splits to use for DE analysis
+    - name: --de_sig_cutoff
+      type: double
+      required: false
+      default: 0.05
+    - name: --clipping_cutoff
+      type: double
+      required: false
+      default: 0.0001
+      description: Clip the log p-values between log10(clip) and -log10(clip)
+    - name: --control_compound
+      type: string
+      required: false
+      default: "Dimethyl Sulfoxide"
+  resources:
+    - type: r_script
+      path: script.R
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_r:1.0.4
+    setup:
+      - type: r
+        bioc: [ edgeR, limma, dplyr, tidyr, purrr, tibble, furrr, future ]
+  - type: nextflow
+    directives:
+      label: [ midtime, midmem, highcpu ]

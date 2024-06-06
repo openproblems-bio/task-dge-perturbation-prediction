@@ -1,0 +1,65 @@
+__merge__: ../../api/comp_metric.yaml
+functionality:
+  name: mean_rowwise_correlation
+  info:
+    metrics:
+      - name: mean_rowwise_pearson
+        label: Mean Rowwise Pearson
+        summary: The mean of Pearson correlations per row (perturbation).
+        description: |
+          The **Mean Pearson Correlation** is computed as follows:
+
+          $$
+          \textrm{Mean-Pearson} = \frac{1}{R}\sum_{i=1}^R\frac{\textrm{Cov}(\mathbf{y}_i, \mathbf{\hat{y}}_i)}{\textrm{Var}(\mathbf{y}_i) \cdot \textrm{Var}(\mathbf{\hat{y}}_i)}
+          $$
+
+          where $(R)$ is the number of scored rows, and $(\mathbf{y}_i)$ and $(\mathbf{\hat{y}}_i)$ are the actual and predicted values, respectively, for row $(i)$.
+        repository_url: null
+        documentation_url: null
+        min: -1
+        max: 1
+        maximize: true
+      - name: mean_rowwise_spearman
+        label: Mean Rowwise Spearman
+        summary: The mean of Spearman correlations per row (perturbation).
+        description: |
+          The **Mean Spearman Correlation** is computed as follows:
+
+          $$
+          \textrm{Mean-Pearson} = \frac{1}{R}\sum_{i=1}^R\frac{\textrm{Cov}(\mathbf{r}_i, \mathbf{\hat{r}}_i)}{\textrm{Var}(\mathbf{r}_i) \cdot \textrm{Var}(\mathbf{\hat{r}}_i)}
+          $$
+
+          where $(R)$ is the number of scored rows, and $(\mathbf{r}_i)$ and $(\mathbf{\hat{r}}_i)$ are the ranks of the actual and predicted values, respectively, for row $(i)$.
+        repository_url: null
+        documentation_url: null
+        min: -1
+        max: 1
+        maximize: true
+      - name: mean_rowwise_cosine
+        label: Mean Rowwise Cosine
+        summary: The mean of cosine similarities per row (perturbation).
+        description: |
+          The **Mean Cosine Similarity** is computed as follows:
+
+          $$
+          \textrm{Mean-Cosine} = \frac{1}{R}\sum_{i=1}^R\frac{\mathbf{y}_i\cdot \mathbf{\hat{y}}_i}{\|\mathbf{y}_i\| \|\mathbf{\hat{y}}_i\|}
+          $$
+
+          where $(R)$ is the number of scored rows, and $(\mathbf{y}_i)$ and $(\mathbf{\hat{y}}_i)$ are the actual and predicted values, respectively, for row $(i)$.
+        repository_url: null
+        documentation_url: null
+        min: -1
+        max: 1
+        maximize: true
+  resources:
+    - type: r_script
+      path: script.R
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_r:1.0.4
+    setup:
+      - type: r
+        packages: proxyC
+  - type: nextflow
+    directives:
+      label: [ midtime, highmem, highcpu ]

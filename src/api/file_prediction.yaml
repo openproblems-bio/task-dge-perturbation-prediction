@@ -1,0 +1,21 @@
+type: file
+example: resources/neurips-2023-data/prediction.h5ad
+info:
+  label: Prediction
+  summary: "Differential Gene Expression prediction"
+  file_type: h5ad
+  slots:
+    layers:
+      - name: prediction
+        type: double
+        description: "Predicted differential gene expression"
+        required: true
+    uns:
+      - type: string
+        name: dataset_id
+        description: A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived.
+        required: true
+      - type: string
+        name: method_id
+        description: A unique identifier for the method used to generate the prediction.
+        required: true
